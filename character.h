@@ -23,12 +23,12 @@ public:
   void update(const Uint8 *keys);
   void render(SDL_Renderer *renderer);
 
-  SDL_Texture *texture;
   static int nextID;
 
 private:
   int ID;
   Uint32 lastUpdate;
+  SDL_Texture *texture;
 
   float xPos;
   float yPos;

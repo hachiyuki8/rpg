@@ -6,7 +6,9 @@ character::character(SDL_Renderer *renderer, float x, float y, float w, float h,
                      float xV, float yV) {
   ID = nextID;
   nextID++;
-  std::cout << "Creating character " << ID << std::endl;
+  if (DEBUG) {
+    std::cout << "Creating character " << ID << std::endl;
+  }
 
   xPos = x;
   yPos = y;
@@ -15,7 +17,8 @@ character::character(SDL_Renderer *renderer, float x, float y, float w, float h,
   xVel = xV;
   yVel = yV;
 
-  SDL_Surface *image = SDL_LoadBMP("images/character.bmp");
+  SDL_Surface *image =
+      SDL_LoadBMP("images/character.bmp"); // TO-DO: make it a param
   if (!image) {
     std::cout << "Error loading image character.bmp: " << SDL_GetError()
               << std::endl;
@@ -30,7 +33,9 @@ character::character(SDL_Renderer *renderer, float x, float y, float w, float h,
 }
 
 character::~character() {
-  std::cout << "Destroying character " << ID << std::endl;
+  if (DEBUG) {
+    std::cout << "Destroying character " << ID << std::endl;
+  }
   SDL_DestroyTexture(texture);
 }
 
