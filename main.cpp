@@ -1,5 +1,6 @@
 #include "character.h"
 #include "constants.h"
+#include "map.h"
 #include "tile.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -14,10 +15,13 @@ TTF_Font *main_font;
 SDL_Texture *startup_t;
 SDL_Surface *startup_text;
 
-std::vector<character *> characters;
+std::vector<Character> characters;
+std::vector<SDL_Texture *> characterTextures;
+std::vector<SDL_Texture *> tileTextures;
 
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
-static GameState gameState = PAUSE;
+static GameState gameState = GameState::PAUSE;
+Map *curMap;
 
 bool init();
 bool loop();
@@ -36,8 +40,10 @@ int main(int argc, char **args) {
     return 1;
   }
 
-  character player(renderer);
-  characters.push_back(&player);
+  Character player(characterTextures[0]);
+  characters.push_back(std::move(player));
+  Map map(tileTextures);
+  curMap = &map;
   while (loop()) {
   }
 
@@ -50,10 +56,10 @@ bool loop() {
   SDL_Event evt;
 
   // clear the screen to white
-  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  SDL_SetRenderDrawColor(renderer, 250, 255, 255, 255);
   SDL_RenderClear(renderer);
 
-  if (gameState == PAUSE) {
+  if (gameState == GameState::PAUSE) {
     renderStartScreen();
   }
 
@@ -65,16 +71,18 @@ bool loop() {
     case SDL_KEYDOWN:
       switch (evt.key.keysym.sym) {
       case SDLK_RETURN:
-        gameState = IN_PROGRESS;
+        gameState = GameState::IN_PROGRESS;
         break;
       case SDLK_ESCAPE:
-        gameState = PAUSE;
+        gameState = GameState::PAUSE;
         break;
       }
     }
   }
 
-  if (gameState == IN_PROGRESS) {
+  if (gameState == GameState::IN_PROGRESS) {
+    curMap->render(renderer);
+
     updateCharacters(keys);
     renderCharacters();
   }
@@ -84,14 +92,14 @@ bool loop() {
 }
 
 void updateCharacters(const Uint8 *keys) {
-  for (auto c : characters) {
-    c->update(keys);
+  for (auto &c : characters) {
+    c.update(keys);
   }
 }
 
 void renderCharacters() {
-  for (auto c : characters) {
-    c->render(renderer);
+  for (auto &c : characters) {
+    c.render(renderer);
   }
 }
 
@@ -140,6 +148,30 @@ bool init() {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
 
+  SDL_Surface *image = SDL_LoadBMP("images/character.bmp");
+  if (!image) {
+    std::cout << "Error loading image character.bmp: " << SDL_GetError()
+              << std::endl;
+  }
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_FreeSurface(image);
+  if (!texture) {
+    std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+  }
+  characterTextures.push_back(texture);
+
+  image = SDL_LoadBMP("images/tile.bmp");
+  if (!image) {
+    std::cout << "Error loading image character.bmp: " << SDL_GetError()
+              << std::endl;
+  }
+  texture = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_FreeSurface(image);
+  if (!texture) {
+    std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+  }
+  tileTextures.push_back(texture);
+
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderClear(renderer);
 
@@ -150,6 +182,9 @@ void kill() {
   TTF_CloseFont(main_font);
   SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
+  for (auto &t : tileTextures) {
+    SDL_DestroyTexture(t);
+  }
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
 

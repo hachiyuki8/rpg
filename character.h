@@ -5,16 +5,16 @@
 #include <iostream>
 #include <stdlib.h>
 
-class character {
+class Character {
 public:
-  character(SDL_Renderer *renderer = NULL,
+  Character(SDL_Texture *t,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
             float h = DEFAULT_CHARACTER_HEIGHT,
             float xV = DEFAULT_CHARACTER_XVELOCITY,
             float yV = DEFAULT_CHARACTER_YVELOCITY);
-  virtual ~character();
+  virtual ~Character();
 
   void print();
 

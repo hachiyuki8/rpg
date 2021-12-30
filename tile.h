@@ -5,11 +5,11 @@
 #include <iostream>
 #include <stdlib.h>
 
-class tile {
+class Tile {
 public:
-  tile(SDL_Renderer *renderer = NULL, float x = 0, float y = 0,
-       float s = TILE_SIZE, TileStates ts = REACHABLE);
-  virtual ~tile();
+  Tile(SDL_Texture *t, float x = 0, float y = 0, float s = TILE_SIZE,
+       TileState ts = TileState::REACHABLE);
+  virtual ~Tile();
 
   void print();
   bool isOnTile(float x, float y, float w, float h); // if collides with tile
@@ -17,7 +17,7 @@ public:
                          float h); // invalid if tile is unreachable and
                                    // position collides with tile
   bool isInTile(float x, float y, float w, float h); // if entirely in tile
-  void setTileState(TileStates newState);
+  void setTileState(TileState newState);
 
   void render(SDL_Renderer *renderer);
 
@@ -30,5 +30,5 @@ private:
   float xPos;
   float yPos;
   float size;
-  TileStates state;
+  TileState state;
 };
