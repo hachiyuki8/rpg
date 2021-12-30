@@ -1,0 +1,16 @@
+#pragma once
+#include <SDL.h>
+
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+
+const int DEFAULT_CHARACTER_WIDTH = 32;
+const int DEFAULT_CHARACTER_HEIGHT = 64;
+const int DEFAULT_CHARACTER_XVELOCITY = 160;
+const int DEFAULT_CHARACTER_YVELOCITY = 90;
+
+enum Directions { LEFT, RIGHT, UP, DOWN };
+const SDL_Scancode CONTROL_UP = SDL_SCANCODE_W;
+const SDL_Scancode CONTROL_LEFT = SDL_SCANCODE_A;
+const SDL_Scancode CONTROL_DOWN = SDL_SCANCODE_S;
+const SDL_Scancode CONTROL_RIGHT = SDL_SCANCODE_D;
