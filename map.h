@@ -1,8 +1,10 @@
 #pragma once
 
 #include "constants.h"
+#include "object.h"
 #include "tile.h"
 #include <SDL.h>
+#include <algorithm>
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
@@ -14,6 +16,11 @@ public:
   virtual ~Map();
 
   void print();
+  void addObject(Object o);
+  void removeObject(Object o);
+  bool isInvalidPosition(float x, float y, float w,
+                         float h); // invalid if position collides with an
+                                   // unreachable tile or object
 
   void render(SDL_Renderer *renderer);
 
@@ -26,4 +33,7 @@ private:
   float height;
   float tileSize;
   std::vector<std::vector<Tile>> tiles;
+  std::vector<Object> objects;
+
+  friend class Character;
 };

@@ -19,5 +19,11 @@ const SDL_Scancode CONTROL_LEFT = SDL_SCANCODE_A;
 const SDL_Scancode CONTROL_DOWN = SDL_SCANCODE_S;
 const SDL_Scancode CONTROL_RIGHT = SDL_SCANCODE_D;
 
+const SDL_Keycode SHOW_ITEMS = SDLK_TAB;
+const SDL_Keycode PICKUP_ITEM = SDLK_f;
+
 enum class TileState { REACHABLE, UNREACHABLE };
 const int TILE_SIZE = 80;
+
+enum class ObjectProperty { CAN_COLLIDE, CAN_PICKUP, CAN_INTERACT };
+const int OBJECT_SIZE = 40;

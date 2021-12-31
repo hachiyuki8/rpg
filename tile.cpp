@@ -36,11 +36,6 @@ bool Tile::isInvalidPosition(float x, float y, float w, float h) {
   return (state == TileState::UNREACHABLE && isOnTile(x, y, w, h));
 }
 
-bool Tile::isInTile(float x, float y, float w, float h) {
-  return (xPos <= x && x + w <= xPos + size && yPos <= y &&
-          y + h <= yPos + size);
-}
-
 void Tile::setTileState(TileState newState) { state = newState; }
 
 void Tile::render(SDL_Renderer *renderer) {
@@ -50,4 +45,9 @@ void Tile::render(SDL_Renderer *renderer) {
   r.w = size;
   r.h = size;
   SDL_RenderCopy(renderer, texture, NULL, &r);
+}
+
+bool Tile::isInTile(float x, float y, float w, float h) {
+  return (xPos <= x && x + w <= xPos + size && yPos <= y &&
+          y + h <= yPos + size);
 }

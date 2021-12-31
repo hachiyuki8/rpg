@@ -1,9 +1,11 @@
 #pragma once
 
 #include "constants.h"
+#include "map.h"
 #include <SDL.h>
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 class Character {
 public:
@@ -17,10 +19,14 @@ public:
   virtual ~Character();
 
   void print();
+  void addObject(Object o);
+  void removeObject(Object o);
+  void showObjects();
+  void pickupObject(Map *map);
 
-  void onEntry();
-  void onExit();
-  void update(const Uint8 *keys);
+  // void onEntry();
+  // void onExit();
+  void update(const Uint8 *keys, Map *curMap);
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -36,6 +42,7 @@ private:
   float height;
   float xVel;
   float yVel;
+  std::vector<Object> objects;
 
-  void move(const Uint8 *keys, float dT);
+  void move(const Uint8 *keys, float dT, Map *curMap);
 };

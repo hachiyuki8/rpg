@@ -12,11 +12,9 @@ public:
   virtual ~Tile();
 
   void print();
-  bool isOnTile(float x, float y, float w, float h); // if collides with tile
   bool isInvalidPosition(float x, float y, float w,
                          float h); // invalid if tile is unreachable and
                                    // position collides with tile
-  bool isInTile(float x, float y, float w, float h); // if entirely in tile
   void setTileState(TileState newState);
 
   void render(SDL_Renderer *renderer);
@@ -31,4 +29,7 @@ private:
   float yPos;
   float size;
   TileState state;
+
+  bool isOnTile(float x, float y, float w, float h); // if collides with tile
+  bool isInTile(float x, float y, float w, float h); // if entirely in tile
 };
