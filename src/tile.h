@@ -17,6 +17,7 @@ public:
                                    // position collides with tile
   void setTileState(TileState newState);
 
+  void onInteract();
   void render(SDL_Renderer *renderer);
 
   static int nextID;

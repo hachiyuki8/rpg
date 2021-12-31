@@ -6,6 +6,7 @@
 #include <SDL.h>
 #include <algorithm>
 #include <iostream>
+#include <math.h>
 #include <stdlib.h>
 #include <vector>
 
@@ -22,6 +23,7 @@ public:
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
 
+  void onInteract();
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -34,6 +36,10 @@ private:
   float tileSize;
   std::vector<std::vector<Tile>> tiles;
   std::vector<Object> objects;
+
+  // returns the index of the tile (x, y) is on (in tiles)
+  // if on the border of tiles, returns the right and downmost one
+  std::pair<int, int> findTileIndex(float x, float y);
 
   friend class Character;
 };

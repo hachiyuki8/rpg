@@ -14,6 +14,12 @@ Object::Object(SDL_Texture *t, float x, float y, float w, float h) {
   yPos = y;
   width = w;
   height = h;
+
+  xPosI = x;
+  yPosI = y;
+  widthI = w;
+  heightI = h;
+
   std::set<ObjectProperty> properties;
 }
 
@@ -26,6 +32,13 @@ Object::~Object() {
 void Object::print() {
   std::cout << "Object " << ID << std::endl;
   std::cout << "-pos: (" << xPos << ", " << yPos << ")" << std::endl;
+}
+
+void Object::setInteractRange(float left, float right, float up, float down) {
+  xPosI -= left;
+  widthI += left + right;
+  yPosI -= up;
+  heightI += up + down;
 }
 
 bool Object::operator==(const Object &o) { return (ID == o.ID); }
@@ -45,7 +58,7 @@ void Object::removeObjectProperty(ObjectProperty prop) {
 
 bool Object::canPickup(float x, float y, float w, float h) {
   return (properties.count(ObjectProperty::CAN_PICKUP) &&
-          isOnObject(x, y, w, h));
+          isInObjectRange(x, y, w, h));
 }
 
 void Object::render(SDL_Renderer *renderer) {
@@ -60,4 +73,9 @@ void Object::render(SDL_Renderer *renderer) {
 bool Object::isOnObject(float x, float y, float w, float h) {
   return (xPos <= x + w && x <= xPos + width && yPos <= y + h &&
           y <= yPos + height);
+}
+
+bool Object::isInObjectRange(float x, float y, float w, float h) {
+  return (xPosI <= x + w && x <= xPosI + widthI && yPosI <= y + h &&
+          y <= yPosI + heightI);
 }

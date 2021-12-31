@@ -78,3 +78,12 @@ void Map::render(SDL_Renderer *renderer) {
     o.render(renderer);
   }
 }
+
+std::pair<int, int> Map::findTileIndex(float x, float y) {
+  if (DEBUG) {
+    std::cout << "x: " << x << ", y: " << y << std::endl;
+    std::cout << "index (" << floor(x / tileSize) << ", " << floor(y / tileSize)
+              << ")" << std::endl;
+  }
+  return std::make_pair(floor(x / tileSize), floor(y / tileSize));
+}

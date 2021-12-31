@@ -21,6 +21,7 @@ std::vector<SDL_Texture *> tileTextures;
 std::vector<SDL_Texture *> objectTextures;
 
 Map *curMap;
+Character *curPlayer;
 std::vector<Character> characters;
 std::vector<Object> objects;
 
@@ -31,7 +32,9 @@ bool init();
 bool loop();
 void kill();
 
+void updatePlayer(const Uint8 *key, Map *curMap);
 void updateCharacters(const Uint8 *key, Map *curMap);
+void renderPlayer();
 void renderCharacters();
 void renderStartScreen();
 
@@ -44,17 +47,20 @@ int main(int argc, char **args) {
     return 1;
   }
 
-  Character player(characterTextures[0]);
-  characters.push_back(std::move(player));
+  Character player(characterTextures[0], true);
+  curPlayer = &player;
 
   Map map(tileTextures);
+  curMap = &map;
+
+  // hardcoded for testing
   Object coin(objectTextures[0], 100, 100);
   coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
   coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
+  coin.setInteractRange(10, 10, 10, 10);
   map.addObject(coin);
   Object coin2(objectTextures[0], 300, 300);
   map.addObject(coin2);
-  curMap = &map;
 
   while (loop()) {
   }
@@ -84,16 +90,21 @@ bool loop() {
       switch (evt.key.keysym.sym) {
       case SDLK_RETURN:
         gameState = GameState::IN_PROGRESS;
+        SDL_Delay(10);
         break;
       case SDLK_ESCAPE:
         gameState = GameState::PAUSE;
         break;
       case SHOW_ITEMS:
         // TO-DO: add UI
-        characters[0].showObjects();
+        curPlayer->showObjects();
         break;
       case PICKUP_ITEM:
-        characters[0].pickupObject(curMap);
+        curPlayer->pickupObject(curMap);
+        break;
+      case INTERACT:
+        // TO-DO: first check if current map tile interactable, then check if
+        // any objects interactable. Should be handled by one function in Map
         break;
       }
     }
@@ -102,7 +113,10 @@ bool loop() {
   if (gameState == GameState::IN_PROGRESS) {
     curMap->render(renderer);
 
+    updatePlayer(keys, curMap);
     updateCharacters(keys, curMap);
+
+    renderPlayer();
     renderCharacters();
   }
 
@@ -110,11 +124,17 @@ bool loop() {
   return true;
 }
 
+void updatePlayer(const Uint8 *keys, Map *curMap) {
+  curPlayer->update(keys, curMap);
+}
+
 void updateCharacters(const Uint8 *keys, Map *curMap) {
   for (auto &c : characters) {
     c.update(keys, curMap);
   }
 }
+
+void renderPlayer() { curPlayer->render(renderer); }
 
 void renderCharacters() {
   for (auto &c : characters) {
@@ -154,7 +174,7 @@ bool init() {
     std::cout << "Error intializing SDL_ttf: " << TTF_GetError() << std::endl;
     return false;
   }
-  main_font = TTF_OpenFont("fonts/main.ttf", 36);
+  main_font = TTF_OpenFont("../fonts/main.ttf", 36);
   if (!main_font) {
     std::cout << "Error loading font: " << TTF_GetError() << std::endl;
     return false;
@@ -167,7 +187,7 @@ bool init() {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
 
-  SDL_Surface *image = SDL_LoadBMP("images/character.bmp");
+  SDL_Surface *image = SDL_LoadBMP("../images/character.bmp");
   if (!image) {
     std::cout << "Error loading image character.bmp: " << SDL_GetError()
               << std::endl;
@@ -179,7 +199,7 @@ bool init() {
   }
   characterTextures.push_back(texture);
 
-  image = SDL_LoadBMP("images/tile.bmp");
+  image = SDL_LoadBMP("../images/tile.bmp");
   if (!image) {
     std::cout << "Error loading image tile.bmp: " << SDL_GetError()
               << std::endl;
@@ -191,7 +211,7 @@ bool init() {
   }
   tileTextures.push_back(texture);
 
-  image = SDL_LoadBMP("images/tile2.bmp");
+  image = SDL_LoadBMP("../images/tile2.bmp");
   if (!image) {
     std::cout << "Error loading image tile2.bmp: " << SDL_GetError()
               << std::endl;
@@ -203,7 +223,7 @@ bool init() {
   }
   tileTextures.push_back(texture);
 
-  image = SDL_LoadBMP("images/object.bmp");
+  image = SDL_LoadBMP("../images/object.bmp");
   if (!image) {
     std::cout << "Error loading image object.bmp: " << SDL_GetError()
               << std::endl;

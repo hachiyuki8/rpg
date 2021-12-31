@@ -2,8 +2,8 @@
 
 int Character::nextID = 0;
 
-Character::Character(SDL_Texture *t, float x, float y, float w, float h,
-                     float xV, float yV) {
+Character::Character(SDL_Texture *t, bool flag, float x, float y, float w,
+                     float h, float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -17,6 +17,7 @@ Character::Character(SDL_Texture *t, float x, float y, float w, float h,
   height = h;
   xVel = xV;
   yVel = yV;
+  isCurPlayer = flag;
 
   lastUpdate = SDL_GetTicks();
 }

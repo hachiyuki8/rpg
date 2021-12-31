@@ -9,7 +9,7 @@
 
 class Character {
 public:
-  Character(SDL_Texture *t,
+  Character(SDL_Texture *t, bool flag = false,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
@@ -24,8 +24,7 @@ public:
   void showObjects();
   void pickupObject(Map *map);
 
-  // void onEntry();
-  // void onExit();
+  void onInteract();
   void update(const Uint8 *keys, Map *curMap);
   void render(SDL_Renderer *renderer);
 
@@ -42,6 +41,7 @@ private:
   float height;
   float xVel;
   float yVel;
+  bool isCurPlayer;
   std::vector<Object> objects;
 
   void move(const Uint8 *keys, float dT, Map *curMap);
