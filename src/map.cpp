@@ -21,6 +21,10 @@ Map::Map(std::vector<SDL_Texture *> tileTextures, float w, float h, float s) {
         Tile t(tileTextures[1], col * tileSize, row * tileSize, tileSize,
                TileState::UNREACHABLE);
         vec.push_back(t);
+      } else if (row == 1 && col == 1) {
+        Tile t(tileTextures[2], col * tileSize, row * tileSize, tileSize,
+               TileState::INTERACTABLE);
+        vec.push_back(t);
       } else {
         Tile t(tileTextures[0], col * tileSize, row * tileSize, tileSize,
                TileState::REACHABLE);
@@ -67,6 +71,22 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
   return false;
 }
 
+void Map::onInteract(float x, float y, float w, float h) {
+  for (auto &ts : tiles) {
+    for (auto &t : ts) {
+      if (t.onInteract(x, y, w, h)) {
+        return; // TO-DO: only interact with one? or maybe multiple
+      }
+    }
+  }
+
+  for (auto &o : objects) {
+    if (o.onInteract(x, y, w, h)) {
+      return;
+    }
+  }
+}
+
 void Map::render(SDL_Renderer *renderer) {
   for (auto &ts : tiles) {
     for (auto &t : ts) {
@@ -82,8 +102,8 @@ void Map::render(SDL_Renderer *renderer) {
 std::pair<int, int> Map::findTileIndex(float x, float y) {
   if (DEBUG) {
     std::cout << "x: " << x << ", y: " << y << std::endl;
-    std::cout << "index (" << floor(x / tileSize) << ", " << floor(y / tileSize)
+    std::cout << "index (" << floor(y / tileSize) << ", " << floor(x / tileSize)
               << ")" << std::endl;
   }
-  return std::make_pair(floor(x / tileSize), floor(y / tileSize));
+  return std::make_pair(floor(y / tileSize), floor(x / tileSize));
 }

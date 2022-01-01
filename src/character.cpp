@@ -2,8 +2,8 @@
 
 int Character::nextID = 0;
 
-Character::Character(SDL_Texture *t, bool flag, float x, float y, float w,
-                     float h, float xV, float yV) {
+Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag,
+                     float x, float y, float w, float h, float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -11,6 +11,7 @@ Character::Character(SDL_Texture *t, bool flag, float x, float y, float w,
   }
 
   texture = t;
+  itemlist_texture = itemlist_t;
   xPos = x;
   yPos = y;
   width = w;
@@ -18,6 +19,7 @@ Character::Character(SDL_Texture *t, bool flag, float x, float y, float w,
   xVel = xV;
   yVel = yV;
   isCurPlayer = flag;
+  isShowingObjects = false;
 
   lastUpdate = SDL_GetTicks();
 }
@@ -41,17 +43,26 @@ void Character::removeObject(Object o) {
 }
 
 void Character::showObjects() {
-  // TO-DO
+  isShowingObjects = !isShowingObjects;
   std::cout << "Number of items: " << objects.size() << std::endl;
 }
 
 void Character::pickupObject(Map *map) {
   for (auto &o : map->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
+      if (DEBUG) {
+        std::cout << "Picking up object" << std::endl;
+        o.print();
+      }
       addObject(o);
       map->removeObject(o);
+      return;
     }
   }
+}
+
+void Character::interact(Map *map) {
+  map->onInteract(xPos, yPos, width, height);
 }
 
 void Character::update(const Uint8 *keys, Map *curMap) {
@@ -63,6 +74,42 @@ void Character::update(const Uint8 *keys, Map *curMap) {
   lastUpdate = current;
 }
 
+void Character::renderObjectList(SDL_Renderer *renderer) {
+  float nextX = (SCREEN_WIDTH - ITEMLIST_WIDTH) / 2;
+  float nextY = (SCREEN_HEIGHT - ITEMLIST_HEIGHT) / 2;
+  int nextRow = 0;
+  int nextCol = 0;
+
+  for (int row = 0; row < ITEMLIST_HEIGHT / ITEMLIST_GRID_SIZE; row++) {
+    for (int col = 0; col < ITEMLIST_WIDTH / ITEMLIST_GRID_SIZE; col++) {
+      SDL_Rect r;
+      r.x = nextX + col * ITEMLIST_GRID_SIZE;
+      r.y = nextY + row * ITEMLIST_GRID_SIZE;
+      r.w = ITEMLIST_GRID_SIZE;
+      r.h = ITEMLIST_GRID_SIZE;
+      SDL_RenderCopy(renderer, itemlist_texture, NULL, &r);
+    }
+  }
+
+  int offset = (ITEMLIST_GRID_SIZE - ITEMLIST_OBJECT_SIZE) / 2;
+  for (auto &o : objects) {
+    o.render(renderer, nextX + offset, nextY + offset, ITEMLIST_OBJECT_SIZE,
+             ITEMLIST_OBJECT_SIZE);
+
+    if (nextCol + 1 < ITEMLIST_WIDTH / ITEMLIST_GRID_SIZE) {
+      nextCol++;
+      nextX += ITEMLIST_GRID_SIZE;
+    } else if (nextRow + 1 < ITEMLIST_HEIGHT / ITEMLIST_GRID_SIZE) {
+      nextCol = 0;
+      nextX = (SCREEN_WIDTH - ITEMLIST_WIDTH) / 2;
+      nextRow++;
+      nextY += ITEMLIST_GRID_SIZE;
+    } else {
+      // TO-DO: display a new page
+    }
+  }
+}
+
 void Character::render(SDL_Renderer *renderer) {
   SDL_Rect r;
   r.x = xPos;
@@ -70,6 +117,10 @@ void Character::render(SDL_Renderer *renderer) {
   r.w = width;
   r.h = height;
   SDL_RenderCopy(renderer, texture, NULL, &r);
+
+  if (isShowingObjects) {
+    renderObjectList(renderer);
+  }
 }
 
 void Character::move(const Uint8 *keys, float dT, Map *curMap) {

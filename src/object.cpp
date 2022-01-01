@@ -61,12 +61,35 @@ bool Object::canPickup(float x, float y, float w, float h) {
           isInObjectRange(x, y, w, h));
 }
 
+bool Object::onInteract(float x, float y, float w, float h) {
+  if (!isInObjectRange(x, y, w, h) ||
+      !properties.count(ObjectProperty::CAN_INTERACT)) {
+    return false;
+  }
+
+  // TO-DO: do something to interact
+  if (DEBUG) {
+    std::cout << "Interacting with object " << ID << std::endl;
+  }
+  return true;
+}
+
 void Object::render(SDL_Renderer *renderer) {
   SDL_Rect r;
   r.x = xPos;
   r.y = yPos;
   r.w = width;
   r.h = height;
+  SDL_RenderCopy(renderer, texture, NULL, &r);
+}
+
+void Object::render(SDL_Renderer *renderer, float x, float y, float w,
+                    float h) {
+  SDL_Rect r;
+  r.x = x;
+  r.y = y;
+  r.w = w;
+  r.h = h;
   SDL_RenderCopy(renderer, texture, NULL, &r);
 }
 

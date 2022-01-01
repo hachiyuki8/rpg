@@ -23,8 +23,13 @@ const SDL_Keycode SHOW_ITEMS = SDLK_TAB;
 const SDL_Keycode PICKUP_ITEM = SDLK_e;
 const SDL_Keycode INTERACT = SDLK_f;
 
-enum class TileState { REACHABLE, UNREACHABLE };
+enum class TileState { REACHABLE, INTERACTABLE, UNREACHABLE };
 const int TILE_SIZE = 80;
 
 enum class ObjectProperty { CAN_COLLIDE, CAN_PICKUP, CAN_INTERACT };
 const int OBJECT_SIZE = 40;
+
+const int ITEMLIST_WIDTH = 960;
+const int ITEMLIST_HEIGHT = 540;
+const int ITEMLIST_GRID_SIZE = 60;
+const int ITEMLIST_OBJECT_SIZE = 40;

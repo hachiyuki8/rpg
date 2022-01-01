@@ -23,7 +23,9 @@ public:
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
 
-  void onInteract();
+  // first check if can interact with any tile, then with
+  // any object, will only carry out one interaction
+  void onInteract(float x, float y, float w, float h);
   void render(SDL_Renderer *renderer);
 
   static int nextID;

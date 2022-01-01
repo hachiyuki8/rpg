@@ -13,7 +13,7 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 TTF_Font *main_font;
 
-SDL_Texture *startup_t;
+SDL_Texture *startup_t, *player_t, *itemlist_t;
 SDL_Surface *startup_text;
 
 std::vector<SDL_Texture *> characterTextures;
@@ -47,18 +47,20 @@ int main(int argc, char **args) {
     return 1;
   }
 
-  Character player(characterTextures[0], true);
+  Character player(player_t, itemlist_t, true);
   curPlayer = &player;
 
   Map map(tileTextures);
   curMap = &map;
 
   // hardcoded for testing
-  Object coin(objectTextures[0], 100, 100);
-  coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  coin.setInteractRange(10, 10, 10, 10);
-  map.addObject(coin);
+  for (int i = 0; i < 10; i++) {
+    Object coin(objectTextures[0], 500, 500);
+    coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
+    coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
+    coin.setInteractRange(5, 5, 5, 5);
+    map.addObject(coin);
+  }
   Object coin2(objectTextures[0], 300, 300);
   map.addObject(coin2);
 
@@ -74,7 +76,7 @@ bool loop() {
   SDL_Event evt;
 
   // clear the screen to white
-  SDL_SetRenderDrawColor(renderer, 250, 255, 255, 255);
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderClear(renderer);
 
   if (gameState == GameState::PAUSE) {
@@ -103,8 +105,7 @@ bool loop() {
         curPlayer->pickupObject(curMap);
         break;
       case INTERACT:
-        // TO-DO: first check if current map tile interactable, then check if
-        // any objects interactable. Should be handled by one function in Map
+        curPlayer->interact(curMap);
         break;
       }
     }
@@ -187,24 +188,25 @@ bool init() {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
 
+  // characters
   SDL_Surface *image = SDL_LoadBMP("../images/character.bmp");
   if (!image) {
     std::cout << "Error loading image character.bmp: " << SDL_GetError()
               << std::endl;
   }
-  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+  player_t = SDL_CreateTextureFromSurface(renderer, image);
   SDL_FreeSurface(image);
-  if (!texture) {
+  if (!player_t) {
     std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
   }
-  characterTextures.push_back(texture);
 
+  // tiles
   image = SDL_LoadBMP("../images/tile.bmp");
   if (!image) {
     std::cout << "Error loading image tile.bmp: " << SDL_GetError()
               << std::endl;
   }
-  texture = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
   SDL_FreeSurface(image);
   if (!texture) {
     std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
@@ -223,6 +225,19 @@ bool init() {
   }
   tileTextures.push_back(texture);
 
+  image = SDL_LoadBMP("../images/tile3.bmp");
+  if (!image) {
+    std::cout << "Error loading image tile3.bmp: " << SDL_GetError()
+              << std::endl;
+  }
+  texture = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_FreeSurface(image);
+  if (!texture) {
+    std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+  }
+  tileTextures.push_back(texture);
+
+  // objects
   image = SDL_LoadBMP("../images/object.bmp");
   if (!image) {
     std::cout << "Error loading image object.bmp: " << SDL_GetError()
@@ -235,6 +250,18 @@ bool init() {
   }
   objectTextures.push_back(texture);
 
+  // others
+  image = SDL_LoadBMP("../images/itemlist.bmp");
+  if (!image) {
+    std::cout << "Error loading image itemlist.bmp: " << SDL_GetError()
+              << std::endl;
+  }
+  itemlist_t = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_FreeSurface(image);
+  if (!itemlist_t) {
+    std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+  }
+
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderClear(renderer);
 
@@ -245,6 +272,8 @@ void kill() {
   TTF_CloseFont(main_font);
   SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
+  SDL_DestroyTexture(player_t);
+  SDL_DestroyTexture(itemlist_t);
   for (auto &t : tileTextures) {
     SDL_DestroyTexture(t);
   }

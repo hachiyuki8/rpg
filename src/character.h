@@ -9,7 +9,7 @@
 
 class Character {
 public:
-  Character(SDL_Texture *t, bool flag = false,
+  Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag = false,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
@@ -22,9 +22,10 @@ public:
   void addObject(Object o);
   void removeObject(Object o);
   void showObjects();
-  void pickupObject(Map *map);
+  void pickupObject(Map *map); // pick up at most one object
 
-  void onInteract();
+  void interact(Map *map); // when INTERACT key is pressed
+  bool onInteract(float x, float y, float w, float h); // TO-DO: only for NPCs
   void update(const Uint8 *keys, Map *curMap);
   void render(SDL_Renderer *renderer);
 
@@ -33,7 +34,7 @@ public:
 private:
   int ID;
   Uint32 lastUpdate;
-  SDL_Texture *texture;
+  SDL_Texture *texture, *itemlist_texture;
 
   float xPos;
   float yPos;
@@ -42,7 +43,9 @@ private:
   float xVel;
   float yVel;
   bool isCurPlayer;
+  bool isShowingObjects;
   std::vector<Object> objects;
 
   void move(const Uint8 *keys, float dT, Map *curMap);
+  void renderObjectList(SDL_Renderer *renderer);
 };

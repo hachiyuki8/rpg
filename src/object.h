@@ -25,8 +25,9 @@ public:
                  float h); // true if object has CAN_PICKUP and position
                            // collides with object
 
-  void onInteract();
+  bool onInteract(float x, float y, float w, float h);
   void render(SDL_Renderer *renderer);
+  void render(SDL_Renderer *renderer, float x, float y, float w, float h);
 
   static int nextID;
 
@@ -39,7 +40,7 @@ private:
   float width;
   float height;
 
-  // collider for interacting with the object
+  // collider for interacting with the object, default to object size
   float xPosI;
   float yPosI;
   float widthI;
