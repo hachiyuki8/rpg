@@ -21,17 +21,18 @@ public:
 
   void print();
   void showItemlist();
-  void pickupObject(Map *map); // pick up at most one object
+  void pickupObject(); // pick up at most one object
 
-  void interact(Map *map); // when INTERACT key is pressed
+  void interact(); // when INTERACT key is pressed
   void click(float x, float y,
              bool isLeft); // when left or right mouse button is clicked
   void confirm();          // when CONFIRM key is pressed
   bool onInteract(float x, float y, float w, float h); // TO-DO: only for NPCs
-  void update(const Uint8 *keys, Map *curMap);
+  void update(const Uint8 *keys);
   void render(SDL_Renderer *renderer);
 
   static int nextID;
+  Map *curMap;
 
 private:
   int ID;
@@ -50,6 +51,6 @@ private:
   Itemlist itemlist;
   // TO-DO: skill screen, quest screen, map, etc.
 
-  void move(const Uint8 *keys, float dT, Map *curMap);
+  void move(const Uint8 *keys, float dT);
   void renderObjectList(SDL_Renderer *renderer);
 };

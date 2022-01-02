@@ -2,13 +2,17 @@
 
 #include "constants.h"
 #include "object.h"
+#include "teleporter.h"
 #include "tile.h"
 #include <SDL.h>
 #include <algorithm>
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
+#include <tuple>
 #include <vector>
+
+class Character;
 
 class Map {
 public:
@@ -18,15 +22,17 @@ public:
   virtual ~Map();
 
   void print();
+  void addTeleporter(Teleporter tp);
   void addObject(Object o);
   void removeObject(Object o);
   bool isInvalidPosition(float x, float y, float w,
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
 
-  // first check if can interact with any teleporters, then with any object,
+  // first check if can use any teleporters, then with any object,
   // will only carry out one interaction
-  void onInteract(float x, float y, float w, float h);
+  std::tuple<Map *, float, float> onInteract(Map *curMap, float x, float y,
+                                             float w, float h);
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -38,11 +44,9 @@ private:
   float height;
   float tileSize;
   std::vector<std::vector<Tile>> tiles;
+  std::vector<Teleporter> teleporters;
   std::vector<Object> objects;
-
-  // returns the index of the tile (x, y) is on (in tiles)
-  // if on the border of tiles, returns the right and downmost one
-  std::pair<int, int> findTileIndex(float x, float y);
+  std::vector<Character *> characters; // TO-DO
 
   friend class Character;
 };

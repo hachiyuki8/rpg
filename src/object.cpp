@@ -115,8 +115,8 @@ void Object::render(SDL_Renderer *renderer, float x, float y, float w,
 }
 
 bool Object::isOnObject(float x, float y, float w, float h) {
-  return (xPos <= x + w && x <= xPos + width && yPos <= y + h &&
-          y <= yPos + height);
+  return (xPos < x + w && x < xPos + width && yPos < y + h &&
+          y < yPos + height);
 }
 
 bool Object::isInObjectRange(float x, float y, float w, float h) {

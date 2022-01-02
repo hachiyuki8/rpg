@@ -50,30 +50,39 @@ void Character::showItemlist() {
   }
 }
 
-void Character::pickupObject(Map *map) {
+void Character::pickupObject() {
   if (uiState != UIState::IN_GAME) {
     return;
   }
 
-  for (auto &o : map->objects) {
+  for (auto &o : curMap->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
       if (DEBUG) {
         std::cout << "Picking up object" << std::endl;
         o.print();
       }
       itemlist.addItem(o);
-      map->removeObject(o);
+      curMap->removeObject(o);
       return;
     }
   }
 }
 
-void Character::interact(Map *map) {
+void Character::interact() {
   if (uiState != UIState::IN_GAME) {
     return;
   }
 
-  map->onInteract(xPos, yPos, width, height);
+  Map *newMap;
+  float newX, newY;
+  std::tie(newMap, newX, newY) =
+      curMap->onInteract(curMap, xPos, yPos, width, height);
+  if (newMap != curMap) {
+    // change map, reset position to new tile center
+    curMap = newMap;
+    xPos = newX - width / 2;
+    yPos = newY - height / 2;
+  }
 }
 
 void Character::click(float x, float y, bool isLeft) {
@@ -96,7 +105,7 @@ void Character::confirm() {
   }
 }
 
-void Character::update(const Uint8 *keys, Map *curMap) {
+void Character::update(const Uint8 *keys) {
   if (uiState != UIState::IN_GAME) {
     return;
   }
@@ -104,12 +113,14 @@ void Character::update(const Uint8 *keys, Map *curMap) {
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 
-  move(keys, dT, curMap);
+  move(keys, dT);
 
   lastUpdate = current;
 }
 
 void Character::render(SDL_Renderer *renderer) {
+  curMap->render(renderer);
+
   SDL_Rect r;
   r.x = xPos;
   r.y = yPos;
@@ -120,7 +131,7 @@ void Character::render(SDL_Renderer *renderer) {
   itemlist.render(renderer);
 }
 
-void Character::move(const Uint8 *keys, float dT, Map *curMap) {
+void Character::move(const Uint8 *keys, float dT) {
   // TO-DO: check collision
   if (keys[CONTROL_UP] && yPos - yVel * dT >= 0 &&
       !curMap->isInvalidPosition(xPos, yPos - yVel * dT, width, height)) {

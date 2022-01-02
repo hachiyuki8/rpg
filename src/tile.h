@@ -16,6 +16,7 @@ public:
                          float h); // invalid if tile is unreachable and
                                    // position collides with tile
   void setTileState(TileState newState);
+  bool isInTile(float x, float y, float w, float h); // if entirely in tile
 
   void render(SDL_Renderer *renderer);
 
@@ -31,5 +32,6 @@ private:
   TileState state;
 
   bool isOnTile(float x, float y, float w, float h); // if collides with tile
-  bool isInTile(float x, float y, float w, float h); // if entirely in tile
+
+  friend class Map;
 };

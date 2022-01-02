@@ -45,6 +45,8 @@ void Map::print() {
             << std::endl;
 }
 
+void Map::addTeleporter(Teleporter tp) { teleporters.push_back(tp); }
+
 void Map::addObject(Object o) { objects.push_back(o); }
 
 void Map::removeObject(Object o) {
@@ -69,14 +71,26 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
   return false;
 }
 
-void Map::onInteract(float x, float y, float w, float h) {
-  // TO-DO: interact with tps
+std::tuple<Map *, float, float> Map::onInteract(Map *curMap, float x, float y,
+                                                float w, float h) {
+  for (auto &tp : teleporters) {
+    if (tp.src_map == curMap &&
+        tiles[tp.src_row][tp.src_col].isInTile(x, y, w, h)) {
+      // change map and return new tile center
+      return std::make_tuple(
+          tp.dest_map,
+          tp.dest_map->tiles[tp.dest_row][tp.dest_col].xPos + tileSize / 2,
+          tp.dest_map->tiles[tp.dest_row][tp.dest_col].yPos + tileSize / 2);
+    }
+  }
 
   for (auto &o : objects) {
     if (o.onInteract(x, y, w, h)) {
-      return;
+      return std::make_tuple(curMap, x, y);
     }
   }
+
+  return std::make_tuple(curMap, x, y);
 }
 
 void Map::render(SDL_Renderer *renderer) {
@@ -89,13 +103,4 @@ void Map::render(SDL_Renderer *renderer) {
   for (auto &o : objects) {
     o.render(renderer);
   }
-}
-
-std::pair<int, int> Map::findTileIndex(float x, float y) {
-  if (DEBUG) {
-    std::cout << "x: " << x << ", y: " << y << std::endl;
-    std::cout << "index (" << floor(y / tileSize) << ", " << floor(x / tileSize)
-              << ")" << std::endl;
-  }
-  return std::make_pair(floor(y / tileSize), floor(x / tileSize));
 }

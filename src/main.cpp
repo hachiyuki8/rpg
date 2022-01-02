@@ -3,6 +3,7 @@
 #include "map.h"
 #include "mapfiles.h"
 #include "object.h"
+#include "teleporter.h"
 #include "tile.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -22,23 +23,21 @@ std::vector<SDL_Texture *> characterTextures;
 std::vector<SDL_Texture *> tileTextures;
 std::vector<SDL_Texture *> objectTextures;
 
-Map *curMap;
+std::vector<Map> maps;
 Character *curPlayer;
 std::vector<Character> characters;
-std::vector<Object> objects;
 
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 static GameState gameState = GameState::PAUSE;
 
+void init_maps();
 void init_tiles();
 bool init();
 bool loop();
 void kill();
 
-void updatePlayer(const Uint8 *key, Map *curMap);
-void updateCharacters(const Uint8 *key, Map *curMap);
+void updatePlayer(const Uint8 *key);
 void renderPlayer();
-void renderCharacters();
 void renderStartScreen();
 
 /*
@@ -53,8 +52,8 @@ int main(int argc, char **args) {
   Character player(player_t, itemlist_t, true);
   curPlayer = &player;
 
-  Map map(tileTextures, INITIAL_MAP);
-  curMap = &map;
+  init_maps();
+  curPlayer->curMap = &maps[0];
 
   // hardcoded for testing
   for (int i = 0; i < 5; i++) {
@@ -63,10 +62,14 @@ int main(int argc, char **args) {
     coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
     coin.addObjectProperty(ObjectProperty::CAN_USE);
     coin.setInteractRange(5, 5, 5, 5);
-    map.addObject(coin);
+    maps[0].addObject(coin);
   }
   Object coin2(objectTextures[0], 600, 600);
-  map.addObject(coin2);
+  maps[0].addObject(coin2);
+  Teleporter tp(&maps[0], &maps[1], 1, 15, 1, 0);
+  maps[0].addTeleporter(tp);
+  Teleporter tp2(&maps[1], &maps[0], 1, 0, 1, 15);
+  maps[1].addTeleporter(tp2);
 
   while (loop()) {
   }
@@ -112,12 +115,13 @@ bool loop() {
         break;
       case PICKUP_ITEM:
         if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->pickupObject(curMap);
+          curPlayer->pickupObject();
         }
         break;
       case INTERACT:
         if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->interact(curMap);
+          curPlayer->interact();
+          curPlayer->curMap->print();
         }
         break;
       case CONFIRM:
@@ -143,36 +147,18 @@ bool loop() {
   }
 
   if (gameState == GameState::IN_PROGRESS) {
-    curMap->render(renderer);
-
-    updatePlayer(keys, curMap);
-    updateCharacters(keys, curMap);
+    updatePlayer(keys);
 
     renderPlayer();
-    renderCharacters();
   }
 
   SDL_RenderPresent(renderer);
   return true;
 }
 
-void updatePlayer(const Uint8 *keys, Map *curMap) {
-  curPlayer->update(keys, curMap);
-}
-
-void updateCharacters(const Uint8 *keys, Map *curMap) {
-  for (auto &c : characters) {
-    c.update(keys, curMap);
-  }
-}
+void updatePlayer(const Uint8 *keys) { curPlayer->update(keys); }
 
 void renderPlayer() { curPlayer->render(renderer); }
-
-void renderCharacters() {
-  for (auto &c : characters) {
-    c.render(renderer);
-  }
-}
 
 void renderStartScreen() {
   startup_t = SDL_CreateTextureFromSurface(renderer, startup_text);
@@ -269,6 +255,13 @@ bool init() {
   SDL_RenderClear(renderer);
 
   return true;
+}
+
+void init_maps() {
+  for (auto &map : MAPS) {
+    Map newMap(tileTextures, map);
+    maps.push_back(newMap);
+  }
 }
 
 void init_tiles() {
