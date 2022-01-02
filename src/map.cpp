@@ -18,9 +18,16 @@ Map::Map(std::vector<SDL_Texture *> tileTextures,
   for (int row = 0; row < height / tileSize; row++) {
     std::vector<Tile> vec;
     for (int col = 0; col < width / tileSize; col++) {
-      Tile t(tileTextures[mapfile[row][col]], col * tileSize, row * tileSize,
-             tileSize, TileState::REACHABLE);
-      vec.push_back(t);
+      int index = mapfile[row][col];
+      if (index >= 0) {
+        Tile t(tileTextures[index], col * tileSize, row * tileSize, tileSize,
+               TileState::REACHABLE);
+        vec.push_back(t);
+      } else {
+        Tile t(tileTextures[-index], col * tileSize, row * tileSize, tileSize,
+               TileState::UNREACHABLE);
+        vec.push_back(t);
+      }
     }
     tiles.push_back(vec);
   }
@@ -63,13 +70,7 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
 }
 
 void Map::onInteract(float x, float y, float w, float h) {
-  for (auto &ts : tiles) {
-    for (auto &t : ts) {
-      if (t.onInteract(x, y, w, h)) {
-        return; // TO-DO: only interact with one? or maybe multiple
-      }
-    }
-  }
+  // TO-DO: interact with tps
 
   for (auto &o : objects) {
     if (o.onInteract(x, y, w, h)) {

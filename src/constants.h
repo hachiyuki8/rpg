@@ -32,7 +32,7 @@ const SDL_Keycode CONFIRM = SDLK_RETURN;
 const SDL_Keycode START_GAME = SDLK_CAPSLOCK;
 const SDL_Keycode PAUSE_GAME = SDLK_ESCAPE;
 
-enum class TileState { REACHABLE, INTERACTABLE, UNREACHABLE };
+enum class TileState { REACHABLE, UNREACHABLE };
 const int TILE_SIZE = 80;
 
 enum class ObjectProperty { CAN_COLLIDE, CAN_PICKUP, CAN_INTERACT, CAN_USE };
