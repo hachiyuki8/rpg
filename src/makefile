@@ -18,7 +18,7 @@ object.o: object.cpp object.h
 itemlist.o: itemlist.cpp itemlist.h
 	clang++ -std=c++17 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 itemlist.cpp
 
-main.o: main.cpp constants.h
+main.o: main.cpp constants.h mapfiles.h
 	clang++ -std=c++17 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 main.cpp
 
 clean:

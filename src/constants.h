@@ -1,9 +1,14 @@
 #pragma once
 #include <SDL.h>
+#include <string>
 
 const bool DEBUG = true;
 
+const std::string IMAGE_PATH = "../images/";
+const std::string FONT_PATH = "../fonts/";
+
 enum class GameState { PAUSE, IN_PROGRESS };
+enum class UIState { IN_GAME, IN_ITEMLIST };
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -22,6 +27,10 @@ const SDL_Scancode CONTROL_RIGHT = SDL_SCANCODE_D;
 const SDL_Keycode SHOW_ITEMS = SDLK_TAB;
 const SDL_Keycode PICKUP_ITEM = SDLK_e;
 const SDL_Keycode INTERACT = SDLK_f;
+const SDL_Keycode CONFIRM = SDLK_RETURN;
+
+const SDL_Keycode START_GAME = SDLK_CAPSLOCK;
+const SDL_Keycode PAUSE_GAME = SDLK_ESCAPE;
 
 enum class TileState { REACHABLE, INTERACTABLE, UNREACHABLE };
 const int TILE_SIZE = 80;

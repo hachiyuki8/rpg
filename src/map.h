@@ -12,7 +12,8 @@
 
 class Map {
 public:
-  Map(std::vector<SDL_Texture *> tileTextures, float w = SCREEN_WIDTH,
+  Map(std::vector<SDL_Texture *> tileTextures,
+      std::vector<std::vector<int>> mapfile, float w = SCREEN_WIDTH,
       float h = SCREEN_HEIGHT, float s = TILE_SIZE);
   virtual ~Map();
 

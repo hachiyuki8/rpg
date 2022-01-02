@@ -20,17 +20,19 @@ public:
   void print();
   void addItem(Object o);
   void useItem(Object o); // TO-DO
-  void toggleShow();
 
-  void onClick(float x, float y, bool isLeft);
+  void open();
+  void close();
+  void onClick(float x, float y, bool isLeft); // select/discard item
+  void onConfirm();                            // use selected item
   void render(SDL_Renderer *renderer);
 
   static int nextID;
   SDL_Texture *texture;
-  bool isShowing = false;
 
 private:
   int ID;
+  bool isShowing = false;
 
   float xPos;
   float yPos;
@@ -46,7 +48,7 @@ private:
   Object *curSelected = NULL;
   std::vector<Object> items;
 
-  void onLeftClick(float x, float y);
-  void onRightClick(float x, float y);
+  void onLeftClick(float x, float y);  // select/unselect
+  void onRightClick(float x, float y); // discard selected
   void removeItem(Object o);
 };

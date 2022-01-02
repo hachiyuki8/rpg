@@ -51,7 +51,7 @@ private:
   // position in itemlist
   float xPosIL = 0;
   float yPosIL = 0;
-  bool isSelected = false;
+  bool isSelected = false; // if selected in item list
 
   float value = 0;
   std::set<ObjectProperty> properties;

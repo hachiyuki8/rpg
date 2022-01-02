@@ -36,17 +36,25 @@ void Character::print() {
 }
 
 void Character::showItemlist() {
-  if (!isActive && !itemlist.isShowing) {
-    return;
+  switch (uiState) {
+  case UIState::IN_GAME:
+    itemlist.open();
+    uiState = UIState::IN_ITEMLIST;
+    break;
+  case UIState::IN_ITEMLIST:
+    itemlist.close();
+    uiState = UIState::IN_GAME;
+    break;
+  default:
+    break;
   }
-  itemlist.isShowing = !itemlist.isShowing;
-  isActive = !isActive;
 }
 
 void Character::pickupObject(Map *map) {
-  if (!isActive) {
+  if (uiState != UIState::IN_GAME) {
     return;
   }
+
   for (auto &o : map->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
       if (DEBUG) {
@@ -61,23 +69,38 @@ void Character::pickupObject(Map *map) {
 }
 
 void Character::interact(Map *map) {
-  if (!isActive) {
+  if (uiState != UIState::IN_GAME) {
     return;
   }
+
   map->onInteract(xPos, yPos, width, height);
 }
 
 void Character::click(float x, float y, bool isLeft) {
-  if (itemlist.isShowing) {
+  switch (uiState) {
+  case UIState::IN_ITEMLIST:
     itemlist.onClick(x, y, isLeft);
+    break;
+  default:
+    break;
   }
-  // TO-DO: handle other cases such as skill screen
+}
+
+void Character::confirm() {
+  switch (uiState) {
+  case UIState::IN_ITEMLIST:
+    itemlist.onConfirm();
+    break;
+  default:
+    break;
+  }
 }
 
 void Character::update(const Uint8 *keys, Map *curMap) {
-  if (!isActive) {
+  if (uiState != UIState::IN_GAME) {
     return;
   }
+
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 

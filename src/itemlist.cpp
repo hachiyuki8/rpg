@@ -44,12 +44,43 @@ void Itemlist::addItem(Object o) {
     std::cout << "No more space in bag" << std::endl;
   }
 }
+void Itemlist::useItem(Object o){};
+
+void Itemlist::open() { isShowing = true; }
+
+void Itemlist::close() {
+  // unselect
+  if (curSelected) {
+    curSelected->isSelected = false;
+    curSelected = NULL;
+  }
+  isShowing = false;
+}
 
 void Itemlist::onClick(float x, float y, bool isLeft) {
+  if (!isShowing) {
+    return;
+  }
+
   if (isLeft) {
     onLeftClick(x, y);
   } else {
     onRightClick(x, y);
+  }
+}
+
+void Itemlist::onConfirm() {
+  if (!isShowing) {
+    return;
+  }
+
+  if (curSelected) {
+    // use item, remove and unselect if used
+    if (curSelected->onUse()) {
+      curSelected->isSelected = !curSelected->isSelected;
+      removeItem(*curSelected);
+      curSelected = NULL;
+    }
   }
 }
 
@@ -86,14 +117,11 @@ void Itemlist::render(SDL_Renderer *renderer) {
 }
 
 void Itemlist::onLeftClick(float x, float y) {
-  if (!isShowing) {
-    return;
-  }
   for (auto &i : items) {
     if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
         y < i.yPosIL + object_size) {
       if (DEBUG) {
-        std::cout << "Left clicking on item " << i.ID << std::endl;
+        std::cout << "Selecting on item " << i.ID << std::endl;
       }
 
       if (!i.isSelected) {
@@ -104,7 +132,7 @@ void Itemlist::onLeftClick(float x, float y) {
         curSelected = &i;
 
         // TO-DO: item clicked, show actions
-        std::cout << "Right click to use item" << std::endl;
+        std::cout << "RETURN to use item, right click to discard" << std::endl;
       } else {
         // unselect this
         curSelected = NULL;
@@ -115,24 +143,17 @@ void Itemlist::onLeftClick(float x, float y) {
 }
 
 void Itemlist::onRightClick(float x, float y) {
-  if (!isShowing) {
-    return;
-  }
-
   for (auto &i : items) {
     if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
         y < i.yPosIL + object_size) {
-      if (DEBUG) {
-        std::cout << "Right clicking on item " << i.ID << std::endl;
-      }
-
       if (i.isSelected) {
-        // use item, remove and unselect if used
-        if (i.onUse()) {
-          i.isSelected = !i.isSelected;
-          removeItem(i);
-          curSelected = NULL;
+        if (DEBUG) {
+          std::cout << "Discarding on item " << i.ID << std::endl;
         }
+        // remove and unselect
+        i.isSelected = !i.isSelected;
+        removeItem(i);
+        curSelected = NULL;
       }
     }
   }

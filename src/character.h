@@ -26,6 +26,7 @@ public:
   void interact(Map *map); // when INTERACT key is pressed
   void click(float x, float y,
              bool isLeft); // when left or right mouse button is clicked
+  void confirm();          // when CONFIRM key is pressed
   bool onInteract(float x, float y, float w, float h); // TO-DO: only for NPCs
   void update(const Uint8 *keys, Map *curMap);
   void render(SDL_Renderer *renderer);
@@ -45,7 +46,7 @@ private:
   float yVel;
   bool isCurPlayer;
 
-  bool isActive = true; // inactive when any of the following is showing
+  UIState uiState = UIState::IN_GAME;
   Itemlist itemlist;
   // TO-DO: skill screen, quest screen, map, etc.
 

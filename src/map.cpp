@@ -2,7 +2,9 @@
 
 int Map::nextID = 0;
 
-Map::Map(std::vector<SDL_Texture *> tileTextures, float w, float h, float s) {
+// mapfile must have dimension (w/s) * (h/s)
+Map::Map(std::vector<SDL_Texture *> tileTextures,
+         std::vector<std::vector<int>> mapfile, float w, float h, float s) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -12,24 +14,13 @@ Map::Map(std::vector<SDL_Texture *> tileTextures, float w, float h, float s) {
   width = w;
   height = h;
   tileSize = s;
-  // TO-DO: map initialization is hardcoded now
+
   for (int row = 0; row < height / tileSize; row++) {
     std::vector<Tile> vec;
     for (int col = 0; col < width / tileSize; col++) {
-      if (row == 0 || row + 1 >= height / tileSize || col == 0 ||
-          col + 1 >= width / tileSize) {
-        Tile t(tileTextures[1], col * tileSize, row * tileSize, tileSize,
-               TileState::UNREACHABLE);
-        vec.push_back(t);
-      } else if (row == 1 && col == 1) {
-        Tile t(tileTextures[2], col * tileSize, row * tileSize, tileSize,
-               TileState::INTERACTABLE);
-        vec.push_back(t);
-      } else {
-        Tile t(tileTextures[0], col * tileSize, row * tileSize, tileSize,
-               TileState::REACHABLE);
-        vec.push_back(t);
-      }
+      Tile t(tileTextures[mapfile[row][col]], col * tileSize, row * tileSize,
+             tileSize, TileState::REACHABLE);
+      vec.push_back(t);
     }
     tiles.push_back(vec);
   }
