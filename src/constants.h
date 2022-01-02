@@ -26,10 +26,12 @@ const SDL_Keycode INTERACT = SDLK_f;
 enum class TileState { REACHABLE, INTERACTABLE, UNREACHABLE };
 const int TILE_SIZE = 80;
 
-enum class ObjectProperty { CAN_COLLIDE, CAN_PICKUP, CAN_INTERACT };
+enum class ObjectProperty { CAN_COLLIDE, CAN_PICKUP, CAN_INTERACT, CAN_USE };
 const int OBJECT_SIZE = 40;
 
 const int ITEMLIST_WIDTH = 960;
 const int ITEMLIST_HEIGHT = 540;
 const int ITEMLIST_GRID_SIZE = 60;
 const int ITEMLIST_OBJECT_SIZE = 40;
+const int ITEM_LIMIT = (ITEMLIST_WIDTH / ITEMLIST_GRID_SIZE) *
+                       (ITEMLIST_HEIGHT / ITEMLIST_GRID_SIZE);

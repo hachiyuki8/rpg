@@ -24,8 +24,10 @@ public:
   bool canPickup(float x, float y, float w,
                  float h); // true if object has CAN_PICKUP and position
                            // collides with object
+  void setItemlistPosition(float x, float y);
 
   bool onInteract(float x, float y, float w, float h);
+  bool onUse();
   void render(SDL_Renderer *renderer);
   void render(SDL_Renderer *renderer, float x, float y, float w, float h);
 
@@ -46,10 +48,18 @@ private:
   float widthI;
   float heightI;
 
+  // position in itemlist
+  float xPosIL = 0;
+  float yPosIL = 0;
+  bool isSelected = false;
+
+  float value = 0;
   std::set<ObjectProperty> properties;
 
   bool isOnObject(float x, float y, float w,
                   float h); // if collides with object
   bool isInObjectRange(float x, float y, float w,
                        float h); // if collides with object's interaction range
+
+  friend class Itemlist;
 };

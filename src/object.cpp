@@ -61,6 +61,11 @@ bool Object::canPickup(float x, float y, float w, float h) {
           isInObjectRange(x, y, w, h));
 }
 
+void Object::setItemlistPosition(float x, float y) {
+  xPosIL = x;
+  yPosIL = y;
+}
+
 bool Object::onInteract(float x, float y, float w, float h) {
   if (!isInObjectRange(x, y, w, h) ||
       !properties.count(ObjectProperty::CAN_INTERACT)) {
@@ -70,6 +75,18 @@ bool Object::onInteract(float x, float y, float w, float h) {
   // TO-DO: do something to interact
   if (DEBUG) {
     std::cout << "Interacting with object " << ID << std::endl;
+  }
+  return true;
+}
+
+bool Object::onUse() {
+  if (!properties.count(ObjectProperty::CAN_USE)) {
+    return false;
+  }
+
+  // TO-DO: do something to use
+  if (DEBUG) {
+    std::cout << "Using item " << ID << std::endl;
   }
   return true;
 }
@@ -90,7 +107,11 @@ void Object::render(SDL_Renderer *renderer, float x, float y, float w,
   r.y = y;
   r.w = w;
   r.h = h;
+  if (isSelected) {
+    SDL_SetTextureColorMod(texture, 127, 127, 127); // TO-DO: highlight item?
+  }
   SDL_RenderCopy(renderer, texture, NULL, &r);
+  SDL_SetTextureColorMod(texture, 255, 255, 255);
 }
 
 bool Object::isOnObject(float x, float y, float w, float h) {

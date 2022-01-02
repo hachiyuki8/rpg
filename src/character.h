@@ -1,6 +1,7 @@
 #pragma once
 
 #include "constants.h"
+#include "itemlist.h"
 #include "map.h"
 #include <SDL.h>
 #include <iostream>
@@ -19,12 +20,12 @@ public:
   virtual ~Character();
 
   void print();
-  void addObject(Object o);
-  void removeObject(Object o);
-  void showObjects();
+  void showItemlist();
   void pickupObject(Map *map); // pick up at most one object
 
   void interact(Map *map); // when INTERACT key is pressed
+  void click(float x, float y,
+             bool isLeft); // when left or right mouse button is clicked
   bool onInteract(float x, float y, float w, float h); // TO-DO: only for NPCs
   void update(const Uint8 *keys, Map *curMap);
   void render(SDL_Renderer *renderer);
@@ -34,7 +35,7 @@ public:
 private:
   int ID;
   Uint32 lastUpdate;
-  SDL_Texture *texture, *itemlist_texture;
+  SDL_Texture *texture;
 
   float xPos;
   float yPos;
@@ -43,8 +44,10 @@ private:
   float xVel;
   float yVel;
   bool isCurPlayer;
-  bool isShowingObjects;
-  std::vector<Object> objects;
+
+  bool isActive = true; // inactive when any of the following is showing
+  Itemlist itemlist;
+  // TO-DO: skill screen, quest screen, map, etc.
 
   void move(const Uint8 *keys, float dT, Map *curMap);
   void renderObjectList(SDL_Renderer *renderer);

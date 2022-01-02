@@ -58,6 +58,7 @@ int main(int argc, char **args) {
     Object coin(objectTextures[0], 500, 500);
     coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
     coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
+    coin.addObjectProperty(ObjectProperty::CAN_USE);
     coin.setInteractRange(5, 5, 5, 5);
     map.addObject(coin);
   }
@@ -98,14 +99,22 @@ bool loop() {
         gameState = GameState::PAUSE;
         break;
       case SHOW_ITEMS:
-        // TO-DO: add UI
-        curPlayer->showObjects();
+        curPlayer->showItemlist();
         break;
       case PICKUP_ITEM:
         curPlayer->pickupObject(curMap);
         break;
       case INTERACT:
         curPlayer->interact(curMap);
+        break;
+      }
+    case SDL_MOUSEBUTTONDOWN:
+      switch (evt.button.button) {
+      case SDL_BUTTON_LEFT:
+        curPlayer->click(evt.button.x, evt.button.y, true);
+        break;
+      case SDL_BUTTON_RIGHT:
+        curPlayer->click(evt.button.x, evt.button.y, false);
         break;
       }
     }

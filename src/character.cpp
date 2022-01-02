@@ -11,7 +11,6 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag,
   }
 
   texture = t;
-  itemlist_texture = itemlist_t;
   xPos = x;
   yPos = y;
   width = w;
@@ -19,7 +18,7 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag,
   xVel = xV;
   yVel = yV;
   isCurPlayer = flag;
-  isShowingObjects = false;
+  itemlist.texture = itemlist_t;
 
   lastUpdate = SDL_GetTicks();
 }
@@ -36,25 +35,25 @@ void Character::print() {
   std::cout << "-pos: (" << xPos << ", " << yPos << ")" << std::endl;
 }
 
-void Character::addObject(Object o) { objects.push_back(o); }
-
-void Character::removeObject(Object o) {
-  objects.erase(std::remove(objects.begin(), objects.end(), o), objects.end());
-}
-
-void Character::showObjects() {
-  isShowingObjects = !isShowingObjects;
-  std::cout << "Number of items: " << objects.size() << std::endl;
+void Character::showItemlist() {
+  if (!isActive && !itemlist.isShowing) {
+    return;
+  }
+  itemlist.isShowing = !itemlist.isShowing;
+  isActive = !isActive;
 }
 
 void Character::pickupObject(Map *map) {
+  if (!isActive) {
+    return;
+  }
   for (auto &o : map->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
       if (DEBUG) {
         std::cout << "Picking up object" << std::endl;
         o.print();
       }
-      addObject(o);
+      itemlist.addItem(o);
       map->removeObject(o);
       return;
     }
@@ -62,52 +61,29 @@ void Character::pickupObject(Map *map) {
 }
 
 void Character::interact(Map *map) {
+  if (!isActive) {
+    return;
+  }
   map->onInteract(xPos, yPos, width, height);
 }
 
+void Character::click(float x, float y, bool isLeft) {
+  if (itemlist.isShowing) {
+    itemlist.onClick(x, y, isLeft);
+  }
+  // TO-DO: handle other cases such as skill screen
+}
+
 void Character::update(const Uint8 *keys, Map *curMap) {
+  if (!isActive) {
+    return;
+  }
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 
   move(keys, dT, curMap);
 
   lastUpdate = current;
-}
-
-void Character::renderObjectList(SDL_Renderer *renderer) {
-  float nextX = (SCREEN_WIDTH - ITEMLIST_WIDTH) / 2;
-  float nextY = (SCREEN_HEIGHT - ITEMLIST_HEIGHT) / 2;
-  int nextRow = 0;
-  int nextCol = 0;
-
-  for (int row = 0; row < ITEMLIST_HEIGHT / ITEMLIST_GRID_SIZE; row++) {
-    for (int col = 0; col < ITEMLIST_WIDTH / ITEMLIST_GRID_SIZE; col++) {
-      SDL_Rect r;
-      r.x = nextX + col * ITEMLIST_GRID_SIZE;
-      r.y = nextY + row * ITEMLIST_GRID_SIZE;
-      r.w = ITEMLIST_GRID_SIZE;
-      r.h = ITEMLIST_GRID_SIZE;
-      SDL_RenderCopy(renderer, itemlist_texture, NULL, &r);
-    }
-  }
-
-  int offset = (ITEMLIST_GRID_SIZE - ITEMLIST_OBJECT_SIZE) / 2;
-  for (auto &o : objects) {
-    o.render(renderer, nextX + offset, nextY + offset, ITEMLIST_OBJECT_SIZE,
-             ITEMLIST_OBJECT_SIZE);
-
-    if (nextCol + 1 < ITEMLIST_WIDTH / ITEMLIST_GRID_SIZE) {
-      nextCol++;
-      nextX += ITEMLIST_GRID_SIZE;
-    } else if (nextRow + 1 < ITEMLIST_HEIGHT / ITEMLIST_GRID_SIZE) {
-      nextCol = 0;
-      nextX = (SCREEN_WIDTH - ITEMLIST_WIDTH) / 2;
-      nextRow++;
-      nextY += ITEMLIST_GRID_SIZE;
-    } else {
-      // TO-DO: display a new page
-    }
-  }
 }
 
 void Character::render(SDL_Renderer *renderer) {
@@ -118,9 +94,7 @@ void Character::render(SDL_Renderer *renderer) {
   r.h = height;
   SDL_RenderCopy(renderer, texture, NULL, &r);
 
-  if (isShowingObjects) {
-    renderObjectList(renderer);
-  }
+  itemlist.render(renderer);
 }
 
 void Character::move(const Uint8 *keys, float dT, Map *curMap) {
