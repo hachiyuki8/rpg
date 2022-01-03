@@ -5,6 +5,7 @@
 #include "map.h"
 #include "skills.h"
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
@@ -12,7 +13,7 @@
 class Character {
 public:
   Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,
-            bool isCurrent = false,
+            TTF_Font *f, bool isCurrent = false,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,

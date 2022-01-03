@@ -15,7 +15,7 @@
 
 SDL_Window *window;
 SDL_Renderer *renderer;
-TTF_Font *main_font;
+TTF_Font *main_font, *second_font;
 
 SDL_Texture *startup_t, *player_t, *itemlist_t, *skills_t;
 SDL_Surface *startup_text;
@@ -50,7 +50,7 @@ int main(int argc, char **args) {
     return 1;
   }
 
-  Character player(player_t, itemlist_t, skills_t, true);
+  Character player(player_t, itemlist_t, skills_t, second_font, true);
   curPlayer = &player;
 
   init_maps();
@@ -112,6 +112,11 @@ bool loop() {
       case SHOW_ITEMS:
         if (gameState == GameState::IN_PROGRESS) {
           curPlayer->showItemlist();
+        }
+        break;
+      case SHOW_SKILLS:
+        if (gameState == GameState::IN_PROGRESS) {
+          curPlayer->showSkills();
         }
         break;
       case PICKUP_ITEM:
@@ -198,6 +203,11 @@ bool init() {
   path = FONT_PATH + std::string("main.ttf");
   main_font = TTF_OpenFont(path.c_str(), 36);
   if (!main_font) {
+    std::cout << "Error loading font: " << TTF_GetError() << std::endl;
+    return false;
+  }
+  second_font = TTF_OpenFont(path.c_str(), 18);
+  if (!second_font) {
     std::cout << "Error loading font: " << TTF_GetError() << std::endl;
     return false;
   }
@@ -295,6 +305,7 @@ void init_tiles() {
 
 void kill() {
   TTF_CloseFont(main_font);
+  TTF_CloseFont(second_font);
   SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
   SDL_DestroyTexture(player_t);

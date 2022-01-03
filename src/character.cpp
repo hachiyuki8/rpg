@@ -3,8 +3,8 @@
 int Character::nextID = 0;
 
 Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
-                     SDL_Texture *skills_t, bool isCurrent, float x, float y,
-                     float w, float h, float xV, float yV) {
+                     SDL_Texture *skills_t, TTF_Font *f, bool isCurrent,
+                     float x, float y, float w, float h, float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -22,6 +22,7 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
 
   itemlist.texture = itemlist_t;
   skills.texture = skills_t;
+  skills.font = f;
   skills.initAllSkills();
 
   lastUpdate = SDL_GetTicks();
@@ -116,6 +117,9 @@ void Character::click(float x, float y, bool isLeft) {
   case UIState::IN_ITEMLIST:
     itemlist.onClick(x, y, isLeft);
     break;
+  case UIState::IN_SKILLS:
+    skills.onClick(x, y, isLeft);
+    break;
   default:
     break;
   }
@@ -126,6 +130,8 @@ void Character::confirm() {
   case UIState::IN_ITEMLIST:
     itemlist.onConfirm();
     break;
+  case UIState::IN_SKILLS:
+    skills.onConfirm();
   default:
     break;
   }
@@ -155,10 +161,10 @@ void Character::render(SDL_Renderer *renderer) {
   SDL_RenderCopy(renderer, texture, NULL, &r);
 
   itemlist.render(renderer);
+  skills.render(renderer);
 }
 
 void Character::move(const Uint8 *keys, float dT) {
-  // TO-DO: check collision
   if (keys[CONTROL_UP] && yPos - yVel * dT >= 0 &&
       !curMap->isInvalidPosition(xPos, yPos - yVel * dT, width, height)) {
     yPos -= yVel * dT;
