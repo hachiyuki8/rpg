@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <map>
 #include <string>
 
 const bool DEBUG = true;
@@ -8,7 +9,7 @@ const std::string IMAGE_PATH = "../images/";
 const std::string FONT_PATH = "../fonts/";
 
 enum class GameState { PAUSE, IN_PROGRESS };
-enum class UIState { IN_GAME, IN_ITEMLIST };
+enum class UIState { IN_GAME, IN_ITEMLIST, IN_SKILLS };
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -44,3 +45,9 @@ const int ITEMLIST_GRID_SIZE = 60;
 const int ITEMLIST_OBJECT_SIZE = 40;
 const int ITEM_LIMIT = (ITEMLIST_WIDTH / ITEMLIST_GRID_SIZE) *
                        (ITEMLIST_HEIGHT / ITEMLIST_GRID_SIZE);
+
+const int SKILLS_SCREEN_WIDTH = 960;
+const int SKILLS_SCREEN_HEIGHT = 540;
+const std::map<int, int> SKILLS_EXP_PER_LEVEL = {{0, 100}, {1, 200}, {2, 400}};
+const std::map<std::string, bool> SKILLS_ALL = {{"testing 1", true},
+                                                {"testing 2", false}};

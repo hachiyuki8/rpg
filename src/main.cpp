@@ -3,6 +3,7 @@
 #include "map.h"
 #include "mapfiles.h"
 #include "object.h"
+#include "skills.h"
 #include "teleporter.h"
 #include "tile.h"
 #include <SDL.h>
@@ -16,7 +17,7 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 TTF_Font *main_font;
 
-SDL_Texture *startup_t, *player_t, *itemlist_t;
+SDL_Texture *startup_t, *player_t, *itemlist_t, *skills_t;
 SDL_Surface *startup_text;
 
 std::vector<SDL_Texture *> characterTextures;
@@ -49,7 +50,7 @@ int main(int argc, char **args) {
     return 1;
   }
 
-  Character player(player_t, itemlist_t, true);
+  Character player(player_t, itemlist_t, skills_t, true);
   curPlayer = &player;
 
   init_maps();
@@ -251,6 +252,18 @@ bool init() {
     std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
   }
 
+  path = IMAGE_PATH + std::string("skills.bmp");
+  image = SDL_LoadBMP(path.c_str());
+  if (!image) {
+    std::cout << "Error loading image skills.bmp: " << SDL_GetError()
+              << std::endl;
+  }
+  skills_t = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_FreeSurface(image);
+  if (!skills_t) {
+    std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+  }
+
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderClear(renderer);
 
@@ -286,6 +299,7 @@ void kill() {
   SDL_DestroyTexture(startup_t);
   SDL_DestroyTexture(player_t);
   SDL_DestroyTexture(itemlist_t);
+  SDL_DestroyTexture(skills_t);
   for (auto &t : characterTextures) {
     SDL_DestroyTexture(t);
   }

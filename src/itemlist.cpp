@@ -20,7 +20,6 @@ Itemlist::Itemlist(float x, float y, float w, float h, float g, float o,
   numCol = floor(width / grid_size);
 
   limit = l;
-  std::vector<Object> items;
 }
 
 Itemlist::~Itemlist() {

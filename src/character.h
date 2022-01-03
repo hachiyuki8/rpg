@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "itemlist.h"
 #include "map.h"
+#include "skills.h"
 #include <SDL.h>
 #include <iostream>
 #include <stdlib.h>
@@ -10,7 +11,8 @@
 
 class Character {
 public:
-  Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag = false,
+  Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,
+            bool isCurrent = false,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
@@ -21,7 +23,9 @@ public:
 
   void print();
   void showItemlist();
+  void showSkills();
   void pickupObject(); // pick up at most one object
+  void upgradeSkill(std::string s, int exp);
 
   void interact(); // when INTERACT key is pressed
   void click(float x, float y,
@@ -49,7 +53,8 @@ private:
 
   UIState uiState = UIState::IN_GAME;
   Itemlist itemlist;
-  // TO-DO: skill screen, quest screen, map, etc.
+  Skills skills;
+  // TO-DO: quest screen, map, etc.
 
   void move(const Uint8 *keys, float dT);
   void renderObjectList(SDL_Renderer *renderer);

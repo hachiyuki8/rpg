@@ -2,8 +2,9 @@
 
 int Character::nextID = 0;
 
-Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag,
-                     float x, float y, float w, float h, float xV, float yV) {
+Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
+                     SDL_Texture *skills_t, bool isCurrent, float x, float y,
+                     float w, float h, float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -17,8 +18,11 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t, bool flag,
   height = h;
   xVel = xV;
   yVel = yV;
-  isCurPlayer = flag;
+  isCurPlayer = isCurrent;
+
   itemlist.texture = itemlist_t;
+  skills.texture = skills_t;
+  skills.initAllSkills();
 
   lastUpdate = SDL_GetTicks();
 }
@@ -50,6 +54,21 @@ void Character::showItemlist() {
   }
 }
 
+void Character::showSkills() {
+  switch (uiState) {
+  case UIState::IN_GAME:
+    skills.open();
+    uiState = UIState::IN_SKILLS;
+    break;
+  case UIState::IN_SKILLS:
+    skills.close();
+    uiState = UIState::IN_GAME;
+    break;
+  default:
+    break;
+  }
+}
+
 void Character::pickupObject() {
   if (uiState != UIState::IN_GAME) {
     return;
@@ -65,6 +84,13 @@ void Character::pickupObject() {
       curMap->removeObject(o);
       return;
     }
+  }
+}
+
+void Character::upgradeSkill(std::string s, int exp) {
+  skills.upgradeSkill(s, exp);
+  if (DEBUG) {
+    skills.print();
   }
 }
 

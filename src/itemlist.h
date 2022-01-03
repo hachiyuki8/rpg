@@ -28,7 +28,7 @@ public:
   void render(SDL_Renderer *renderer);
 
   static int nextID;
-  SDL_Texture *texture;
+  SDL_Texture *texture; // initialized in Character
 
 private:
   int ID;
