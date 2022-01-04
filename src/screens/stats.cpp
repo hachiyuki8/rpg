@@ -70,6 +70,14 @@ void Stats::increaseExp(int ex) {
   exp = newExp;
 }
 
+void Stats::increaseMoney(int m) {
+  money += m;
+  if (money > STATS_MAX_MONEY) {
+    std::cout << "Max money reached" << std::endl;
+    money = STATS_MAX_MONEY;
+  }
+}
+
 void Stats::increaseStat(std::string s, int val) {
   if (!stats.contains(s)) {
     std::cout << "Stat doesn't exists" << std::endl;
@@ -125,6 +133,21 @@ void Stats::render(SDL_Renderer *renderer) {
     SDL_RenderCopy(renderer, t, NULL, &r);
     SDL_FreeSurface(text);
     SDL_DestroyTexture(t);
+
+    // money
+    std::string m = "Money: " + std::to_string(money);
+    text = TTF_RenderText_Solid(font, m.c_str(), text_color);
+    if (!text) {
+      std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
+    }
+    t = SDL_CreateTextureFromSurface(renderer, text);
+    r.y += offset;
+    r.w = text->w;
+    r.h = text->h;
+    SDL_RenderCopy(renderer, t, NULL, &r);
+    SDL_FreeSurface(text);
+    SDL_DestroyTexture(t);
+
     r.y += offset;
 
     // stats

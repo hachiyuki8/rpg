@@ -2,7 +2,8 @@
 
 int Object::nextID = 0;
 
-Object::Object(SDL_Texture *t, float x, float y, float w, float h) {
+Object::Object(SDL_Texture *t, int v, bool isQuest, bool isCoin, float x,
+               float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -19,6 +20,10 @@ Object::Object(SDL_Texture *t, float x, float y, float w, float h) {
   yPosI = y;
   widthI = w;
   heightI = h;
+
+  value = v;
+  isQuestObject = isQuest;
+  isMoney = isCoin;
 
   std::set<ObjectProperty> properties;
 }

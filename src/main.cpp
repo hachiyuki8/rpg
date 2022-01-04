@@ -13,7 +13,6 @@
 #include <string>
 #include <vector>
 
-
 SDL_Window *window;
 SDL_Renderer *renderer;
 TTF_Font *main_font, *second_font;
@@ -60,14 +59,15 @@ int main(int argc, char **args) {
 
   // hardcoded for testing
   for (int i = 0; i < 5; i++) {
-    Object coin(objectTextures[0], 100 * (i + 1), 100 * (i + 1));
+    Object coin(objectTextures[0], 10, false, true, 100 * (i + 1),
+                100 * (i + 1));
     coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
     coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
     coin.addObjectProperty(ObjectProperty::CAN_USE);
     coin.setInteractRange(5, 5, 5, 5);
     maps[0].addObject(coin);
   }
-  Object coin2(objectTextures[0], 600, 600);
+  Object coin2(objectTextures[0], 0, false, false, 600, 600);
   maps[0].addObject(coin2);
   Teleporter tp(&maps[0], &maps[1], 1, 15, 1, 0);
   maps[0].addTeleporter(tp);

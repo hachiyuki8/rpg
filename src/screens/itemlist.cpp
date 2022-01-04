@@ -56,15 +56,16 @@ void Itemlist::close() {
   isShowing = false;
 }
 
-void Itemlist::onClick(float x, float y, bool isLeft) {
+int Itemlist::onClick(float x, float y, bool isLeft) {
   if (!isShowing) {
-    return;
+    return 0;
   }
 
   if (isLeft) {
     onLeftClick(x, y);
+    return 0;
   } else {
-    onRightClick(x, y);
+    return onRightClick(x, y);
   }
 }
 
@@ -130,8 +131,8 @@ void Itemlist::onLeftClick(float x, float y) {
         }
         curSelected = &i;
 
-        // TO-DO: item clicked, show actions
-        std::cout << "RETURN to use item, right click to discard" << std::endl;
+        // TO-DO: item clicked, show actions/descriptions
+        std::cout << "RETURN to use item, right click to sell" << std::endl;
       } else {
         // unselect this
         curSelected = NULL;
@@ -141,21 +142,25 @@ void Itemlist::onLeftClick(float x, float y) {
   }
 }
 
-void Itemlist::onRightClick(float x, float y) {
+int Itemlist::onRightClick(float x, float y) {
   for (auto &i : items) {
     if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
         y < i.yPosIL + object_size) {
-      if (i.isSelected) {
+      if (i.isSelected && !i.isQuestObject) {
         if (DEBUG) {
-          std::cout << "Discarding on item " << i.ID << std::endl;
+          std::cout << "Selling item " << i.ID << " with value " << i.value
+                    << std::endl;
         }
         // remove and unselect
         i.isSelected = !i.isSelected;
         removeItem(i);
         curSelected = NULL;
+        return i.value;
       }
     }
   }
+
+  return 0;
 }
 
 void Itemlist::removeItem(Object o) {

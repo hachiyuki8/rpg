@@ -23,8 +23,8 @@ public:
 
   void open();
   void close();
-  void onClick(float x, float y, bool isLeft); // select/discard item
-  void onConfirm();                            // use selected item
+  int onClick(float x, float y, bool isLeft); // select/sell item
+  void onConfirm();                           // use selected item
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -48,7 +48,8 @@ private:
   Object *curSelected = NULL;
   std::vector<Object> items;
 
-  void onLeftClick(float x, float y);  // select/unselect
-  void onRightClick(float x, float y); // discard selected
+  void onLeftClick(float x, float y); // select/unselect
+  int onRightClick(
+      float x, float y); // sell selected if not a quest item, return item value
   void removeItem(Object o);
 };

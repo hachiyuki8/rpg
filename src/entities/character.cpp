@@ -97,11 +97,16 @@ void Character::pickupObject() {
 
   for (auto &o : curMap->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
-      if (DEBUG) {
-        std::cout << "Picking up object" << std::endl;
-        o.print();
+      if (o.isMoney) {
+        stats.increaseMoney(o.value);
+      } else {
+
+        if (DEBUG) {
+          std::cout << "Picking up object" << std::endl;
+          o.print();
+        }
+        itemlist.addItem(o);
       }
-      itemlist.addItem(o);
       curMap->removeObject(o);
       return;
     }
@@ -126,9 +131,11 @@ void Character::interact() {
 }
 
 void Character::click(float x, float y, bool isLeft) {
+  int m;
   switch (uiState) {
   case UIState::IN_ITEMLIST:
-    itemlist.onClick(x, y, isLeft);
+    m = itemlist.onClick(x, y, isLeft); // m > 0 if selling items
+    stats.increaseMoney(m);
     break;
   case UIState::IN_SKILLS:
     skills.onClick(x, y, isLeft);

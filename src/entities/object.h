@@ -8,7 +8,8 @@
 
 class Object {
 public:
-  Object(SDL_Texture *t, float x = 0, float y = 0, float w = OBJECT_SIZE,
+  Object(SDL_Texture *t, int v = 0, bool isQuest = false, bool isCoin = false,
+         float x = 0, float y = 0, float w = OBJECT_SIZE,
          float h = OBJECT_SIZE);
   virtual ~Object();
 
@@ -53,7 +54,9 @@ private:
   float yPosIL = 0;
   bool isSelected = false; // if selected in item list
 
-  float value = 0;
+  int value;
+  bool isQuestObject = false; // cannot sell if true
+  bool isMoney = false;
   std::set<ObjectProperty> properties;
 
   bool isOnObject(float x, float y, float w,
@@ -62,4 +65,5 @@ private:
                        float h); // if collides with object's interaction range
 
   friend class Itemlist;
+  friend class Character;
 };

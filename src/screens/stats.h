@@ -30,6 +30,7 @@ public:
   void initAllStats(
       std::map<std::string, std::pair<std::string, int>> st = STATS_ALL);
   void increaseExp(int ex);
+  void increaseMoney(int m);
   void increaseStat(std::string s, int val);
 
   void open();
@@ -52,6 +53,7 @@ private:
   std::string name;
   int level = 0;
   int exp = 0;
+  int money = 0;
   std::map<int, int> expPerLevel;
 
   SDL_Color text_color = {0, 0, 0};
