@@ -3,8 +3,9 @@
 int Character::nextID = 0;
 
 Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
-                     SDL_Texture *skills_t, TTF_Font *f, bool isCurrent,
-                     float x, float y, float w, float h, float xV, float yV) {
+                     SDL_Texture *skills_t, SDL_Texture *stats_t, TTF_Font *f,
+                     bool isCurrent, PlayerState state, float x, float y,
+                     float w, float h, float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -19,11 +20,15 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
   xVel = xV;
   yVel = yV;
   isCurPlayer = isCurrent;
+  playerState = state;
 
   itemlist.texture = itemlist_t;
   skills.texture = skills_t;
   skills.font = f;
   skills.initAllSkills();
+  stats.texture = stats_t;
+  stats.font = f;
+  stats.initAllStats();
 
   lastUpdate = SDL_GetTicks();
 }
@@ -70,6 +75,21 @@ void Character::showSkills() {
   }
 }
 
+void Character::showStats() {
+  switch (uiState) {
+  case UIState::IN_GAME:
+    stats.open();
+    uiState = UIState::IN_STATS;
+    break;
+  case UIState::IN_STATS:
+    stats.close();
+    uiState = UIState::IN_GAME;
+    break;
+  default:
+    break;
+  }
+}
+
 void Character::pickupObject() {
   if (uiState != UIState::IN_GAME) {
     return;
@@ -85,13 +105,6 @@ void Character::pickupObject() {
       curMap->removeObject(o);
       return;
     }
-  }
-}
-
-void Character::upgradeSkill(std::string s, int exp) {
-  skills.upgradeSkill(s, exp);
-  if (DEBUG) {
-    skills.print();
   }
 }
 
@@ -162,6 +175,7 @@ void Character::render(SDL_Renderer *renderer) {
 
   itemlist.render(renderer);
   skills.render(renderer);
+  stats.render(renderer);
 }
 
 void Character::move(const Uint8 *keys, float dT) {
@@ -181,4 +195,17 @@ void Character::move(const Uint8 *keys, float dT) {
       !curMap->isInvalidPosition(xPos + xVel * dT, yPos, width, height)) {
     xPos += xVel * dT;
   }
+}
+
+void Character::upgradeSkill(std::string s, int exp) {
+  skills.upgradeSkill(s, exp);
+  if (DEBUG) {
+    skills.print();
+  }
+}
+
+void Character::increaseExp(int exp) { stats.increaseExp(exp); }
+
+void Character::increaseStat(std::string s, int val) {
+  stats.increaseStat(s, val);
 }

@@ -214,6 +214,7 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   r.w = sc.name_text->w;
   r.h = sc.name_text->h;
   SDL_RenderCopy(renderer, t, NULL, &r);
+  SDL_DestroyTexture(t);
 
   // description
   t = SDL_CreateTextureFromSurface(renderer, sc.description_text);
@@ -222,6 +223,7 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   r.w = sc.description_text->w;
   r.h = sc.description_text->h;
   SDL_RenderCopy(renderer, t, NULL, &r);
+  SDL_DestroyTexture(t);
 
   // level
   std::string level = "Level " + std::to_string(sc.skill.curLevel) + ": " +
@@ -239,7 +241,6 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   r.w = level_text->w;
   r.h = level_text->h;
   SDL_RenderCopy(renderer, t, NULL, &r);
-
   SDL_DestroyTexture(t);
 }
 

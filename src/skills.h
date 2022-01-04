@@ -1,6 +1,6 @@
 #pragma once
 
-#include "constants.h"
+#include "skills_constants.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>

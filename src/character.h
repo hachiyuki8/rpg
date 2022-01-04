@@ -1,9 +1,11 @@
 #pragma once
 
-#include "constants.h"
+#include "character_constants.h"
+#include "controls.h"
 #include "itemlist.h"
 #include "map.h"
 #include "skills.h"
+#include "stats.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -13,7 +15,8 @@
 class Character {
 public:
   Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,
-            TTF_Font *f, bool isCurrent = false,
+            SDL_Texture *stats_t, TTF_Font *f, bool isCurrent = false,
+            PlayerState state = PlayerState::OTHER_NPC,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
@@ -25,8 +28,8 @@ public:
   void print();
   void showItemlist();
   void showSkills();
+  void showStats();
   void pickupObject(); // pick up at most one object
-  void upgradeSkill(std::string s, int exp);
 
   void interact(); // when INTERACT key is pressed
   void click(float x, float y,
@@ -51,12 +54,17 @@ private:
   float xVel;
   float yVel;
   bool isCurPlayer;
+  PlayerState playerState;
 
   UIState uiState = UIState::IN_GAME;
   Itemlist itemlist;
   Skills skills;
+  Stats stats;
   // TO-DO: quest screen, map, etc.
 
   void move(const Uint8 *keys, float dT);
   void renderObjectList(SDL_Renderer *renderer);
+  void upgradeSkill(std::string s, int exp);
+  void increaseExp(int exp);
+  void increaseStat(std::string s, int val);
 };
