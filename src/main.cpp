@@ -1,19 +1,18 @@
-#include "character.h"
-#include "constants.h"
-#include "controls.h"
-#include "map.h"
-#include "mapfiles.h"
-#include "object.h"
-#include "skills.h"
-#include "stats.h"
-#include "teleporter.h"
-#include "tile.h"
+#include "constants/constants.h"
+#include "constants/controls.h"
+#include "constants/mapfiles.h"
+#include "entities/character.h"
+#include "entities/object.h"
+#include "maps/map.h"
+#include "maps/teleporter.h"
+#include "maps/tile.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
 #include <stdlib.h>
 #include <string>
 #include <vector>
+
 
 SDL_Window *window;
 SDL_Renderer *renderer;

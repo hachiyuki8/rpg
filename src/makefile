@@ -3,31 +3,31 @@ all: main
 main: main.o character.o map.o tile.o teleporter.o object.o itemlist.o skills.o stats.o
 	clang++ -std=c++20 -o main main.o character.o map.o tile.o teleporter.o object.o itemlist.o skills.o stats.o -L/opt/homebrew/Cellar/sdl2/2.0.18/lib -L/opt/homebrew/Cellar/sdl2_ttf/2.0.15/lib -lSDL2 -lSDL2_ttf
 
-character.o: character.cpp character.h character_constants.h controls.h itemlist.h map.h skills.h stats.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 character.cpp
+character.o: entities/character.cpp entities/character.h constants/character_constants.h constants/controls.h screens/itemlist.h maps/map.h screens/skills.h screens/stats.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 entities/character.cpp
 
-map.o: map.cpp map.h constants.h object.h teleporter.h tile.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 map.cpp
+map.o: maps/map.cpp maps/map.h constants/constants.h entities/object.h maps/teleporter.h maps/tile.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 maps/map.cpp
 
-tile.o: tile.cpp tile.h tile_constants.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 tile.cpp
+tile.o: maps/tile.cpp maps/tile.h constants/tile_constants.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 maps/tile.cpp
 
-teleporter.o: teleporter.cpp teleporter.h constants.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 teleporter.cpp
+teleporter.o: maps/teleporter.cpp maps/teleporter.h constants/constants.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 maps/teleporter.cpp
 
-object.o: object.cpp object.h object_constants.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 object.cpp
+object.o: entities/object.cpp entities/object.h constants/object_constants.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 entities/object.cpp
 
-itemlist.o: itemlist.cpp itemlist.h itemlist_constants.h object.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 itemlist.cpp
+itemlist.o: screens/itemlist.cpp screens/itemlist.h constants/itemlist_constants.h entities/object.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 screens/itemlist.cpp
 
-skills.o: skills.cpp skills.h skills_constants.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 skills.cpp
+skills.o: screens/skills.cpp screens/skills.h constants/skills_constants.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 screens/skills.cpp
 
-stats.o: stats.cpp stats.h stats_constants.h
-	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 stats.cpp
+stats.o: screens/stats.cpp screens/stats.h constants/stats_constants.h
+	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 screens/stats.cpp
 
-main.o: main.cpp constants.h controls.h mapfiles.h
+main.o: main.cpp constants/constants.h constants/controls.h constants/mapfiles.h
 	clang++ -std=c++20 -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 main.cpp
 
 clean:
