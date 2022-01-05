@@ -34,18 +34,22 @@ void Itemlist::print() {
   std::cout << "-Current size: " << curSize << std::endl;
 }
 
-void Itemlist::addItem(Object o) {
+void Itemlist::addItem(Logs *logs, Object o) {
   if (curSize + 1 <= limit) {
     curSize++;
     items.push_back(o);
   } else {
-    // TO-DO: display message
-    std::cout << "No more space in bag" << std::endl;
+    logs->addLog("No more space in bag");
   }
 }
 void Itemlist::useItem(Object o){};
 
-void Itemlist::open() { isShowing = true; }
+void Itemlist::open(Logs *logs) {
+  isShowing = true;
+  std::string s = "-Right click to sell selected, " +
+                  std::string(SDL_GetKeyName(CONFIRM)) + " to use selected";
+  logs->addLog(s);
+}
 
 void Itemlist::close() {
   // unselect
@@ -56,20 +60,20 @@ void Itemlist::close() {
   isShowing = false;
 }
 
-int Itemlist::onClick(float x, float y, bool isLeft) {
+int Itemlist::onClick(Logs *logs, float x, float y, bool isLeft) {
   if (!isShowing) {
     return 0;
   }
 
   if (isLeft) {
-    onLeftClick(x, y);
+    onLeftClick(logs, x, y);
     return 0;
   } else {
-    return onRightClick(x, y);
+    return onRightClick(logs, x, y);
   }
 }
 
-void Itemlist::onConfirm() {
+void Itemlist::onConfirm(Logs *logs) {
   if (!isShowing) {
     return;
   }
@@ -77,6 +81,8 @@ void Itemlist::onConfirm() {
   if (curSelected) {
     // use item, remove and unselect if used
     if (curSelected->onUse()) {
+      std::string s = "-Used " + curSelected->name;
+      logs->addLog(s);
       curSelected->isSelected = !curSelected->isSelected;
       removeItem(*curSelected);
       curSelected = NULL;
@@ -116,14 +122,10 @@ void Itemlist::render(SDL_Renderer *renderer) {
   }
 }
 
-void Itemlist::onLeftClick(float x, float y) {
+void Itemlist::onLeftClick(Logs *logs, float x, float y) {
   for (auto &i : items) {
     if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
         y < i.yPosIL + object_size) {
-      if (DEBUG) {
-        std::cout << "Selecting on item " << i.ID << std::endl;
-      }
-
       if (!i.isSelected) {
         // unselect previous and select this
         if (curSelected) {
@@ -131,8 +133,9 @@ void Itemlist::onLeftClick(float x, float y) {
         }
         curSelected = &i;
 
-        // TO-DO: item clicked, show actions/descriptions
-        std::cout << "RETURN to use item, right click to sell" << std::endl;
+        std::string s =
+            "-Selected item: " + i.name + ", value: " + std::to_string(i.value);
+        logs->addLog(s);
       } else {
         // unselect this
         curSelected = NULL;
@@ -142,21 +145,21 @@ void Itemlist::onLeftClick(float x, float y) {
   }
 }
 
-int Itemlist::onRightClick(float x, float y) {
+int Itemlist::onRightClick(Logs *logs, float x, float y) {
   for (auto &i : items) {
     if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
         y < i.yPosIL + object_size) {
       if (i.isSelected && !i.isQuestObject) {
-        if (DEBUG) {
-          std::cout << "Selling item " << i.ID << " with value " << i.value
-                    << std::endl;
-        }
+        std::string s = "-Sold  " + i.name + " for " + std::to_string(i.value);
+        logs->addLog(s);
         // remove and unselect
         i.isSelected = !i.isSelected;
         removeItem(i);
         curSelected = NULL;
         return i.value;
       }
+    } else if (i.isQuestObject) {
+      logs->addLog("-Cannot sell a quest item");
     }
   }
 

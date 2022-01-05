@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants/stats_constants.h"
+#include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -29,9 +30,9 @@ public:
   void print();
   void initAllStats(
       std::map<std::string, std::pair<std::string, int>> st = STATS_ALL);
-  void increaseExp(int ex);
-  void increaseMoney(int m);
-  void increaseStat(std::string s, int val);
+  void increaseExp(Logs *log, int ex);
+  void increaseMoney(Logs *log, int m);
+  void increaseStat(Logs *log, std::string s, int val);
 
   void open();
   void close();

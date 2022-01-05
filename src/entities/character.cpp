@@ -3,9 +3,10 @@
 int Character::nextID = 0;
 
 Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
-                     SDL_Texture *skills_t, SDL_Texture *stats_t, TTF_Font *f,
-                     bool isCurrent, PlayerState state, float x, float y,
-                     float w, float h, float xV, float yV) {
+                     SDL_Texture *skills_t, SDL_Texture *stats_t,
+                     SDL_Texture *logs_t, TTF_Font *f, bool isCurrent,
+                     PlayerState state, float x, float y, float w, float h,
+                     float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -29,6 +30,9 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
   stats.texture = stats_t;
   stats.font = f;
   stats.initAllStats();
+  logs.texture = logs_t;
+  logs.font = f;
+  logs.addLog("-Press H to see controls");
 
   lastUpdate = SDL_GetTicks();
 }
@@ -45,10 +49,14 @@ void Character::print() {
   std::cout << "-pos: (" << xPos << ", " << yPos << ")" << std::endl;
 }
 
+void Character::showHelp() {
+  // TO-DO
+}
+
 void Character::showItemlist() {
   switch (uiState) {
   case UIState::IN_GAME:
-    itemlist.open();
+    itemlist.open(&logs);
     uiState = UIState::IN_ITEMLIST;
     break;
   case UIState::IN_ITEMLIST:
@@ -63,7 +71,7 @@ void Character::showItemlist() {
 void Character::showSkills() {
   switch (uiState) {
   case UIState::IN_GAME:
-    skills.open();
+    skills.open(&logs);
     uiState = UIState::IN_SKILLS;
     break;
   case UIState::IN_SKILLS:
@@ -90,6 +98,8 @@ void Character::showStats() {
   }
 }
 
+void Character::showLogs() { logs.toggleShow(); }
+
 void Character::pickupObject() {
   if (uiState != UIState::IN_GAME) {
     return;
@@ -98,14 +108,11 @@ void Character::pickupObject() {
   for (auto &o : curMap->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
       if (o.isMoney) {
-        stats.increaseMoney(o.value);
+        stats.increaseMoney(&logs, o.value);
       } else {
-
-        if (DEBUG) {
-          std::cout << "Picking up object" << std::endl;
-          o.print();
-        }
-        itemlist.addItem(o);
+        std::string s = "-Picked up " + o.name;
+        logs.addLog(s);
+        itemlist.addItem(&logs, o);
       }
       curMap->removeObject(o);
       return;
@@ -134,11 +141,11 @@ void Character::click(float x, float y, bool isLeft) {
   int m;
   switch (uiState) {
   case UIState::IN_ITEMLIST:
-    m = itemlist.onClick(x, y, isLeft); // m > 0 if selling items
-    stats.increaseMoney(m);
+    m = itemlist.onClick(&logs, x, y, isLeft); // m > 0 if selling items
+    stats.increaseMoney(&logs, m);
     break;
   case UIState::IN_SKILLS:
-    skills.onClick(x, y, isLeft);
+    skills.onClick(&logs, x, y, isLeft);
     break;
   default:
     break;
@@ -148,7 +155,7 @@ void Character::click(float x, float y, bool isLeft) {
 void Character::confirm() {
   switch (uiState) {
   case UIState::IN_ITEMLIST:
-    itemlist.onConfirm();
+    itemlist.onConfirm(&logs);
     break;
   case UIState::IN_SKILLS:
     skills.onConfirm();
@@ -183,6 +190,7 @@ void Character::render(SDL_Renderer *renderer) {
   itemlist.render(renderer);
   skills.render(renderer);
   stats.render(renderer);
+  logs.render(renderer);
 }
 
 void Character::move(const Uint8 *keys, float dT) {
@@ -205,14 +213,15 @@ void Character::move(const Uint8 *keys, float dT) {
 }
 
 void Character::upgradeSkill(std::string s, int exp) {
-  skills.upgradeSkill(s, exp);
-  if (DEBUG) {
-    skills.print();
-  }
+  skills.upgradeSkill(&logs, s, exp);
 }
 
-void Character::increaseExp(int exp) { stats.increaseExp(exp); }
+void Character::increaseExp(int exp) { stats.increaseExp(&logs, exp); }
 
 void Character::increaseStat(std::string s, int val) {
-  stats.increaseStat(s, val);
+  stats.increaseStat(&logs, s, val);
 }
+
+void Character::increaseMoney(int m) { stats.increaseMoney(&logs, m); }
+
+void Character::testing() { increaseExp(200); }

@@ -8,8 +8,8 @@
 
 class Object {
 public:
-  Object(SDL_Texture *t, int v = 0, bool isQuest = false, bool isCoin = false,
-         float x = 0, float y = 0, float w = OBJECT_SIZE,
+  Object(std::string n, SDL_Texture *t, int v = 0, bool isQuest = false,
+         bool isCoin = false, float x = 0, float y = 0, float w = OBJECT_SIZE,
          float h = OBJECT_SIZE);
   virtual ~Object();
 
@@ -54,6 +54,7 @@ private:
   float yPosIL = 0;
   bool isSelected = false; // if selected in item list
 
+  std::string name;
   int value;
   bool isQuestObject = false; // cannot sell if true
   bool isMoney = false;

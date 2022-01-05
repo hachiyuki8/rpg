@@ -17,7 +17,7 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 TTF_Font *main_font, *second_font;
 
-SDL_Texture *startup_t, *player_t, *itemlist_t, *skills_t, *stats_t;
+SDL_Texture *startup_t, *player_t, *itemlist_t, *skills_t, *stats_t, *logs_t;
 SDL_Surface *startup_text;
 
 std::vector<SDL_Texture *> characterTextures;
@@ -50,8 +50,8 @@ int main(int argc, char **args) {
     return 1;
   }
 
-  Character player(player_t, itemlist_t, skills_t, stats_t, second_font, true,
-                   PlayerState::PLAYER);
+  Character player(player_t, itemlist_t, skills_t, stats_t, logs_t, second_font,
+                   true, PlayerState::PLAYER);
   curPlayer = &player;
 
   init_maps();
@@ -59,7 +59,7 @@ int main(int argc, char **args) {
 
   // hardcoded for testing
   for (int i = 0; i < 5; i++) {
-    Object coin(objectTextures[0], 10, false, true, 100 * (i + 1),
+    Object coin("coin", objectTextures[0], 10, false, true, 100 * (i + 1),
                 100 * (i + 1));
     coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
     coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
@@ -67,7 +67,9 @@ int main(int argc, char **args) {
     coin.setInteractRange(5, 5, 5, 5);
     maps[0].addObject(coin);
   }
-  Object coin2(objectTextures[0], 0, false, false, 600, 600);
+  Object coin2("coin 2", objectTextures[0], 0, false, false, 600, 600);
+  coin2.addObjectProperty(ObjectProperty::CAN_PICKUP);
+  coin2.setInteractRange(5, 5, 5, 5);
   maps[0].addObject(coin2);
   Teleporter tp(&maps[0], &maps[1], 1, 15, 1, 0);
   maps[0].addTeleporter(tp);
@@ -111,6 +113,11 @@ bool loop() {
           gameState = GameState::PAUSE;
         }
         break;
+      case HELP:
+        if (gameState == GameState::IN_PROGRESS) {
+          curPlayer->showHelp();
+        }
+        break;
       case SHOW_ITEMS:
         if (gameState == GameState::IN_PROGRESS) {
           curPlayer->showItemlist();
@@ -124,6 +131,11 @@ bool loop() {
       case SHOW_STATS:
         if (gameState == GameState::IN_PROGRESS) {
           curPlayer->showStats();
+        }
+        break;
+      case SHOW_LOGS:
+        if (gameState == GameState::IN_PROGRESS) {
+          curPlayer->showLogs();
         }
         break;
       case PICKUP_ITEM:
@@ -141,6 +153,10 @@ bool loop() {
         if (gameState == GameState::IN_PROGRESS) {
           curPlayer->confirm();
         }
+        break;
+      case SDLK_t:
+        // testing
+        curPlayer->testing();
         break;
       }
     case SDL_MOUSEBUTTONDOWN:
@@ -220,8 +236,9 @@ bool init() {
   }
 
   SDL_Color text_color = {0, 0, 0};
-  startup_text = TTF_RenderText_Solid(
-      main_font, "Press CAPSLOCK to start/resume the game", text_color);
+  std::string s = "Press " + std::string(SDL_GetKeyName(START_GAME)) +
+                  " to start/resume the game";
+  startup_text = TTF_RenderText_Solid(main_font, s.c_str(), text_color);
   if (!startup_text) {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
@@ -290,6 +307,18 @@ bool init() {
   stats_t = SDL_CreateTextureFromSurface(renderer, image);
   SDL_FreeSurface(image);
   if (!stats_t) {
+    std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+  }
+
+  path = IMAGE_PATH + std::string("logs.bmp");
+  image = SDL_LoadBMP(path.c_str());
+  if (!image) {
+    std::cout << "Error loading image logs.bmp: " << SDL_GetError()
+              << std::endl;
+  }
+  logs_t = SDL_CreateTextureFromSurface(renderer, image);
+  SDL_FreeSurface(image);
+  if (!logs_t) {
     std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
   }
 

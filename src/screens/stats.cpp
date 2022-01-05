@@ -50,7 +50,7 @@ void Stats::initAllStats(
   }
 }
 
-void Stats::increaseExp(int ex) {
+void Stats::increaseExp(Logs *logs, int ex) {
   int newLevel = level;
   int newExp = exp + ex;
   while (newExp >= expPerLevel[newLevel]) {
@@ -58,35 +58,43 @@ void Stats::increaseExp(int ex) {
     newLevel++;
 
     if (!expPerLevel.contains(newLevel)) {
-      if (DEBUG) {
-        std::cout << "Max level reached" << std::endl;
-      }
+      logs->addLog("-Max level reached");
       newLevel--;
       newExp = expPerLevel[newLevel];
       break;
     }
   }
+  if (newLevel > level) {
+    std::string s = "-Leveled up to " + std::to_string(newLevel);
+    logs->addLog(s);
+  }
   level = newLevel;
   exp = newExp;
 }
 
-void Stats::increaseMoney(int m) {
+void Stats::increaseMoney(Logs *logs, int m) {
   money += m;
+  std::string s = "-Money increased to " + std::to_string(money);
+  logs->addLog(s);
   if (money > STATS_MAX_MONEY) {
-    std::cout << "Max money reached" << std::endl;
+    logs->addLog("-Max money reach");
     money = STATS_MAX_MONEY;
   }
 }
 
-void Stats::increaseStat(std::string s, int val) {
+void Stats::increaseStat(Logs *logs, std::string s, int val) {
   if (!stats.contains(s)) {
     std::cout << "Stat doesn't exists" << std::endl;
     return;
   }
   stats[s].value += val;
+  std::string s0 =
+      "-" + stats[s].name + " increased to " + std::to_string(stats[s].value);
+  logs->addLog(s0);
   if (stats[s].value > stats[s].maxValue) {
     stats[s].value = stats[s].maxValue;
-    std::cout << "Max stat value reached" << std::endl;
+    s0 = "-" + stats[s].name + " reached max value";
+    logs->addLog(s0);
   }
 }
 

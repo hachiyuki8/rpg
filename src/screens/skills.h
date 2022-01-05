@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants/skills_constants.h"
+#include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -41,11 +42,11 @@ public:
   void initAllSkills(
       std::map<std::string, std::pair<std::string, bool>> sk = SKILLS_ALL);
   void unlockSkill(std::string s);
-  void upgradeSkill(std::string s, int exp);
+  void upgradeSkill(Logs *logs, std::string s, int exp);
 
-  void open();
+  void open(Logs *logs);
   void close();
-  void onClick(float x, float y, bool isLeft); // select skill
+  void onClick(Logs *logs, float x, float y, bool isLeft); // select skill
   void onConfirm(); // TO-DO: maybe allocate skill points?
   void render(SDL_Renderer *renderer);
 
@@ -76,6 +77,7 @@ private:
 
   void addSkill(std::string s, std::string d, bool isUnlocked);
   void renderCard(SDL_Renderer *renderer, SkillCard sc);
-  void onLeftClick(float x, float y);  // select/unselect
-  void onRightClick(float x, float y); // TO-DO: maybe show description?
+  void onLeftClick(Logs *logs, float x, float y); // select/unselect
+  void onRightClick(Logs *logs, float x,
+                    float y); // TO-DO: maybe show description?
 };

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "../constants/controls.h"
 #include "../constants/itemlist_constants.h"
 #include "../entities/object.h"
+#include "logs.h"
 #include <SDL.h>
 #include <iostream>
 #include <math.h>
@@ -18,13 +20,13 @@ public:
   virtual ~Itemlist();
 
   void print();
-  void addItem(Object o);
+  void addItem(Logs *logs, Object o);
   void useItem(Object o); // TO-DO
 
-  void open();
+  void open(Logs *logs);
   void close();
-  int onClick(float x, float y, bool isLeft); // select/sell item
-  void onConfirm();                           // use selected item
+  int onClick(Logs *logs, float x, float y, bool isLeft); // select/sell item
+  void onConfirm(Logs *logs);                             // use selected item
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -48,8 +50,9 @@ private:
   Object *curSelected = NULL;
   std::vector<Object> items;
 
-  void onLeftClick(float x, float y); // select/unselect
+  void onLeftClick(Logs *logs, float x, float y); // select/unselect
   int onRightClick(
-      float x, float y); // sell selected if not a quest item, return item value
+      Logs *logs, float x,
+      float y); // sell selected if not a quest item, return item value
   void removeItem(Object o);
 };

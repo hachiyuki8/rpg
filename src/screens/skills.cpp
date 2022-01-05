@@ -62,7 +62,7 @@ void Skills::unlockSkill(std::string s) {
   skills[s].isUnlocked = true;
 }
 
-void Skills::upgradeSkill(std::string s, int exp) {
+void Skills::upgradeSkill(Logs *logs, std::string s, int exp) {
   if (!skills.contains(s)) {
     std::cout << "Skill doesn't exists" << std::endl;
     return;
@@ -78,19 +78,25 @@ void Skills::upgradeSkill(std::string s, int exp) {
     newLevel++;
 
     if (!expPerLevel.contains(newLevel)) {
-      if (DEBUG) {
-        std::cout << "Skill " << s << " maxed out" << std::endl;
-      }
+      std::string s0 = "-" + s + " reached max level";
+      logs->addLog(s0);
       newLevel--;
       newExp = expPerLevel[newLevel];
       break;
     }
   }
+  if (newLevel > skills[s].curLevel) {
+    std::string s0 = "-" + s + " upgraded to level " + std::to_string(newLevel);
+    logs->addLog(s0);
+  }
   skills[s].curLevel = newLevel;
   skills[s].curExp = newExp;
 }
 
-void Skills::open() { isShowing = true; }
+void Skills::open(Logs *logs) {
+  isShowing = true;
+  logs->addLog("-Left click to show skill description");
+}
 
 void Skills::close() {
   // unselect
@@ -101,15 +107,15 @@ void Skills::close() {
   isShowing = false;
 }
 
-void Skills::onClick(float x, float y, bool isLeft) {
+void Skills::onClick(Logs *logs, float x, float y, bool isLeft) {
   if (!isShowing) {
     return;
   }
 
   if (isLeft) {
-    onLeftClick(x, y);
+    onLeftClick(logs, x, y);
   } else {
-    onRightClick(x, y);
+    onRightClick(logs, x, y);
   }
 }
 
@@ -244,13 +250,13 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   SDL_DestroyTexture(t);
 }
 
-void Skills::onLeftClick(float x, float y) {
+void Skills::onLeftClick(Logs *logs, float x, float y) {
   for (auto &sc : skillcards) {
     if (sc.xPos < x && x < sc.xPos + sc.width && sc.yPos < y &&
         y < sc.yPos + sc.height) {
-      if (DEBUG) {
-        std::cout << "Selecting on skill " << sc.skill.name << std::endl;
-      }
+      std::string s = "-" + sc.skill.name + ": " +
+                      sc.skill.description; // TO-DO: need line break?
+      logs->addLog(s);
 
       if (!sc.isSelected) {
         // unselect previous and select this
@@ -269,4 +275,4 @@ void Skills::onLeftClick(float x, float y) {
   }
 }
 
-void Skills::onRightClick(float x, float y) { return; } // TO-DO
+void Skills::onRightClick(Logs *logs, float x, float y) { return; } // TO-DO

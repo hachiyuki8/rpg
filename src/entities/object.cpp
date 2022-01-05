@@ -2,8 +2,8 @@
 
 int Object::nextID = 0;
 
-Object::Object(SDL_Texture *t, int v, bool isQuest, bool isCoin, float x,
-               float y, float w, float h) {
+Object::Object(std::string n, SDL_Texture *t, int v, bool isQuest, bool isCoin,
+               float x, float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -21,6 +21,7 @@ Object::Object(SDL_Texture *t, int v, bool isQuest, bool isCoin, float x,
   widthI = w;
   heightI = h;
 
+  name = n;
   value = v;
   isQuestObject = isQuest;
   isMoney = isCoin;

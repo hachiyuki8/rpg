@@ -4,6 +4,7 @@
 #include "../constants/controls.h"
 #include "../maps/map.h"
 #include "../screens/itemlist.h"
+#include "../screens/logs.h"
 #include "../screens/skills.h"
 #include "../screens/stats.h"
 #include <SDL.h>
@@ -15,8 +16,8 @@
 class Character {
 public:
   Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,
-            SDL_Texture *stats_t, TTF_Font *f, bool isCurrent = false,
-            PlayerState state = PlayerState::OTHER_NPC,
+            SDL_Texture *stats_t, SDL_Texture *logs_t, TTF_Font *f,
+            bool isCurrent = false, PlayerState state = PlayerState::OTHER_NPC,
             float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
@@ -26,9 +27,11 @@ public:
   virtual ~Character();
 
   void print();
+  void showHelp(); // TO-DO
   void showItemlist();
   void showSkills();
   void showStats();
+  void showLogs();
   void pickupObject(); // pick up at most one object
 
   void interact(); // when INTERACT key is pressed
@@ -38,6 +41,8 @@ public:
   bool onInteract(float x, float y, float w, float h); // TO-DO: only for NPCs
   void update(const Uint8 *keys);
   void render(SDL_Renderer *renderer);
+
+  void testing(); // TO-DO: for testing only
 
   static int nextID;
   Map *curMap;
@@ -60,11 +65,13 @@ private:
   Itemlist itemlist;
   Skills skills;
   Stats stats;
+  Logs logs;
   // TO-DO: quest screen, map, etc.
 
   void move(const Uint8 *keys, float dT);
   void renderObjectList(SDL_Renderer *renderer);
   void upgradeSkill(std::string s, int exp);
   void increaseExp(int exp);
+  void increaseMoney(int m);
   void increaseStat(std::string s, int val);
 };
