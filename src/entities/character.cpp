@@ -24,6 +24,7 @@ Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
   playerState = state;
 
   itemlist.texture = itemlist_t;
+  itemlist.font = f;
   skills.texture = skills_t;
   skills.font = f;
   skills.initAllSkills();
@@ -107,14 +108,17 @@ void Character::pickupObject() {
 
   for (auto &o : curMap->objects) {
     if (o.canPickup(xPos, yPos, width, height)) {
-      if (o.isMoney) {
+      if (o.type == ObjectType::MONEY) {
         stats.increaseMoney(&logs, o.value);
+        curMap->removeObject(o);
       } else {
-        std::string s = "-Picked up " + o.name;
-        logs.addLog(s);
-        itemlist.addItem(&logs, o);
+        bool success = itemlist.addItem(&logs, o, 1);
+        if (success) {
+          std::string s = "-Picked up " + o.name;
+          logs.addLog(s);
+          curMap->removeObject(o);
+        }
       }
-      curMap->removeObject(o);
       return;
     }
   }

@@ -2,8 +2,8 @@
 
 int Object::nextID = 0;
 
-Object::Object(std::string n, SDL_Texture *t, int v, bool isQuest, bool isCoin,
-               float x, float y, float w, float h) {
+Object::Object(std::string n, std::string d, SDL_Texture *t, int v,
+               ObjectType oType, float x, float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -22,9 +22,9 @@ Object::Object(std::string n, SDL_Texture *t, int v, bool isQuest, bool isCoin,
   heightI = h;
 
   name = n;
+  description = d;
   value = v;
-  isQuestObject = isQuest;
-  isMoney = isCoin;
+  type = oType;
 
   std::set<ObjectProperty> properties;
 }
@@ -41,13 +41,15 @@ void Object::print() {
 }
 
 void Object::setInteractRange(float left, float right, float up, float down) {
-  xPosI -= left;
-  widthI += left + right;
-  yPosI -= up;
-  heightI += up + down;
+  xPosI = xPos - left;
+  widthI = width + left + right;
+  yPosI = yPos - up;
+  heightI = height + up + down;
 }
 
-bool Object::operator==(const Object &o) { return (ID == o.ID); }
+bool Object::operator==(const Object &o) const { return (ID == o.ID); }
+
+bool Object::operator<(const Object &o) const { return (name < o.name); }
 
 bool Object::isInvalidPosition(float x, float y, float w, float h) {
   return (!properties.count(ObjectProperty::CAN_COLLIDE) &&
@@ -67,7 +69,12 @@ bool Object::canPickup(float x, float y, float w, float h) {
           isInObjectRange(x, y, w, h));
 }
 
-void Object::setItemlistPosition(float x, float y) {
+void Object::setPosition(float x, float y) {
+  xPos = x;
+  yPos = y;
+}
+
+void Object::setItemlistPosition(float x, float y) const {
   xPosIL = x;
   yPosIL = y;
 }
@@ -85,7 +92,7 @@ bool Object::onInteract(float x, float y, float w, float h) {
   return true;
 }
 
-bool Object::onUse() {
+bool Object::onUse() const {
   if (!properties.count(ObjectProperty::CAN_USE)) {
     return false;
   }
@@ -97,7 +104,7 @@ bool Object::onUse() {
   return true;
 }
 
-void Object::render(SDL_Renderer *renderer) {
+void Object::render(SDL_Renderer *renderer) const {
   SDL_Rect r;
   r.x = xPos;
   r.y = yPos;
@@ -107,7 +114,7 @@ void Object::render(SDL_Renderer *renderer) {
 }
 
 void Object::render(SDL_Renderer *renderer, float x, float y, float w,
-                    float h) {
+                    float h) const {
   SDL_Rect r;
   r.x = x;
   r.y = y;

@@ -45,9 +45,6 @@ void Stats::initAllStats(
   for (auto &s : st) {
     addStat(s.first, s.second.first, s.second.second);
   }
-  if (DEBUG) {
-    print();
-  }
 }
 
 void Stats::increaseExp(Logs *logs, int ex) {
@@ -74,8 +71,10 @@ void Stats::increaseExp(Logs *logs, int ex) {
 
 void Stats::increaseMoney(Logs *logs, int m) {
   money += m;
-  std::string s = "-Money increased to " + std::to_string(money);
-  logs->addLog(s);
+  if (m > 0) {
+    std::string s = "-Money increased to " + std::to_string(money);
+    logs->addLog(s);
+  }
   if (money > STATS_MAX_MONEY) {
     logs->addLog("-Max money reach");
     money = STATS_MAX_MONEY;

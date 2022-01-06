@@ -5,6 +5,7 @@
 #include "../entities/object.h"
 #include "logs.h"
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
@@ -16,11 +17,11 @@ public:
            float y = (SCREEN_HEIGHT - ITEMLIST_HEIGHT) / 2,
            float w = ITEMLIST_WIDTH, float h = ITEMLIST_HEIGHT,
            float g = ITEMLIST_GRID_SIZE, float o = ITEMLIST_OBJECT_SIZE,
-           int l = ITEM_LIMIT);
+           int l = ITEM_LIMIT, int pl = PER_ITEM_LIMIT);
   virtual ~Itemlist();
 
   void print();
-  void addItem(Logs *logs, Object o);
+  bool addItem(Logs *logs, Object o, int q);
   void useItem(Object o); // TO-DO
 
   void open(Logs *logs);
@@ -31,6 +32,7 @@ public:
 
   static int nextID;
   SDL_Texture *texture; // initialized in Character
+  TTF_Font *font;       // initialized in Character
 
 private:
   int ID;
@@ -46,13 +48,16 @@ private:
   int numCol;
 
   int limit;
+  int perLimit;
   int curSize = 0;
-  Object *curSelected = NULL;
-  std::vector<Object> items;
+  const Object *curSelected = NULL;
+  std::map<Object, int> items;
+
+  SDL_Color text_color = {0, 0, 0};
 
   void onLeftClick(Logs *logs, float x, float y); // select/unselect
   int onRightClick(
       Logs *logs, float x,
       float y); // sell selected if not a quest item, return item value
-  void removeItem(Object o);
+  bool decreaseItem(Object o); // return false if no more remaining
 };

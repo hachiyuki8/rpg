@@ -8,13 +8,14 @@
 
 class Object {
 public:
-  Object(std::string n, SDL_Texture *t, int v = 0, bool isQuest = false,
-         bool isCoin = false, float x = 0, float y = 0, float w = OBJECT_SIZE,
-         float h = OBJECT_SIZE);
+  Object(std::string n, std::string d, SDL_Texture *t, int v = 0,
+         ObjectType type = ObjectType::OTHERS, float x = 0, float y = 0,
+         float w = OBJECT_SIZE, float h = OBJECT_SIZE);
   virtual ~Object();
 
   void print();
-  bool operator==(const Object &o);
+  bool operator==(const Object &o) const;
+  bool operator<(const Object &o) const;
   void setInteractRange(float left, float right, float up, float down);
   bool
   isInvalidPosition(float x, float y, float w,
@@ -24,13 +25,14 @@ public:
   void removeObjectProperty(ObjectProperty prop);
   bool canPickup(float x, float y, float w,
                  float h); // true if object has CAN_PICKUP and position
-                           // collides with object
-  void setItemlistPosition(float x, float y);
+  // collides with object
+  void setPosition(float x, float y);
+  void setItemlistPosition(float x, float y) const;
 
   bool onInteract(float x, float y, float w, float h);
-  bool onUse();
-  void render(SDL_Renderer *renderer);
-  void render(SDL_Renderer *renderer, float x, float y, float w, float h);
+  bool onUse() const;
+  void render(SDL_Renderer *renderer) const;
+  void render(SDL_Renderer *renderer, float x, float y, float w, float h) const;
 
   static int nextID;
 
@@ -49,15 +51,15 @@ private:
   float widthI;
   float heightI;
 
-  // position in itemlist
-  float xPosIL = 0;
-  float yPosIL = 0;
-  bool isSelected = false; // if selected in item list
+  // position in itemlist, won't automatically update if item position changed
+  mutable float xPosIL = 0;
+  mutable float yPosIL = 0;
+  mutable bool isSelected = false; // if selected in item list
 
-  std::string name;
+  std::string name; // has to be unique for different objects
+  std::string description;
   int value;
-  bool isQuestObject = false; // cannot sell if true
-  bool isMoney = false;
+  ObjectType type;
   std::set<ObjectProperty> properties;
 
   bool isOnObject(float x, float y, float w,

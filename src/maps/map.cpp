@@ -47,7 +47,12 @@ void Map::print() {
 
 void Map::addTeleporter(Teleporter tp) { teleporters.push_back(tp); }
 
-void Map::addObject(Object o) { objects.push_back(o); }
+void Map::addObject(Object o) {
+  objects.push_back(o);
+  for (auto &o : objects) {
+    o.print();
+  }
+}
 
 void Map::removeObject(Object o) {
   objects.erase(std::remove(objects.begin(), objects.end(), o), objects.end());

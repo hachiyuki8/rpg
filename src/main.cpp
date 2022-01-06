@@ -59,15 +59,16 @@ int main(int argc, char **args) {
 
   // hardcoded for testing
   for (int i = 0; i < 5; i++) {
-    Object coin("coin", objectTextures[0], 10, false, true, 100 * (i + 1),
-                100 * (i + 1));
+    Object coin("coin", "coin 10", objectTextures[0], 10, ObjectType::OTHERS,
+                100 * (i + 1), 100 * (i + 1));
     coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
     coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
     coin.addObjectProperty(ObjectProperty::CAN_USE);
     coin.setInteractRange(5, 5, 5, 5);
     maps[0].addObject(coin);
   }
-  Object coin2("coin 2", objectTextures[0], 0, false, false, 600, 600);
+  Object coin2("coin 2", "coin 0", objectTextures[0], 0,
+               ObjectType::QUEST_OBJECT, 600, 600);
   coin2.addObjectProperty(ObjectProperty::CAN_PICKUP);
   coin2.setInteractRange(5, 5, 5, 5);
   maps[0].addObject(coin2);
