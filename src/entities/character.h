@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <vector>
 
+class Shop;
+
 class Character {
 public:
   Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,
@@ -38,14 +40,17 @@ public:
   void click(float x, float y,
              bool isLeft); // when left or right mouse button is clicked
   void confirm();          // when CONFIRM key is pressed
-  bool onInteract(float x, float y, float w, float h); // TO-DO: only for NPCs
   void update(const Uint8 *keys);
   void render(SDL_Renderer *renderer);
 
   void testing(); // TO-DO: for testing only
 
   static int nextID;
-  Map *curMap;
+  Map *curMap = NULL;
+  Shop *curShop = NULL;      // shop that's currently opened
+  CharacterNPC *curConvoNPC; // TO-DO: NPC that's currently talking to
+  UIState uiState = UIState::IN_GAME;
+  Logs logs;
 
 private:
   int ID;
@@ -61,11 +66,10 @@ private:
   bool isCurPlayer;
   PlayerState playerState;
 
-  UIState uiState = UIState::IN_GAME;
   Itemlist itemlist;
   Skills skills;
   Stats stats;
-  Logs logs;
+
   // TO-DO: quest screen, map, etc.
 
   void move(const Uint8 *keys, float dT);
@@ -74,4 +78,6 @@ private:
   void increaseExp(int exp);
   void increaseMoney(int m);
   void increaseStat(std::string s, int val);
+
+  friend class Shop;
 };

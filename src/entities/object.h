@@ -45,18 +45,20 @@ private:
   float width;
   float height;
 
-  // collider for interacting with the object, default to object size
+  // collider for interacting with the object, default to object size, won't
+  // automatically update if item position changed
   float xPosI;
   float yPosI;
   float widthI;
   float heightI;
 
-  // position in itemlist, won't automatically update if item position changed
+  // position in itemlist or shop
   mutable float xPosIL = 0;
   mutable float yPosIL = 0;
   mutable bool isSelected = false; // if selected in item list
 
-  std::string name; // has to be unique for different objects
+  std::string name; // has to be unique for different items since item list and
+                    // shops group items based on name instead of ID
   std::string description;
   int value;
   ObjectType type;
@@ -68,5 +70,6 @@ private:
                        float h); // if collides with object's interaction range
 
   friend class Itemlist;
+  friend class Shop;
   friend class Character;
 };

@@ -1,4 +1,5 @@
 #include "character.h"
+#include "../screens/shop.h"
 
 int Character::nextID = 0;
 
@@ -125,14 +126,22 @@ void Character::pickupObject() {
 }
 
 void Character::interact() {
-  if (uiState != UIState::IN_GAME) {
+  switch (uiState) {
+  case UIState::IN_SHOP:
+    curShop->close();
+    uiState = UIState::IN_GAME;
+    curShop = NULL;
+    return;
+  case UIState::IN_GAME:
+    break;
+  default:
     return;
   }
 
   Map *newMap;
   float newX, newY;
   std::tie(newMap, newX, newY) =
-      curMap->onInteract(curMap, xPos, yPos, width, height);
+      curMap->onInteract(this, curMap, xPos, yPos, width, height);
   if (newMap != curMap) {
     // change map, reset position to new tile center
     curMap = newMap;
@@ -151,6 +160,9 @@ void Character::click(float x, float y, bool isLeft) {
   case UIState::IN_SKILLS:
     skills.onClick(&logs, x, y, isLeft);
     break;
+  case UIState::IN_SHOP:
+    curShop->onClick(&logs, x, y);
+    break;
   default:
     break;
   }
@@ -163,6 +175,8 @@ void Character::confirm() {
     break;
   case UIState::IN_SKILLS:
     skills.onConfirm();
+  case UIState::IN_SHOP:
+    curShop->onConfirm(this);
   default:
     break;
   }
@@ -194,6 +208,10 @@ void Character::render(SDL_Renderer *renderer) {
   itemlist.render(renderer);
   skills.render(renderer);
   stats.render(renderer);
+  if (curShop) {
+    curShop->render(renderer);
+  }
+
   logs.render(renderer);
 }
 

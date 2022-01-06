@@ -81,6 +81,16 @@ void Stats::increaseMoney(Logs *logs, int m) {
   }
 }
 
+bool Stats::decreaseMoneyIfEnough(Logs *logs, int m) {
+  if (money - m >= 0) {
+    money -= m;
+    return true;
+  } else {
+    logs->addLog("-Not enough moeny");
+    return false;
+  }
+}
+
 void Stats::increaseStat(Logs *logs, std::string s, int val) {
   if (!stats.contains(s)) {
     std::cout << "Stat doesn't exists" << std::endl;

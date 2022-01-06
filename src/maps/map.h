@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants/constants.h"
+#include "../entities/characterNPC.h"
 #include "../entities/object.h"
 #include "../maps/teleporter.h"
 #include "../maps/tile.h"
@@ -25,14 +26,16 @@ public:
   void addTeleporter(Teleporter tp);
   void addObject(Object o);
   void removeObject(Object o);
+  void addNPC(CharacterNPC npc);
   bool isInvalidPosition(float x, float y, float w,
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
 
   // first check if can use any teleporters, then with any object,
   // will only carry out one interaction
-  std::tuple<Map *, float, float> onInteract(Map *curMap, float x, float y,
-                                             float w, float h);
+  std::tuple<Map *, float, float> onInteract(Character *curPlayer, Map *curMap,
+                                             float x, float y, float w,
+                                             float h);
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -46,7 +49,7 @@ private:
   std::vector<std::vector<Tile>> tiles;
   std::vector<Teleporter> teleporters;
   std::vector<Object> objects;
-  std::vector<Character *> characters; // TO-DO
+  std::vector<CharacterNPC> NPCs; // TO-DO
 
   friend class Character;
 };

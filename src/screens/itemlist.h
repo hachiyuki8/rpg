@@ -21,13 +21,15 @@ public:
   virtual ~Itemlist();
 
   void print();
+  void setInteractRange(float left, float right, float up, float down);
   bool addItem(Logs *logs, Object o, int q);
   void useItem(Object o); // TO-DO
 
   void open(Logs *logs);
   void close();
-  int onClick(Logs *logs, float x, float y, bool isLeft); // select/sell item
-  void onConfirm(Logs *logs);                             // use selected item
+  int onClick(Logs *logs, float x, float y,
+              bool isLeft);   // select/sell item, return item value
+  void onConfirm(Logs *logs); // use one of the selected item
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -56,8 +58,8 @@ private:
   SDL_Color text_color = {0, 0, 0};
 
   void onLeftClick(Logs *logs, float x, float y); // select/unselect
-  int onRightClick(
-      Logs *logs, float x,
-      float y); // sell selected if not a quest item, return item value
+  int onRightClick(Logs *logs, float x,
+                   float y);   // sell one of the selected if not a quest item,
+                               // return item value
   bool decreaseItem(Object o); // return false if no more remaining
 };

@@ -32,6 +32,7 @@ public:
       std::map<std::string, std::pair<std::string, int>> st = STATS_ALL);
   void increaseExp(Logs *log, int ex);
   void increaseMoney(Logs *log, int m);
+  bool decreaseMoneyIfEnough(Logs *log, int m);
   void increaseStat(Logs *log, std::string s, int val);
 
   void open();

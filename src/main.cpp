@@ -2,6 +2,7 @@
 #include "constants/controls.h"
 #include "constants/mapfiles.h"
 #include "entities/character.h"
+#include "entities/characterNPC.h"
 #include "entities/object.h"
 #include "maps/map.h"
 #include "maps/teleporter.h"
@@ -72,10 +73,19 @@ int main(int argc, char **args) {
   coin2.addObjectProperty(ObjectProperty::CAN_PICKUP);
   coin2.setInteractRange(5, 5, 5, 5);
   maps[0].addObject(coin2);
+
   Teleporter tp(&maps[0], &maps[1], 1, 15, 1, 0);
   maps[0].addTeleporter(tp);
   Teleporter tp2(&maps[1], &maps[0], 1, 0, 1, 15);
   maps[1].addTeleporter(tp2);
+
+  CharacterNPC npc1(player_t, itemlist_t, second_font, PlayerState::SHOP_NPC,
+                    800, 500);
+  maps[0].addNPC(npc1);
+  // TO-DO: why the following add won't work? copy issue?
+  Object coin3("coin 3", "coin 00", objectTextures[0], 10, ObjectType::OTHERS,
+               600, 600);
+  npc1.shop.addItem(coin3, 10);
 
   while (loop()) {
   }

@@ -47,16 +47,13 @@ void Map::print() {
 
 void Map::addTeleporter(Teleporter tp) { teleporters.push_back(tp); }
 
-void Map::addObject(Object o) {
-  objects.push_back(o);
-  for (auto &o : objects) {
-    o.print();
-  }
-}
+void Map::addObject(Object o) { objects.push_back(o); }
 
 void Map::removeObject(Object o) {
   objects.erase(std::remove(objects.begin(), objects.end(), o), objects.end());
 }
+
+void Map::addNPC(CharacterNPC npc) { NPCs.push_back(npc); }
 
 bool Map::isInvalidPosition(float x, float y, float w, float h) {
   for (auto &ts : tiles) {
@@ -76,8 +73,15 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
   return false;
 }
 
-std::tuple<Map *, float, float> Map::onInteract(Map *curMap, float x, float y,
+std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
+                                                Map *curMap, float x, float y,
                                                 float w, float h) {
+  for (auto &c : NPCs) {
+    if (c.onInteract(curPlayer, x, y, w, h)) {
+      return std::make_tuple(curMap, x, y);
+    }
+  }
+
   for (auto &tp : teleporters) {
     if (tp.src_map == curMap &&
         tiles[tp.src_row][tp.src_col].isInTile(x, y, w, h)) {
@@ -107,5 +111,9 @@ void Map::render(SDL_Renderer *renderer) {
 
   for (auto &o : objects) {
     o.render(renderer);
+  }
+
+  for (auto &npc : NPCs) {
+    npc.render(renderer);
   }
 }
