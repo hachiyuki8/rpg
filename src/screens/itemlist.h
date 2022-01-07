@@ -3,10 +3,12 @@
 #include "../constants/controls.h"
 #include "../constants/itemlist_constants.h"
 #include "../entities/object.h"
+#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
+#include <map>
 #include <math.h>
 #include <stdlib.h>
 #include <vector>
@@ -33,8 +35,6 @@ public:
   void render(SDL_Renderer *renderer);
 
   static int nextID;
-  SDL_Texture *texture; // initialized in Character
-  TTF_Font *font;       // initialized in Character
 
 private:
   int ID;
@@ -55,7 +55,9 @@ private:
   const Object *curSelected = NULL;
   std::map<Object, int> items;
 
-  SDL_Color text_color = {0, 0, 0};
+  SDL_Color text_color = ITEMLIST_COLOR;
+  SDL_Texture *texture = UIs[ITEMLIST_TEXTURE];
+  TTF_Font *font = fonts[ITEMLIST_FONT];
 
   void onLeftClick(Logs *logs, float x, float y); // select/unselect
   int onRightClick(Logs *logs, float x,

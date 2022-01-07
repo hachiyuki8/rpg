@@ -3,13 +3,13 @@ all: main
 main: main.o init.o character.o characterNPC.o map.o tile.o teleporter.o object.o itemlist.o skills.o stats.o logs.o shop.o
 	clang++ -std=c++20 -g -o main main.o init.o character.o characterNPC.o map.o tile.o teleporter.o object.o itemlist.o skills.o stats.o logs.o shop.o -L/opt/homebrew/Cellar/sdl2/2.0.18/lib -L/opt/homebrew/Cellar/sdl2_ttf/2.0.15/lib -L/opt/homebrew/Cellar/sdl2_image/2.0.5/lib -lSDL2 -lSDL2_ttf -lSDL2_image
 
-character.o: entities/character.cpp entities/character.h constants/character_constants.h constants/controls.h screens/itemlist.h maps/map.h screens/skills.h screens/stats.h screens/logs.h
+character.o: entities/character.cpp entities/character.h globals.h constants/character_constants.h constants/controls.h maps/map.h screens/itemlist.h screens/skills.h screens/stats.h screens/shop.h screens/logs.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 entities/character.cpp
 
-characterNPC.o: entities/characterNPC.cpp entities/characterNPC.h constants/character_constants.h screens/shop.h entities/character.h
+characterNPC.o: entities/characterNPC.cpp entities/characterNPC.h globals.h constants/npc_constants.h screens/shop.h entities/character.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 entities/characterNPC.cpp
 
-map.o: maps/map.cpp maps/map.h constants/constants.h entities/object.h maps/teleporter.h maps/tile.h
+map.o: maps/map.cpp maps/map.h globals.h constants/constants.h entities/characterNPC.h entities/object.h maps/teleporter.h maps/tile.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 maps/map.cpp
 
 tile.o: maps/tile.cpp maps/tile.h constants/tile_constants.h
@@ -21,22 +21,22 @@ teleporter.o: maps/teleporter.cpp maps/teleporter.h constants/constants.h
 object.o: entities/object.cpp entities/object.h constants/object_constants.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 entities/object.cpp
 
-itemlist.o: screens/itemlist.cpp screens/itemlist.h constants/itemlist_constants.h entities/object.h constants/controls.h
+itemlist.o: screens/itemlist.cpp screens/itemlist.h globals.h constants/itemlist_constants.h constants/controls.h entities/object.h screens/logs.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/itemlist.cpp
 
-skills.o: screens/skills.cpp screens/skills.h constants/skills_constants.h
+skills.o: screens/skills.cpp screens/skills.h globals.h constants/skills_constants.h screens/logs.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/skills.cpp
 
-stats.o: screens/stats.cpp screens/stats.h constants/stats_constants.h
+stats.o: screens/stats.cpp screens/stats.h globals.h constants/stats_constants.h screens/logs.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/stats.cpp
 
-logs.o: screens/logs.cpp screens/logs.h constants/logs_constants.h
+logs.o: screens/logs.cpp screens/logs.h globals.h constants/logs_constants.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/logs.cpp
 
-shop.o: screens/shop.cpp screens/shop.h constants/shop_constants.h entities/object.h constants/controls.h
+shop.o: screens/shop.cpp screens/shop.h globals.h constants/shop_constants.h constants/controls.h entities/character.h entities/object.h screens/logs.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/shop.cpp
 
-init.o: init.cpp init.h constants/constants.h constants/controls.h constants/mapfiles.h globals.h
+init.o: init.cpp init.h globals.h constants/constants.h constants/controls.h constants/mapfiles.h 
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 init.cpp
 
 main.o: main.cpp init.h globals.h

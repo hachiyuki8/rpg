@@ -5,9 +5,6 @@ int Tile::nextID = 0;
 Tile::Tile(SDL_Texture *t, float x, float y, float s, TileState ts) {
   ID = nextID;
   nextID++;
-  if (DEBUG) {
-    // std::cout << "Creating tile " << ID << std::endl;
-  }
 
   texture = t;
   xPos = x;
@@ -16,11 +13,7 @@ Tile::Tile(SDL_Texture *t, float x, float y, float s, TileState ts) {
   state = ts;
 }
 
-Tile::~Tile() {
-  if (DEBUG) {
-    // std::cout << "Destroying tile " << ID << std::endl;
-  }
-}
+Tile::~Tile() {}
 
 void Tile::print() {
   std::cout << "Tile " << ID << std::endl;

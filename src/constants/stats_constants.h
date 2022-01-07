@@ -1,4 +1,5 @@
 #pragma once
+#include "../globals.h"
 #include "constants.h"
 #include <map>
 #include <stdlib.h>
@@ -11,3 +12,6 @@ const std::map<std::string, std::pair<std::string, int>> STATS_ALL = {
     {"defense", std::make_pair("player defense", 0)}};
 const int STATS_MAX_MONEY = 999999;
 const int STATS_MAX_VALUE = 99;
+const int STATS_TEXTURE = 2;
+const int STATS_FONT = 2;
+const SDL_Color STATS_COLOR = {0, 0, 0};

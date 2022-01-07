@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../constants/character_constants.h"
+#include "../constants/npc_constants.h"
+#include "../globals.h"
 #include "../screens/shop.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -11,12 +12,10 @@ class Character;
 
 class CharacterNPC {
 public:
-  CharacterNPC(SDL_Texture *t, SDL_Texture *shop_t, TTF_Font *f,
-               PlayerState st = PlayerState::SHOP_NPC,
-               float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
-               float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
-               float w = DEFAULT_CHARACTER_WIDTH,
-               float h = DEFAULT_CHARACTER_HEIGHT);
+  CharacterNPC(SDL_Texture *t, NPCState st = NPCState::SHOP_NPC,
+               float x = (SCREEN_WIDTH - DEFAULT_NPC_WIDTH) / 2,
+               float y = (SCREEN_HEIGHT - DEFAULT_NPC_HEIGHT) / 2,
+               float w = DEFAULT_NPC_WIDTH, float h = DEFAULT_NPC_HEIGHT);
   virtual ~CharacterNPC();
 
   void print();
@@ -37,7 +36,7 @@ private:
   float yPos;
   float width;
   float height;
-  PlayerState state;
+  NPCState state;
 
   // collider for interacting with character, default to character size, won't
   // automatically update if character position changed

@@ -3,8 +3,8 @@
 
 int CharacterNPC::nextID = 0;
 
-CharacterNPC::CharacterNPC(SDL_Texture *t, SDL_Texture *shop_t, TTF_Font *f,
-                           PlayerState st, float x, float y, float w, float h) {
+CharacterNPC::CharacterNPC(SDL_Texture *t, NPCState st, float x, float y,
+                           float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -22,11 +22,6 @@ CharacterNPC::CharacterNPC(SDL_Texture *t, SDL_Texture *shop_t, TTF_Font *f,
   yPosI = y;
   widthI = w;
   heightI = h;
-
-  if (state == PlayerState::SHOP_NPC) {
-    shop.texture = shop_t;
-    shop.font = f;
-  }
 }
 
 CharacterNPC::~CharacterNPC() {
@@ -55,7 +50,7 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
   }
 
   switch (state) {
-  case PlayerState::SHOP_NPC:
+  case NPCState::SHOP_NPC:
     switch (curPlayer->uiState) {
     case UIState::IN_GAME:
       shop.open(&curPlayer->logs);

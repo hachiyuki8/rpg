@@ -3,6 +3,8 @@
 #include "constants/constants.h"
 #include "constants/controls.h"
 #include "constants/mapfiles.h"
+#include "entities/character.h"
+#include "entities/characterNPC.h"
 #include "entities/object.h"
 #include "globals.h"
 #include <SDL.h>
@@ -13,6 +15,7 @@
 #include <vector>
 
 bool init();
+void init_fonts();
 void init_NPC_texture();
 void init_object_texture();
 void init_tile_texture();

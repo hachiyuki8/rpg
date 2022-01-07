@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants/skills_constants.h"
+#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -51,8 +52,6 @@ public:
   void render(SDL_Renderer *renderer);
 
   static int nextID;
-  SDL_Texture *texture; // initialized in Character
-  TTF_Font *font;       // initialized in Character
 
 private:
   int ID;
@@ -69,7 +68,9 @@ private:
   float cardHeight;
   SkillCard *curSelected = NULL;
 
-  SDL_Color text_color = {255, 255, 255};
+  SDL_Color text_color = SKILLS_COLOR;
+  SDL_Texture *texture = UIs[SKILLS_TEXTURE];
+  TTF_Font *font = fonts[SKILLS_FONT];
 
   std::map<std::string, Skill> skills;
   std::vector<SkillCard> skillcards;

@@ -38,8 +38,6 @@ public:
   void render(SDL_Renderer *renderer);
 
   static int nextID;
-  SDL_Texture *texture; // initialized in CharacterNPC
-  TTF_Font *font;       // initialized in Character
 
 private:
   int ID;
@@ -58,5 +56,7 @@ private:
   const Object *curSelected = NULL;
   std::map<Object, int> items;
 
-  SDL_Color text_color = {0, 0, 0};
+  SDL_Color text_color = SHOP_COLOR;
+  SDL_Texture *texture = UIs[SHOP_TEXTURE];
+  TTF_Font *font = fonts[SHOP_FONT];
 };

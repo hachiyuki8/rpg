@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants/stats_constants.h"
+#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -38,8 +39,6 @@ public:
   void close();
   void render(SDL_Renderer *renderer);
   static int nextID;
-  SDL_Texture *texture; // initialized in Character
-  TTF_Font *font;       // initialized in Character
 
 private:
   int ID;
@@ -59,7 +58,9 @@ private:
   int money = 0;
   std::map<int, int> expPerLevel;
 
-  SDL_Color text_color = {0, 0, 0};
+  SDL_Color text_color = STATS_COLOR;
+  SDL_Texture *texture = UIs[STATS_TEXTURE];
+  TTF_Font *font = fonts[STATS_FONT];
   std::map<std::string, Stat> stats;
 
   void addStat(std::string s, std::string d, int val);

@@ -46,13 +46,12 @@ bool Shop::addItem(Object o, int q) {
       return false;
     }
   }
-  std::cout << items.size() << std::endl;
   return true;
 }
 
 void Shop::open(Logs *logs) {
   isShowing = true;
-  std::string s = "Press " + std::string(SDL_GetKeyName(CONFIRM)) +
+  std::string s = "-Press " + std::string(SDL_GetKeyName(CONFIRM)) +
                   " to use selected, " + std::string(SDL_GetKeyName(INTERACT)) +
                   " to close";
   logs->addLog(s);

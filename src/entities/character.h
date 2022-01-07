@@ -2,6 +2,7 @@
 
 #include "../constants/character_constants.h"
 #include "../constants/controls.h"
+#include "../globals.h"
 #include "../maps/map.h"
 #include "../screens/itemlist.h"
 #include "../screens/logs.h"
@@ -19,10 +20,7 @@ class Map;
 
 class Character {
 public:
-  Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,
-            SDL_Texture *stats_t, SDL_Texture *logs_t, TTF_Font *f,
-            bool isCurrent = false, PlayerState state = PlayerState::OTHER_NPC,
-            float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
+  Character(float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
             float w = DEFAULT_CHARACTER_WIDTH,
             float h = DEFAULT_CHARACTER_HEIGHT,
@@ -30,6 +28,7 @@ public:
             float yV = DEFAULT_CHARACTER_YVELOCITY);
   virtual ~Character();
 
+  void init();
   void print();
   void showHelp(); // TO-DO
   void showItemlist();
@@ -65,8 +64,6 @@ private:
   float height;
   float xVel;
   float yVel;
-  bool isCurPlayer;
-  PlayerState playerState;
 
   Itemlist itemlist;
   Skills skills;

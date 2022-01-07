@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants/logs_constants.h"
+#include "../globals.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <deque>
@@ -26,8 +27,6 @@ public:
   void render(SDL_Renderer *renderer);
 
   static int nextID;
-  SDL_Texture *texture; // initialized in Character
-  TTF_Font *font;       // initialized in Character
 
 private:
   int ID;
@@ -38,7 +37,10 @@ private:
   float width;
   float height;
 
-  SDL_Color text_color = {255, 255, 255};
+  SDL_Color text_color = LOGS_COLOR;
+  SDL_Texture *texture = UIs[LOGS_TEXTURE];
+  TTF_Font *font = fonts[LOGS_FONT];
+
   int offset = 10;
   int lineLimit;
   float lineHeight;

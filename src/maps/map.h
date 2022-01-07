@@ -31,8 +31,8 @@ public:
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
 
-  // first check if can interact with any NPC, then use any teleporters, then
-  // with any object, will only carry out one interaction
+  // check interaction in the following order: NPC->TP->Enemy->Object, will only
+  // carry out one interaction
   std::tuple<Map *, float, float> onInteract(Character *curPlayer, Map *curMap,
                                              float x, float y, float w,
                                              float h);

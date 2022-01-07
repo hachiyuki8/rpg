@@ -1,21 +1,23 @@
 #pragma once
 
-#include "entities/character.h"
-#include "entities/characterNPC.h"
-#include "maps/map.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <stdlib.h>
 #include <vector>
 
+class CharacterNPC;
+
 class Map;
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-extern TTF_Font *main_font, *second_font;
+extern TTF_Font *mainL_f, *mainM_f, *mainS_f, *mainL_bold_f, *mainM_bold_f,
+    *mainS_bold_f;
+extern std::vector<TTF_Font *> fonts;
 
 extern SDL_Texture *startup_t, *player_t;
 extern SDL_Texture *itemlist_t, *skills_t, *stats_t, *logs_t, *shop_t;
+extern std::vector<SDL_Texture *> UIs;
 extern SDL_Surface *startup_text;
 
 // elements in following vectors should only be used by reference

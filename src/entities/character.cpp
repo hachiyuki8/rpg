@@ -3,38 +3,20 @@
 
 int Character::nextID = 0;
 
-Character::Character(SDL_Texture *t, SDL_Texture *itemlist_t,
-                     SDL_Texture *skills_t, SDL_Texture *stats_t,
-                     SDL_Texture *logs_t, TTF_Font *f, bool isCurrent,
-                     PlayerState state, float x, float y, float w, float h,
-                     float xV, float yV) {
+Character::Character(float x, float y, float w, float h, float xV, float yV) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
     std::cout << "Creating character " << ID << std::endl;
   }
 
-  texture = t;
+  texture = player_t;
   xPos = x;
   yPos = y;
   width = w;
   height = h;
   xVel = xV;
   yVel = yV;
-  isCurPlayer = isCurrent;
-  playerState = state;
-
-  itemlist.texture = itemlist_t;
-  itemlist.font = f;
-  skills.texture = skills_t;
-  skills.font = f;
-  skills.initAllSkills();
-  stats.texture = stats_t;
-  stats.font = f;
-  stats.initAllStats();
-  logs.texture = logs_t;
-  logs.font = f;
-  logs.addLog("-Press H to see controls");
 
   lastUpdate = SDL_GetTicks();
 }
@@ -43,6 +25,12 @@ Character::~Character() {
   if (DEBUG) {
     std::cout << "Destroying character " << ID << std::endl;
   }
+}
+
+void Character::init() {
+  stats.initAllStats();
+  skills.initAllSkills();
+  logs.addLog("-Press H to see help/controls");
 }
 
 void Character::print() {

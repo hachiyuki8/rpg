@@ -28,8 +28,8 @@ int main(int argc, char **args) {
   }
 
   // player initialization
-  Character player(player_t, itemlist_t, skills_t, stats_t, logs_t, second_font,
-                   true, PlayerState::PLAYER);
+  Character player;
+  player.init();
   curPlayer = &player;
   curPlayer->curMap = &maps[0];
 
@@ -125,7 +125,6 @@ bool loop() {
       case INTERACT:
         if (gameState == GameState::IN_PROGRESS) {
           curPlayer->interact();
-          curPlayer->curMap->print();
         }
         break;
       case CONFIRM:
@@ -177,8 +176,9 @@ void renderStartScreen() {
 }
 
 void kill() {
-  TTF_CloseFont(main_font);
-  TTF_CloseFont(second_font);
+  for (auto &f : fonts) {
+    TTF_CloseFont(f);
+  }
 
   SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
@@ -193,10 +193,9 @@ void kill() {
   for (auto &t : objectTextures) {
     SDL_DestroyTexture(t);
   }
-  SDL_DestroyTexture(itemlist_t);
-  SDL_DestroyTexture(skills_t);
-  SDL_DestroyTexture(stats_t);
-  SDL_DestroyTexture(logs_t);
+  for (auto &t : uiTextures) {
+    SDL_DestroyTexture(t);
+  }
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

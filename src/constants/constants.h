@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL.h>
-#include <map>
 #include <stdlib.h>
 #include <string>
 #include <vector>
@@ -15,6 +14,8 @@ const std::string OBJECT_PATH = IMAGE_PATH + "objects/";
 const std::string TILE_PATH = IMAGE_PATH + "tiles/";
 const std::string UI_PATH = IMAGE_PATH + "UI/";
 
+const std::vector<std::string> FONTS = {
+    "0_abaddon_bold.ttf", "1_abaddon_light.ttf", "2_quicksand_regular.ttf"};
 const std::vector<std::string> NPCS = {"0_shop1.png"};
 const std::vector<std::string> OBJECTS = {
     "0_coin.png",     "1_flower1.png",  "2_flower2.png",   "3_flower3.png",
@@ -35,7 +36,8 @@ const std::vector<std::string> UI = {
     "0_textbox.png",   "1_grid1.png",  "2_grid2.png",   "3_panel1.png",
     "4_panel2.png",    "5_panel3.png", "6_panel4.png",  "7_longbox.png",
     "8_panel5.png",    "9_panel6.png", "10_panel7.png", "11_panel8.png",
-    "12_namecard.png", "13_box.png"};
+    "12_namecard.png", "13_box.png",   "14_grid3.png",  "15_grid4.png",
+    "16_grid5.png"};
 
 enum class GameState { PAUSE, IN_PROGRESS };
 enum class UIState {
