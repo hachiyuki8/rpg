@@ -3,8 +3,7 @@
 int Map::nextID = 0;
 
 // mapfile must have dimension (w/s) * (h/s)
-Map::Map(std::vector<SDL_Texture *> tileTextures,
-         std::vector<std::vector<int>> mapfile, float w, float h, float s) {
+Map::Map(std::vector<std::vector<int>> mapfile, float w, float h, float s) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -81,7 +80,6 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
       return std::make_tuple(curMap, x, y);
     }
   }
-
   for (auto &tp : teleporters) {
     if (tp.src_map == curMap &&
         tiles[tp.src_row][tp.src_col].isInTile(x, y, w, h)) {

@@ -14,6 +14,9 @@ Stats::Stats(std::string n, float x, float y, float w, float h,
   yPos = y;
   width = w;
   height = h;
+  offsetBorder = width / 12;
+  offsetLine = height / 9;
+  offset = width / 6;
 
   name = n;
   expPerLevel = exp;
@@ -126,8 +129,8 @@ void Stats::render(SDL_Renderer *renderer) {
       std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
     }
     SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, text);
-    r.x = xPos + offset;
-    r.y = yPos + offset;
+    r.x = xPos + offsetBorder;
+    r.y = yPos + offsetBorder;
     r.w = text->w;
     r.h = text->h;
     SDL_RenderCopy(renderer, t, NULL, &r);
@@ -143,7 +146,7 @@ void Stats::render(SDL_Renderer *renderer) {
       std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
     }
     t = SDL_CreateTextureFromSurface(renderer, text);
-    r.y += offset;
+    r.y += offsetLine;
     r.w = text->w;
     r.h = text->h;
     SDL_RenderCopy(renderer, t, NULL, &r);
@@ -157,19 +160,19 @@ void Stats::render(SDL_Renderer *renderer) {
       std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
     }
     t = SDL_CreateTextureFromSurface(renderer, text);
-    r.y += offset;
+    r.y += offsetLine;
     r.w = text->w;
     r.h = text->h;
     SDL_RenderCopy(renderer, t, NULL, &r);
     SDL_FreeSurface(text);
     SDL_DestroyTexture(t);
 
-    r.y += offset;
+    r.y += offsetLine;
 
     // stats
     for (auto &s : stats) {
       t = SDL_CreateTextureFromSurface(renderer, s.second.name_text);
-      r.y += offset;
+      r.y += offsetLine;
       r.w = s.second.name_text->w;
       r.h = s.second.name_text->h;
       SDL_RenderCopy(renderer, t, NULL, &r);
@@ -181,13 +184,13 @@ void Stats::render(SDL_Renderer *renderer) {
         std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
       }
       t = SDL_CreateTextureFromSurface(renderer, text);
-      r.x += offset * 2;
+      r.x += offset;
       r.w = text->w;
       r.h = text->h;
       SDL_RenderCopy(renderer, t, NULL, &r);
       SDL_FreeSurface(text);
       SDL_DestroyTexture(t);
-      r.x -= offset * 2;
+      r.x -= offset;
     }
   }
 };

@@ -10,4 +10,4 @@ enum class ObjectType {
   ADD_STAT,
   OTHERS
 };
-const int OBJECT_SIZE = 40;
+const int OBJECT_SIZE = 25;

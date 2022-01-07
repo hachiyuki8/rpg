@@ -21,8 +21,7 @@ struct Stat {
 class Stats {
 public:
   Stats(std::string n = "new player",
-        float x = (SCREEN_WIDTH - STATS_SCREEN_WIDTH) / 2,
-        float y = (SCREEN_HEIGHT - STATS_SCREEN_HEIGHT) / 2,
+        float x = SCREEN_WIDTH - STATS_SCREEN_WIDTH, float y = 0,
         float w = STATS_SCREEN_WIDTH, float h = STATS_SCREEN_HEIGHT,
         std::map<int, int> exp = PLAYER_EXP_PER_LEVEL);
   virtual ~Stats();
@@ -50,7 +49,9 @@ private:
   float yPos;
   float width;
   float height;
-  float offset = 60;
+  float offsetBorder;
+  float offsetLine;
+  float offset;
 
   std::string name;
   int level = 0;

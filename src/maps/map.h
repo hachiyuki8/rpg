@@ -3,6 +3,7 @@
 #include "../constants/constants.h"
 #include "../entities/characterNPC.h"
 #include "../entities/object.h"
+#include "../globals.h"
 #include "../maps/teleporter.h"
 #include "../maps/tile.h"
 #include <SDL.h>
@@ -17,8 +18,7 @@ class Character;
 
 class Map {
 public:
-  Map(std::vector<SDL_Texture *> tileTextures,
-      std::vector<std::vector<int>> mapfile, float w = SCREEN_WIDTH,
+  Map(std::vector<std::vector<int>> mapfile, float w = SCREEN_WIDTH,
       float h = SCREEN_HEIGHT, float s = TILE_SIZE);
   virtual ~Map();
 

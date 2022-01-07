@@ -38,8 +38,8 @@ bool Tile::isInvalidPosition(float x, float y, float w, float h) {
 void Tile::setTileState(TileState newState) { state = newState; }
 
 bool Tile::isInTile(float x, float y, float w, float h) {
-  return (xPos <= x && x + w <= xPos + size && yPos <= y &&
-          y + h <= yPos + size);
+  return (xPos <= x + w / 2 && x + w / 2 <= xPos + size && yPos <= y + h / 2 &&
+          y + h / 2 <= yPos + size);
 }
 
 void Tile::render(SDL_Renderer *renderer) {

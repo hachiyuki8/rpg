@@ -15,6 +15,8 @@
 
 class Shop;
 
+class Map;
+
 class Character {
 public:
   Character(SDL_Texture *t, SDL_Texture *itemlist_t, SDL_Texture *skills_t,

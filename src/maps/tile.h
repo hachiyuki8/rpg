@@ -16,7 +16,8 @@ public:
                          float h); // invalid if tile is unreachable and
                                    // position collides with tile
   void setTileState(TileState newState);
-  bool isInTile(float x, float y, float w, float h); // if entirely in tile
+  bool isInTile(float x, float y, float w,
+                float h); // if collides with tile center
 
   void render(SDL_Renderer *renderer);
 
