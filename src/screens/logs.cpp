@@ -22,7 +22,6 @@ Logs::~Logs() {
   if (DEBUG) {
     std::cout << "Destroying logs " << ID << std::endl;
   }
-  SDL_DestroyTexture(texture);
   for (auto &l : logs) {
     SDL_FreeSurface(l.text);
   }

@@ -21,20 +21,21 @@ TTF_Font *main_font, *second_font;
 SDL_Texture *startup_t, *player_t, *itemlist_t, *skills_t, *stats_t, *logs_t;
 SDL_Surface *startup_text;
 
+// elements in following vectors should only be used by reference
 std::vector<SDL_Texture *> characterTextures;
 std::vector<SDL_Texture *> tileTextures;
 std::vector<SDL_Texture *> objectTextures;
-
 std::vector<Map> maps;
+std::vector<CharacterNPC> NPCs;
 Character *curPlayer;
-std::vector<Character> characters;
 
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 static GameState gameState = GameState::PAUSE;
 
-void init_maps();
-void init_tiles();
 bool init();
+void init_tiles();
+void init_maps();
+void init_NPCs();
 bool loop();
 void kill();
 
@@ -51,16 +52,15 @@ int main(int argc, char **args) {
     return 1;
   }
 
+  // player initialization
   Character player(player_t, itemlist_t, skills_t, stats_t, logs_t, second_font,
                    true, PlayerState::PLAYER);
   curPlayer = &player;
-
-  init_maps();
   curPlayer->curMap = &maps[0];
 
   // hardcoded for testing
   for (int i = 0; i < 5; i++) {
-    Object coin("coin", "coin 10", objectTextures[0], 10, ObjectType::OTHERS,
+    Object coin("coin", "coin 10", objectTextures[0], 10, ObjectType::MONEY,
                 100 * (i + 1), 100 * (i + 1));
     coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
     coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
@@ -79,18 +79,10 @@ int main(int argc, char **args) {
   Teleporter tp2(&maps[1], &maps[0], 1, 0, 1, 15);
   maps[1].addTeleporter(tp2);
 
-  CharacterNPC npc1(player_t, itemlist_t, second_font, PlayerState::SHOP_NPC,
-                    800, 500);
-  maps[0].addNPC(npc1);
-  // TO-DO: why the following add won't work? copy issue?
-  Object coin3("coin 3", "coin 00", objectTextures[0], 10, ObjectType::OTHERS,
-               600, 600);
-  npc1.shop.addItem(coin3, 10);
-
   while (loop()) {
   }
 
-  // End the program
+  // end the program
   kill();
   return 0;
 }
@@ -211,11 +203,17 @@ void renderStartScreen() {
 bool init() {
   std::string path;
 
+  // libraries
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
     std::cout << "Error initializing SDL: " << SDL_GetError() << std::endl;
     return false;
   }
+  if (TTF_Init() < 0) {
+    std::cout << "Error intializing SDL_ttf: " << TTF_GetError() << std::endl;
+    return false;
+  }
 
+  // basics
   window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
                             SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -230,10 +228,7 @@ bool init() {
     return false;
   }
 
-  if (TTF_Init() < 0) {
-    std::cout << "Error intializing SDL_ttf: " << TTF_GetError() << std::endl;
-    return false;
-  }
+  // fonts
   path = FONT_PATH + std::string("main.ttf");
   main_font = TTF_OpenFont(path.c_str(), 36);
   if (!main_font) {
@@ -246,6 +241,7 @@ bool init() {
     return false;
   }
 
+  // texts
   SDL_Color text_color = {0, 0, 0};
   std::string s = "Press " + std::string(SDL_GetKeyName(START_GAME)) +
                   " to start/resume the game";
@@ -254,7 +250,7 @@ bool init() {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
 
-  // characters
+  // character textures
   path = IMAGE_PATH + std::string("character.bmp");
   SDL_Surface *image = SDL_LoadBMP(path.c_str());
   if (!image) {
@@ -267,10 +263,7 @@ bool init() {
     std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
   }
 
-  // tiles
-  init_tiles();
-
-  // objects
+  // object textures
   path = IMAGE_PATH + std::string("object.bmp");
   image = SDL_LoadBMP(path.c_str());
   if (!image) {
@@ -284,7 +277,7 @@ bool init() {
   }
   objectTextures.push_back(texture);
 
-  // others
+  // screen textures
   path = IMAGE_PATH + std::string("itemlist.bmp");
   image = SDL_LoadBMP(path.c_str());
   if (!image) {
@@ -333,17 +326,19 @@ bool init() {
     std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
   }
 
+  // tile textures
+  init_tiles();
+
+  // maps
+  init_maps();
+
+  // NPCs
+  init_NPCs();
+
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderClear(renderer);
 
   return true;
-}
-
-void init_maps() {
-  for (auto &map : MAPS) {
-    Map newMap(tileTextures, map);
-    maps.push_back(newMap);
-  }
 }
 
 void init_tiles() {
@@ -362,14 +357,31 @@ void init_tiles() {
   }
 }
 
+void init_maps() {
+  for (auto &map : MAPS) {
+    Map newMap(tileTextures, map);
+    maps.push_back(newMap);
+  }
+}
+
+void init_NPCs() {
+  CharacterNPC npc1(player_t, itemlist_t, second_font, PlayerState::SHOP_NPC,
+                    800, 500);
+  NPCs.push_back(npc1);
+  maps[0].addNPC(&NPCs[0]);
+  Object coin3("coin 3", "coin 00", objectTextures[0], 10, ObjectType::OTHERS,
+               600, 600);
+  NPCs[0].shop.addItem(coin3, 10);
+}
+
 void kill() {
   TTF_CloseFont(main_font);
   TTF_CloseFont(second_font);
+
   SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
   SDL_DestroyTexture(player_t);
-  SDL_DestroyTexture(itemlist_t);
-  SDL_DestroyTexture(skills_t);
+
   for (auto &t : characterTextures) {
     SDL_DestroyTexture(t);
   }
@@ -379,6 +391,11 @@ void kill() {
   for (auto &t : objectTextures) {
     SDL_DestroyTexture(t);
   }
+  SDL_DestroyTexture(itemlist_t);
+  SDL_DestroyTexture(skills_t);
+  SDL_DestroyTexture(stats_t);
+  SDL_DestroyTexture(logs_t);
+
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
 

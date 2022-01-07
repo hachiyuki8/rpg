@@ -26,13 +26,13 @@ public:
   void addTeleporter(Teleporter tp);
   void addObject(Object o);
   void removeObject(Object o);
-  void addNPC(CharacterNPC npc);
+  void addNPC(CharacterNPC *npc);
   bool isInvalidPosition(float x, float y, float w,
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
 
-  // first check if can use any teleporters, then with any object,
-  // will only carry out one interaction
+  // first check if can interact with any NPC, then use any teleporters, then
+  // with any object, will only carry out one interaction
   std::tuple<Map *, float, float> onInteract(Character *curPlayer, Map *curMap,
                                              float x, float y, float w,
                                              float h);
@@ -49,7 +49,7 @@ private:
   std::vector<std::vector<Tile>> tiles;
   std::vector<Teleporter> teleporters;
   std::vector<Object> objects;
-  std::vector<CharacterNPC> NPCs; // TO-DO
+  std::vector<CharacterNPC *> NPCs; // TO-DO
 
   friend class Character;
 };

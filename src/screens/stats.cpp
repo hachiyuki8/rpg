@@ -23,7 +23,6 @@ Stats::~Stats() {
   if (DEBUG) {
     std::cout << "Destroying stats " << ID << std::endl;
   }
-  SDL_DestroyTexture(texture);
   for (auto &s : stats) {
     SDL_FreeSurface(s.second.name_text);
     SDL_FreeSurface(s.second.description_text);

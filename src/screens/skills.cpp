@@ -27,7 +27,6 @@ Skills::~Skills() {
   if (DEBUG) {
     std::cout << "Destroying skills " << ID << std::endl;
   }
-  SDL_DestroyTexture(texture);
   for (auto &sc : skillcards) {
     SDL_FreeSurface(sc.name_text);
     SDL_FreeSurface(sc.description_text);

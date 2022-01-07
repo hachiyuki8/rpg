@@ -27,7 +27,6 @@ Itemlist::~Itemlist() {
   if (DEBUG) {
     std::cout << "Destroying itemlist " << ID << std::endl;
   }
-  SDL_DestroyTexture(texture);
 }
 
 void Itemlist::print() {

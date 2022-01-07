@@ -52,8 +52,9 @@ bool Shop::addItem(Object o, int q) {
 
 void Shop::open(Logs *logs) {
   isShowing = true;
-  std::string s =
-      "Press " + std::string(SDL_GetKeyName(CONFIRM)) + " to use selected";
+  std::string s = "Press " + std::string(SDL_GetKeyName(CONFIRM)) +
+                  " to use selected, " + std::string(SDL_GetKeyName(INTERACT)) +
+                  " to close";
   logs->addLog(s);
 }
 
@@ -135,7 +136,6 @@ void Shop::render(SDL_Renderer *renderer) {
     int nextC = 0;
     int offset = (grid_size - object_size) / 2;
     for (auto &o : items) {
-      std::cout << ">>>" << std::endl;
       float x = xPos + nextC * grid_size + offset;
       float y = yPos + nextR * grid_size + offset;
 

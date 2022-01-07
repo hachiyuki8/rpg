@@ -43,7 +43,6 @@ Character::~Character() {
   if (DEBUG) {
     std::cout << "Destroying character " << ID << std::endl;
   }
-  SDL_DestroyTexture(texture);
 }
 
 void Character::print() {
