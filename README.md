@@ -1,5 +1,5 @@
 # rpg
-An unknown theme 2D RPG game
+An unknown theme 2D RPG game written in C++ from scratch using SDL (in development)
 
 ### References
 
