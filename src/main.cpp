@@ -196,6 +196,9 @@ void kill() {
   for (auto &t : uiTextures) {
     SDL_DestroyTexture(t);
   }
+  for (auto &t : keyTextures) {
+    SDL_DestroyTexture(t.second);
+  }
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

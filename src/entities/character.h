@@ -4,6 +4,7 @@
 #include "../constants/controls.h"
 #include "../globals.h"
 #include "../maps/map.h"
+#include "../screens/help.h"
 #include "../screens/itemlist.h"
 #include "../screens/logs.h"
 #include "../screens/skills.h"
@@ -68,6 +69,7 @@ private:
   Itemlist itemlist;
   Skills skills;
   Stats stats;
+  Help help;
 
   // TO-DO: quest screen, map, etc.
 

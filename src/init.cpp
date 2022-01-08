@@ -4,17 +4,20 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 TTF_Font *mainL_f, *mainM_f, *mainS_f, *mainL_bold_f, *mainM_bold_f,
     *mainS_bold_f;
-std::vector<TTF_Font *> fonts;
 
 SDL_Texture *startup_t, *player_t;
-SDL_Texture *itemlist_t, *skills_t, *stats_t, *logs_t, *shop_t;
-std::vector<SDL_Texture *> UIs;
+SDL_Texture *itemlist_t, *skills_t, *stats_t, *logs_t, *shop_t, *help_t;
 SDL_Surface *startup_text;
+
+// indices in constants.h depend on order of elements in these
+std::vector<TTF_Font *> fonts;
+std::vector<SDL_Texture *> UIs;
 
 std::vector<SDL_Texture *> npcTextures;
 std::vector<SDL_Texture *> tileTextures;
 std::vector<SDL_Texture *> objectTextures;
 std::vector<SDL_Texture *> uiTextures;
+std::map<SDL_Keycode, SDL_Texture *> keyTextures;
 std::vector<Map> maps;
 std::vector<CharacterNPC> NPCs;
 
@@ -81,6 +84,7 @@ bool init() {
   init_object_texture();
   init_tile_texture();
   init_UI_texture();
+  init_key_texture();
 
   // maps
   init_maps();
@@ -210,7 +214,29 @@ void init_UI_texture() {
   stats_t = uiTextures[12];
   logs_t = uiTextures[13];
   shop_t = uiTextures[14];
-  UIs = {itemlist_t, skills_t, stats_t, logs_t, shop_t};
+  help_t = uiTextures[17];
+  UIs = {
+      itemlist_t, skills_t, stats_t, logs_t, shop_t, help_t,
+  };
+}
+
+void init_key_texture() {
+  for (auto &s : KEYBOARD) {
+    std::string path = KEY_PATH + s.second;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+    }
+
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+    }
+    keyTextures[s.first] = texture;
+    SDL_FreeSurface(image);
+  }
 }
 
 void init_maps() {

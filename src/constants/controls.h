@@ -5,6 +5,10 @@ const SDL_Scancode CONTROL_UP = SDL_SCANCODE_W;
 const SDL_Scancode CONTROL_LEFT = SDL_SCANCODE_A;
 const SDL_Scancode CONTROL_DOWN = SDL_SCANCODE_S;
 const SDL_Scancode CONTROL_RIGHT = SDL_SCANCODE_D;
+const SDL_Keycode UP = SDLK_w;
+const SDL_Keycode LEFT = SDLK_a;
+const SDL_Keycode DOWN = SDLK_s;
+const SDL_Keycode RIGHT = SDLK_d;
 
 const SDL_Keycode HELP = SDLK_h;
 const SDL_Keycode SHOW_ITEMS = SDLK_TAB;

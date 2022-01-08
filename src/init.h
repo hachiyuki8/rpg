@@ -20,5 +20,6 @@ void init_NPC_texture();
 void init_object_texture();
 void init_tile_texture();
 void init_UI_texture();
+void init_key_texture();
 void init_maps();
 void init_NPCs();

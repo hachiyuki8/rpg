@@ -30,6 +30,7 @@ Character::~Character() {
 void Character::init() {
   stats.initAllStats();
   skills.initAllSkills();
+  help.init();
   logs.addLog("-Press H to see help/controls");
 }
 
@@ -39,7 +40,18 @@ void Character::print() {
 }
 
 void Character::showHelp() {
-  // TO-DO
+  switch (uiState) {
+  case UIState::IN_GAME:
+    help.open();
+    uiState = UIState::IN_HELP;
+    break;
+  case UIState::IN_HELP:
+    help.close();
+    uiState = UIState::IN_GAME;
+    break;
+  default:
+    break;
+  }
 }
 
 void Character::showItemlist() {
@@ -192,6 +204,7 @@ void Character::render(SDL_Renderer *renderer) {
   r.h = height;
   SDL_RenderCopy(renderer, texture, NULL, &r);
 
+  help.render(renderer);
   itemlist.render(renderer);
   skills.render(renderer);
   stats.render(renderer);

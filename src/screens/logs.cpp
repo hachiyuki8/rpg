@@ -59,7 +59,7 @@ void Logs::render(SDL_Renderer *renderer) {
     r.w = width;
     r.h = height;
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureAlphaMod(texture, 200);
+    SDL_SetTextureAlphaMod(texture, LOGS_ALPHA);
     SDL_RenderCopy(renderer, texture, NULL, &r);
 
     r.x += offset;
