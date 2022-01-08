@@ -82,13 +82,18 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
   }
 
   for (auto &tp : teleporters) {
-    if (tp.src_map == curMap &&
-        tiles[tp.src_row][tp.src_col].isInTile(x, y, w, h)) {
-      // change map and return new tile center
-      return std::make_tuple(
-          tp.dest_map,
-          tp.dest_map->tiles[tp.dest_row][tp.dest_col].xPos + tileSize / 2,
-          tp.dest_map->tiles[tp.dest_row][tp.dest_col].yPos + tileSize / 2);
+    if (tp.src_map == curMap) {
+      for (auto &sd : tp.srcToDest) {
+        if (tiles[sd.first.first][sd.first.second].isInTile(x, y, w, h)) {
+          // change map and return new tile center
+          return std::make_tuple(
+              tp.dest_map,
+              tp.dest_map->tiles[sd.second.first][sd.second.second].xPos +
+                  tileSize / 2,
+              tp.dest_map->tiles[sd.second.first][sd.second.second].yPos +
+                  tileSize / 2);
+        }
+      }
     }
   }
 

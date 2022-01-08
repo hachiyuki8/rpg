@@ -2,8 +2,8 @@
 
 int Teleporter::nextID = 0;
 
-Teleporter::Teleporter(Map *src, Map *dest, int src_r, int src_c, int dest_r,
-                       int dest_c) {
+Teleporter::Teleporter(Map *src, Map *dest,
+                       std::map<std::pair<int, int>, std::pair<int, int>> sd) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -12,10 +12,7 @@ Teleporter::Teleporter(Map *src, Map *dest, int src_r, int src_c, int dest_r,
 
   src_map = src;
   dest_map = dest;
-  src_row = src_r;
-  src_col = src_c;
-  dest_row = dest_r;
-  dest_col = dest_c;
+  srcToDest = sd;
 }
 
 Teleporter::~Teleporter() {
@@ -24,8 +21,4 @@ Teleporter::~Teleporter() {
   }
 }
 
-void Teleporter::print() {
-  std::cout << "Teleporter " << ID << std::endl;
-  std::cout << "-From (" << src_row << ", " << src_col << ") to (" << dest_row
-            << ", " << dest_col << ")" << std::endl;
-}
+void Teleporter::print() { std::cout << "Teleporter " << ID << std::endl; }

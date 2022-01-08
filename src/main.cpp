@@ -49,9 +49,19 @@ int main(int argc, char **args) {
   coin2.setInteractRange(5, 5, 5, 5);
   maps[0].addObject(coin2);
 
-  Teleporter tp(&maps[0], &maps[1], 1, 31, 1, 0);
+  std::map<std::pair<int, int>, std::pair<int, int>> sd1 = {
+      {std::make_pair(1, 31), std::make_pair(1, 0)},
+      {std::make_pair(2, 31), std::make_pair(2, 0)},
+      {std::make_pair(3, 31), std::make_pair(3, 0)},
+  };
+  std::map<std::pair<int, int>, std::pair<int, int>> sd2 = {
+      {std::make_pair(1, 0), std::make_pair(1, 31)},
+      {std::make_pair(2, 0), std::make_pair(2, 31)},
+      {std::make_pair(3, 0), std::make_pair(3, 31)},
+  };
+  Teleporter tp(&maps[0], &maps[1], sd1);
   maps[0].addTeleporter(tp);
-  Teleporter tp2(&maps[1], &maps[0], 1, 0, 1, 31);
+  Teleporter tp2(&maps[1], &maps[0], sd2);
   maps[1].addTeleporter(tp2);
   // TO-DO: add dividers, don't use transparent bg yet for testing purpose
 
