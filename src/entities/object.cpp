@@ -104,10 +104,25 @@ bool Object::onUse() const {
   return true;
 }
 
-void Object::render(SDL_Renderer *renderer) const {
+void Object::render(SDL_Renderer *renderer, float camX, float camY, float camW,
+                    float camH) {
+  if (type == ObjectType::DIVIDER && !DEBUG) {
+    return;
+  }
+
+  if (xPos + width < camX || xPos > camX + camW || yPos + height < camY ||
+      yPos > camY + camH) {
+    return;
+  }
+
+  SDL_Rect s;
+  s.x = std::max(0.0f, round(camX - xPos));
+  s.y = std::max(0.0f, round(camY - yPos));
+  s.w = width - s.x;
+  s.h = height - s.y;
   SDL_Rect r;
-  r.x = xPos;
-  r.y = yPos;
+  r.x = xPos - camX;
+  r.y = yPos - camY;
   r.w = width;
   r.h = height;
   SDL_RenderCopy(renderer, texture, NULL, &r);

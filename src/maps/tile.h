@@ -3,6 +3,7 @@
 #include "../constants/tile_constants.h"
 #include <SDL.h>
 #include <iostream>
+#include <math.h>
 #include <stdlib.h>
 
 class Tile {
@@ -19,7 +20,8 @@ public:
   bool isInTile(float x, float y, float w,
                 float h); // if collides with tile center
 
-  void render(SDL_Renderer *renderer);
+  void render(SDL_Renderer *renderer, float camX, float camY, float camW,
+              float camH);
 
   static int nextID;
 

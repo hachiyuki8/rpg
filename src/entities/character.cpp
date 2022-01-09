@@ -18,6 +18,12 @@ Character::Character(float x, float y, float w, float h, float xV, float yV) {
   xVel = xV;
   yVel = yV;
 
+  camX = xPos + w / 2 - SCREEN_WIDTH / 2;
+  camY = yPos + h / 2 - SCREEN_HEIGHT / 2;
+  // for now assume camW and camH never change
+  camW = SCREEN_WIDTH;
+  camH = SCREEN_HEIGHT;
+
   lastUpdate = SDL_GetTicks();
 }
 
@@ -37,6 +43,7 @@ void Character::init() {
 void Character::print() {
   std::cout << "Character " << ID << std::endl;
   std::cout << "-pos: (" << xPos << ", " << yPos << ")" << std::endl;
+  std::cout << "-cam: (" << camX << ", " << camY << ")" << std::endl;
 }
 
 void Character::showHelp() {
@@ -195,11 +202,11 @@ void Character::update(const Uint8 *keys) {
 }
 
 void Character::render(SDL_Renderer *renderer) {
-  curMap->render(renderer);
+  curMap->render(renderer, camX, camY, camW, camH);
 
   SDL_Rect r;
-  r.x = xPos;
-  r.y = yPos;
+  r.x = xPos - camX;
+  r.y = yPos - camY;
   r.w = width;
   r.h = height;
   SDL_RenderCopy(renderer, texture, NULL, &r);
@@ -216,21 +223,39 @@ void Character::render(SDL_Renderer *renderer) {
 }
 
 void Character::move(const Uint8 *keys, float dT) {
-  if (keys[CONTROL_UP] && yPos - yVel * dT >= 0 &&
+  if (keys[CONTROL_UP] &&
       !curMap->isInvalidPosition(xPos, yPos - yVel * dT, width, height)) {
     yPos -= yVel * dT;
   }
-  if (keys[CONTROL_DOWN] && yPos + yVel * dT + height <= SCREEN_HEIGHT &&
+  if (keys[CONTROL_DOWN] &&
       !curMap->isInvalidPosition(xPos, yPos + yVel * dT, width, height)) {
     yPos += yVel * dT;
   }
-  if (keys[CONTROL_LEFT] && xPos - xVel * dT >= 0 &&
+  if (keys[CONTROL_LEFT] &&
       !curMap->isInvalidPosition(xPos - xVel * dT, yPos, width, height)) {
     xPos -= xVel * dT;
   }
-  if (keys[CONTROL_RIGHT] && xPos + xVel * dT + width <= SCREEN_WIDTH &&
+  if (keys[CONTROL_RIGHT] &&
       !curMap->isInvalidPosition(xPos + xVel * dT, yPos, width, height)) {
     xPos += xVel * dT;
+  }
+
+  xPos = round(xPos);
+  yPos = round(yPos);
+
+  camX = xPos + width / 2 - SCREEN_WIDTH / 2;
+  camY = yPos + height / 2 - SCREEN_HEIGHT / 2;
+  if (camX < 0) {
+    camX = 0;
+  }
+  if (camY < 0) {
+    camY = 0;
+  }
+  if (camX + camW > curMap->width) {
+    camX = curMap->width - camW;
+  }
+  if (camY + camH > curMap->height) {
+    camY = curMap->height - camH;
   }
 }
 
@@ -246,4 +271,4 @@ void Character::increaseStat(std::string s, int val) {
 
 void Character::increaseMoney(int m) { stats.increaseMoney(&logs, m); }
 
-void Character::testing() { increaseExp(200); }
+void Character::testing() { print(); }

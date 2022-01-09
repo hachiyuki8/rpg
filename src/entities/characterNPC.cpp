@@ -43,6 +43,11 @@ void CharacterNPC::setInteractRange(float left, float right, float up,
   heightI = height + up + down;
 }
 
+bool CharacterNPC::isInvalidPosition(float x, float y, float w, float h) {
+  return (xPos < x + w && x < xPos + width && yPos < y + h &&
+          y < yPos + height);
+}
+
 bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
                               float h) {
   if (!isInRange(x, y, w, h)) {
@@ -73,10 +78,21 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
   return false;
 }
 
-void CharacterNPC::render(SDL_Renderer *renderer) {
+void CharacterNPC::render(SDL_Renderer *renderer, float camX, float camY,
+                          float camW, float camH) {
+  if (xPos + width < camX || xPos > camX + camW || yPos + height < camY ||
+      yPos > camY + camH) {
+    return;
+  }
+
+  SDL_Rect s;
+  s.x = std::max(0.0f, round(camX - xPos));
+  s.y = std::max(0.0f, round(camY - yPos));
+  s.w = width - s.x;
+  s.h = height - s.y;
   SDL_Rect r;
-  r.x = xPos;
-  r.y = yPos;
+  r.x = xPos - camX;
+  r.y = yPos - camY;
   r.w = width;
   r.h = height;
   SDL_RenderCopy(renderer, texture, NULL, &r);

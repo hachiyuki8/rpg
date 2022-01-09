@@ -20,13 +20,14 @@ const std::vector<std::string> FONTS = {
     "0_abaddon_bold.ttf", "1_abaddon_light.ttf", "2_quicksand_regular.ttf"};
 const std::vector<std::string> NPCS = {"0_shop1.png"};
 const std::vector<std::string> OBJECTS = {
-    "0_coin.png",     "1_flower1.png",  "2_flower2.png",   "3_flower3.png",
-    "4_fence1.png",   "5_fence2.png",   "6_fence3.png",    "7_fence4.png",
-    "8_fence5.png",   "9_fence6.png",   "10_flower4.png",  "11_flower5.png",
-    "12_flower6.png", "13_flower7.png", "14_mailbox1.png", "15_mailbox2.png",
-    "16_sign1.png",   "17_sign2.png",   "18_sign3.png",    "19_rock1.png",
-    "20_rock2.png",   "21_tree1.png",   "22_tree2.png",    "23_house1.png",
-    "24_house2.png"};
+    "0_coin.png",      "1_flower1.png",  "2_flower2.png",   "3_flower3.png",
+    "4_fence1.png",    "5_fence2.png",   "6_fence3.png",    "7_fence4.png",
+    "8_fence5.png",    "9_fence6.png",   "10_flower4.png",  "11_flower5.png",
+    "12_flower6.png",  "13_flower7.png", "14_mailbox1.png", "15_mailbox2.png",
+    "16_sign1.png",    "17_sign2.png",   "18_sign3.png",    "19_rock1.png",
+    "20_rock2.png",    "21_tree1.png",   "22_tree2.png",    "23_house1.png",
+    "24_house2.png",   "25_house3.png",  "26_flower8.png",  "27_flower9.png",
+    "28_flower10.png", "29_bonfire.png"};
 const std::vector<std::string> TILES = {
     "0_water1.png",    "1_grass.png",     "2_land.png",      "3_ground.png",
     "4_water.png",     "5_pond1.png",     "6_pond2.png",     "7_pond3.png",

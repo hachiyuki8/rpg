@@ -3,6 +3,7 @@
 
 enum class ObjectProperty { CAN_COLLIDE, CAN_PICKUP, CAN_INTERACT, CAN_USE };
 enum class ObjectType {
+  DIVIDER,
   MONEY,
   QUEST_OBJECT,
   ADD_EXP,

@@ -2,7 +2,6 @@
 
 int Map::nextID = 0;
 
-// mapfile must have dimension (w/s) * (h/s)
 Map::Map(std::vector<std::vector<int>> mapfile, float w, float h, float s) {
   ID = nextID;
   nextID++;
@@ -55,6 +54,10 @@ void Map::removeObject(Object o) {
 void Map::addNPC(CharacterNPC *npc) { NPCs.push_back(npc); }
 
 bool Map::isInvalidPosition(float x, float y, float w, float h) {
+  if (x < 0 || x + w > width || y < 0 || y + h > height) {
+    return true;
+  }
+
   for (auto &ts : tiles) {
     for (auto &t : ts) {
       if (t.isInvalidPosition(x, y, w, h)) {
@@ -65,6 +68,12 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
 
   for (auto &o : objects) {
     if (o.isInvalidPosition(x, y, w, h)) {
+      return true;
+    }
+  }
+
+  for (auto &npc : NPCs) {
+    if (npc->isInvalidPosition(x, y, w, h)) {
       return true;
     }
   }
@@ -106,18 +115,19 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
   return std::make_tuple(curMap, x, y);
 }
 
-void Map::render(SDL_Renderer *renderer) {
+void Map::render(SDL_Renderer *renderer, float camX, float camY, float camW,
+                 float camH) {
   for (auto &ts : tiles) {
     for (auto &t : ts) {
-      t.render(renderer);
+      t.render(renderer, camX, camY, camW, camH);
     }
   }
 
   for (auto &o : objects) {
-    o.render(renderer);
+    o.render(renderer, camX, camY, camW, camH);
   }
 
   for (auto &npc : NPCs) {
-    npc->render(renderer);
+    npc->render(renderer, camX, camY, camW, camH);
   }
 }

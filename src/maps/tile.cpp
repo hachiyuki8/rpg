@@ -35,11 +35,25 @@ bool Tile::isInTile(float x, float y, float w, float h) {
           y + h / 2 <= yPos + size);
 }
 
-void Tile::render(SDL_Renderer *renderer) {
+void Tile::render(SDL_Renderer *renderer, float camX, float camY, float camW,
+                  float camH) {
+  if (xPos + size < camX || xPos > camX + camW || yPos + size < camY ||
+      yPos > camY + camH) {
+    return;
+  }
+
+  SDL_Rect s;
+  s.x = std::max(0.0f, round(camX - xPos));
+  s.y = std::max(0.0f, round(camY - yPos));
+  s.w = size - s.x;
+  s.h = size - s.y;
+  if (s.x > 0 || s.y > 0) {
+    std::cout << s.x << " " << s.y << " " << s.w << " " << s.h << std::endl;
+  }
   SDL_Rect r;
-  r.x = xPos;
-  r.y = yPos;
+  r.x = xPos - camX;
+  r.y = yPos - camY;
   r.w = size;
   r.h = size;
-  SDL_RenderCopy(renderer, texture, NULL, &r);
+  SDL_RenderCopy(renderer, texture, &s, &r);
 }

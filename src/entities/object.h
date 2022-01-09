@@ -3,6 +3,7 @@
 #include "../constants/object_constants.h"
 #include <SDL.h>
 #include <iostream>
+#include <math.h>
 #include <set>
 #include <stdlib.h>
 
@@ -31,8 +32,11 @@ public:
 
   bool onInteract(float x, float y, float w, float h);
   bool onUse() const;
-  void render(SDL_Renderer *renderer) const;
-  void render(SDL_Renderer *renderer, float x, float y, float w, float h) const;
+  void render(SDL_Renderer *renderer, float camX, float camY, float camW,
+              float camH);
+  void
+  render(SDL_Renderer *renderer, float x, float y, float w,
+         float h) const; // used for rendering objects in itemlist/shops/etc
 
   static int nextID;
 
@@ -57,8 +61,9 @@ private:
   mutable float yPosIL = 0;
   mutable bool isSelected = false; // if selected in item list
 
-  std::string name; // has to be unique for different items since item list and
-                    // shops group items based on name instead of ID
+  std::string
+      name; // different usable/pickable objects must have unique name since
+            // item list and shops group items based on name instead of ID
   std::string description;
   int value;
   ObjectType type;

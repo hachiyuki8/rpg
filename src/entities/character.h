@@ -12,6 +12,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
+#include <math.h>
 #include <stdlib.h>
 #include <vector>
 
@@ -65,6 +66,11 @@ private:
   float height;
   float xVel;
   float yVel;
+
+  float camX;
+  float camY;
+  float camW;
+  float camH;
 
   Itemlist itemlist;
   Skills skills;

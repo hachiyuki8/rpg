@@ -7,6 +7,7 @@
 #include "entities/characterNPC.h"
 #include "entities/object.h"
 #include "globals.h"
+#include "maps/map.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>

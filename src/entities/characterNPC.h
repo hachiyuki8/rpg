@@ -6,6 +6,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
+#include <math.h>
 #include <stdlib.h>
 
 class Character;
@@ -20,10 +21,12 @@ public:
 
   void print();
   void setInteractRange(float left, float right, float up, float down);
+  bool isInvalidPosition(float x, float y, float w, float h);
   bool onInteract(Character *curPlayer, float x, float y, float w,
                   float h); // caller ensures that curPlayer->uiState is IN_GAME
 
-  void render(SDL_Renderer *renderer);
+  void render(SDL_Renderer *renderer, float camX, float camY, float camW,
+              float camH);
 
   static int nextID;
   Shop shop;

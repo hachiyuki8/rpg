@@ -19,7 +19,8 @@ class Character;
 class Map {
 public:
   Map(std::vector<std::vector<int>> mapfile, float w = SCREEN_WIDTH,
-      float h = SCREEN_HEIGHT, float s = TILE_SIZE);
+      float h = SCREEN_HEIGHT,
+      float s = TILE_SIZE); // mapfile must have dimension (w/s) * (h/s)
   virtual ~Map();
 
   void print();
@@ -36,7 +37,8 @@ public:
   std::tuple<Map *, float, float> onInteract(Character *curPlayer, Map *curMap,
                                              float x, float y, float w,
                                              float h);
-  void render(SDL_Renderer *renderer);
+  void render(SDL_Renderer *renderer, float camX, float camY, float camW,
+              float camH);
 
   static int nextID;
 

@@ -28,42 +28,10 @@ int main(int argc, char **args) {
   }
 
   // player initialization
-  Character player;
+  Character player(80, 180);
   player.init();
   curPlayer = &player;
   curPlayer->curMap = &maps[0];
-
-  // hardcoded for testing
-  for (int i = 0; i < 5; i++) {
-    Object coin("coin", "coin 10", objectTextures[0], 10, ObjectType::MONEY,
-                100 * (i + 1), 100 * (i + 1));
-    coin.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-    coin.addObjectProperty(ObjectProperty::CAN_PICKUP);
-    coin.addObjectProperty(ObjectProperty::CAN_USE);
-    coin.setInteractRange(5, 5, 5, 5);
-    maps[0].addObject(coin);
-  }
-  Object coin2("coin 2", "coin 0", objectTextures[0], 0,
-               ObjectType::QUEST_OBJECT, 600, 600);
-  coin2.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  coin2.setInteractRange(5, 5, 5, 5);
-  maps[0].addObject(coin2);
-
-  std::map<std::pair<int, int>, std::pair<int, int>> sd1 = {
-      {std::make_pair(1, 31), std::make_pair(1, 0)},
-      {std::make_pair(2, 31), std::make_pair(2, 0)},
-      {std::make_pair(3, 31), std::make_pair(3, 0)},
-  };
-  std::map<std::pair<int, int>, std::pair<int, int>> sd2 = {
-      {std::make_pair(1, 0), std::make_pair(1, 31)},
-      {std::make_pair(2, 0), std::make_pair(2, 31)},
-      {std::make_pair(3, 0), std::make_pair(3, 31)},
-  };
-  Teleporter tp(&maps[0], &maps[1], sd1);
-  maps[0].addTeleporter(tp);
-  Teleporter tp2(&maps[1], &maps[0], sd2);
-  maps[1].addTeleporter(tp2);
-  // TO-DO: add dividers, don't use transparent bg yet for testing purpose
 
   while (loop()) {
   }
