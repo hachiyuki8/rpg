@@ -13,6 +13,7 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include <stdlib.h>
+#include <tuple>
 #include <vector>
 
 bool init();

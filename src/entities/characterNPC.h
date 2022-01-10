@@ -2,6 +2,7 @@
 
 #include "../constants/npc_constants.h"
 #include "../globals.h"
+#include "../screens/convo.h"
 #include "../screens/shop.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -20,16 +21,22 @@ public:
   virtual ~CharacterNPC();
 
   void print();
+  void init();
   void setInteractRange(float left, float right, float up, float down);
   bool isInvalidPosition(float x, float y, float w, float h);
   bool onInteract(Character *curPlayer, float x, float y, float w,
                   float h); // caller ensures that curPlayer->uiState is IN_GAME
 
+  void setConvo(std::vector<std::tuple<int, std::vector<std::string>>>
+                    lines); // update convo content
+  bool nextConvo();         // return false if convo ends
+  void quitConvo();
   void render(SDL_Renderer *renderer, float camX, float camY, float camW,
               float camH);
 
   static int nextID;
   Shop shop;
+  Convo convo; // can change from time to time
 
 private:
   int ID;

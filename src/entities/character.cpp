@@ -46,6 +46,25 @@ void Character::print() {
   std::cout << "-cam: (" << camX << ", " << camY << ")" << std::endl;
 }
 
+bool Character::quit() {
+  switch (uiState) {
+  case UIState::IN_GAME:
+    return true;
+  case UIState::IN_SHOP:
+    curShop->close();
+    curShop = NULL;
+    uiState = UIState::IN_GAME;
+    return false;
+  case UIState::IN_CONVO:
+    curConvoNPC->quitConvo();
+    curConvoNPC = NULL;
+    uiState = UIState::IN_GAME;
+    return false;
+  default:
+    return false;
+  }
+}
+
 void Character::showHelp() {
   switch (uiState) {
   case UIState::IN_GAME:
@@ -132,15 +151,7 @@ void Character::pickupObject() {
 }
 
 void Character::interact() {
-  switch (uiState) {
-  case UIState::IN_SHOP:
-    curShop->close();
-    uiState = UIState::IN_GAME;
-    curShop = NULL;
-    return;
-  case UIState::IN_GAME:
-    break;
-  default:
+  if (uiState != UIState::IN_GAME) {
     return;
   }
 
@@ -181,22 +192,28 @@ void Character::confirm() {
     break;
   case UIState::IN_SKILLS:
     skills.onConfirm();
+    break;
   case UIState::IN_SHOP:
     curShop->onConfirm(this);
+    break;
+  case UIState::IN_CONVO:
+    if (!curConvoNPC->nextConvo()) {
+      curConvoNPC = NULL;
+      uiState = UIState::IN_GAME;
+    }
+    break;
   default:
     break;
   }
 }
 
 void Character::update(const Uint8 *keys) {
-  if (uiState != UIState::IN_GAME) {
-    return;
-  }
-
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 
-  move(keys, dT);
+  if (uiState == UIState::IN_GAME) {
+    move(keys, dT);
+  }
 
   lastUpdate = current;
 }
@@ -219,7 +236,11 @@ void Character::render(SDL_Renderer *renderer) {
     curShop->render(renderer);
   }
 
-  logs.render(renderer);
+  if (curConvoNPC) {
+    curConvoNPC->convo.render(renderer);
+  } else {
+    logs.render(renderer);
+  }
 }
 
 void Character::move(const Uint8 *keys, float dT) {

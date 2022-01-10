@@ -51,9 +51,8 @@ bool Shop::addItem(Object o, int q) {
 
 void Shop::open(Logs *logs) {
   isShowing = true;
-  std::string s = "-Press " + std::string(SDL_GetKeyName(CONFIRM)) +
-                  " to use selected, " + std::string(SDL_GetKeyName(INTERACT)) +
-                  " to close";
+  std::string s =
+      "-Press " + std::string(SDL_GetKeyName(CONFIRM)) + " to use selected";
   logs->addLog(s);
 }
 

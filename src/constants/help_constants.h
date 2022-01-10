@@ -20,7 +20,7 @@ const SDL_Color HELP_COLOR = {0, 0, 0};
 
 const std::map<std::string, SDL_Keycode> HELP_ALL = {
     {"start game", START_GAME},
-    {"pause game", PAUSE_GAME},
+    {"quit current", QUIT},
     {"move up", UP},
     {"move left", LEFT},
     {"move down", DOWN},

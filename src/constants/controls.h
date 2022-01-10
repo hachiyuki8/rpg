@@ -20,4 +20,4 @@ const SDL_Keycode INTERACT = SDLK_f;
 const SDL_Keycode CONFIRM = SDLK_RETURN;
 
 const SDL_Keycode START_GAME = SDLK_CAPSLOCK;
-const SDL_Keycode PAUSE_GAME = SDLK_ESCAPE;
+const SDL_Keycode QUIT = SDLK_ESCAPE;

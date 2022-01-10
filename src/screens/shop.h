@@ -3,6 +3,7 @@
 #include "../constants/controls.h"
 #include "../constants/shop_constants.h"
 #include "../entities/object.h"
+#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>

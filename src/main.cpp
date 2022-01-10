@@ -28,10 +28,10 @@ int main(int argc, char **args) {
   }
 
   // player initialization
-  Character player(80, 180);
-  player.init();
-  curPlayer = &player;
-  curPlayer->curMap = &maps[0];
+  Character *player = new Character(80, 180);
+  player->init();
+  curPlayer = player;
+  curPlayer->curMap = maps[0];
 
   while (loop()) {
   }
@@ -65,9 +65,11 @@ bool loop() {
           SDL_Delay(10);
         }
         break;
-      case PAUSE_GAME:
+      case QUIT:
         if (gameState == GameState::IN_PROGRESS) {
-          gameState = GameState::PAUSE;
+          if (curPlayer->quit()) {
+            gameState = GameState::PAUSE;
+          }
         }
         break;
       case HELP:
@@ -154,6 +156,13 @@ void renderStartScreen() {
 }
 
 void kill() {
+  for (auto &m : maps) {
+    delete m;
+  }
+  for (auto &npc : allNPCs) {
+    delete npc;
+  }
+
   for (auto &f : fonts) {
     TTF_CloseFont(f);
   }

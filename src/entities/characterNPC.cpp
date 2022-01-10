@@ -56,19 +56,17 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
 
   switch (state) {
   case NPCState::SHOP_NPC:
-    switch (curPlayer->uiState) {
-    case UIState::IN_GAME:
+    if (curPlayer->uiState == UIState::IN_GAME) {
       shop.open(&curPlayer->logs);
       curPlayer->uiState = UIState::IN_SHOP;
       curPlayer->curShop = &shop;
-      break;
-    case UIState::IN_SHOP:
-      shop.close();
-      curPlayer->uiState = UIState::IN_GAME;
-      curPlayer->curShop = NULL;
-      break;
-    default:
-      break;
+    }
+    return true;
+  case NPCState::CONVO_NPC:
+    if (curPlayer->uiState == UIState::IN_GAME) {
+      convo.open();
+      curPlayer->uiState = UIState::IN_CONVO;
+      curPlayer->curConvoNPC = this;
     }
     return true;
   default: // TO-DO: other NPC types
@@ -77,6 +75,16 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
 
   return false;
 }
+
+void CharacterNPC::setConvo(
+    std::vector<std::tuple<int, std::vector<std::string>>> lines) {
+  convo.clear();
+  convo.init(lines);
+}
+
+bool CharacterNPC::nextConvo() { return convo.next(); }
+
+void CharacterNPC::quitConvo() { convo.close(); }
 
 void CharacterNPC::render(SDL_Renderer *renderer, float camX, float camY,
                           float camW, float camH) {

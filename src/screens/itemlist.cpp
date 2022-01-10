@@ -35,6 +35,7 @@ void Itemlist::print() {
 }
 
 bool Itemlist::addItem(Logs *logs, Object o, int q) {
+  o.isSelected = false;
   if (items.contains(o)) {
     items[o] += q;
     if (items[o] > perLimit) {
@@ -119,6 +120,7 @@ void Itemlist::render(SDL_Renderer *renderer) {
     int nextR = 0;
     int nextC = 0;
     int offset = (grid_size - object_size) / 2;
+    // TO-DO: maybe use something ordered to preserve order?
     for (auto &o : items) {
       float x = xPos + nextC * grid_size + offset;
       float y = yPos + nextR * grid_size + offset;

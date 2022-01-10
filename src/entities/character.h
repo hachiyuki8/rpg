@@ -32,6 +32,7 @@ public:
 
   void init();
   void print();
+  bool quit();     // when QUIT key is pressed, return true if game paused
   void showHelp(); // TO-DO
   void showItemlist();
   void showSkills();
@@ -50,8 +51,8 @@ public:
 
   static int nextID;
   Map *curMap = NULL;
-  Shop *curShop = NULL;      // shop that's currently opened
-  CharacterNPC *curConvoNPC; // TO-DO: NPC that's currently talking to
+  Shop *curShop = NULL;             // shop that's currently opened
+  CharacterNPC *curConvoNPC = NULL; // TO-DO: NPC that's currently talking to
   UIState uiState = UIState::IN_GAME;
   Logs logs;
 
