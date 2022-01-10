@@ -23,13 +23,13 @@ class Stats {
 public:
   Stats(std::string n = "new player",
         float x = SCREEN_WIDTH - STATS_SCREEN_WIDTH, float y = 0,
-        float w = STATS_SCREEN_WIDTH, float h = STATS_SCREEN_HEIGHT,
-        std::map<int, int> exp = PLAYER_EXP_PER_LEVEL);
+        float w = STATS_SCREEN_WIDTH, float h = STATS_SCREEN_HEIGHT);
   virtual ~Stats();
 
   void print();
   void initAllStats(
       std::map<std::string, std::pair<std::string, int>> st = STATS_ALL);
+  void increaseHP(int h);
   void increaseExp(Logs *log, int ex);
   void increaseMoney(Logs *log, int m);
   bool decreaseMoneyIfEnough(Logs *log, int m);
@@ -56,7 +56,9 @@ private:
   int level = 0;
   int exp = 0;
   int money = 0;
-  std::map<int, int> expPerLevel;
+  int hp;
+  std::map<int, int> expPerLevel = PLAYER_EXP_PER_LEVEL;
+  std::map<int, int> hpPerLevel = PLAYER_HP_PER_LEVEL;
 
   SDL_Color text_color = STATS_COLOR;
   SDL_Texture *texture = UIs[STATS_TEXTURE];

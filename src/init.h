@@ -18,6 +18,7 @@
 
 bool init();
 void init_fonts();
+void init_player_texture();
 void init_NPC_texture();
 void init_object_texture();
 void init_tile_texture();

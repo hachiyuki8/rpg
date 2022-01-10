@@ -39,15 +39,15 @@ void Convo::init(std::vector<std::tuple<int, std::vector<std::string>>> lines) {
 
     struct Line newL;
     if (index < 0) {
-      newL.icon = player_t;
+      newL.icon = playerIcon;
     } else {
       newL.icon = npcTextures[index];
     }
 
     for (auto &l : lines) {
       newL.lines.push_back(l);
-      SDL_Surface *line_text =
-          TTF_RenderText_Solid(font, l.c_str(), text_color);
+      SDL_Surface *line_text = TTF_RenderText_Blended_Wrapped(
+          font, l.c_str(), text_color, CONVO_WIDTH);
       if (!line_text) {
         std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
       }
@@ -108,7 +108,7 @@ void Convo::render(SDL_Renderer *renderer) {
       SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, l);
       SDL_RenderCopy(renderer, t, NULL, &r);
       SDL_DestroyTexture(t);
-      r.y += lineHeight;
+      r.y += l->h + lineHeight;
     }
   }
 }

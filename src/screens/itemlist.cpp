@@ -173,6 +173,7 @@ void Itemlist::onLeftClick(Logs *logs, float x, float y) {
         }
         curSelected = &i;
 
+        // use a UI similar to shop instead of writing to logs
         std::string s =
             "-Selected item: " + i.name + ", value: " + std::to_string(i.value);
         logs->addLog(s);

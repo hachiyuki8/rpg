@@ -5,7 +5,7 @@ SDL_Renderer *renderer;
 TTF_Font *mainL_f, *mainM_f, *mainS_f, *mainL_bold_f, *mainM_bold_f,
     *mainS_bold_f;
 
-SDL_Texture *startup_t, *player_t;
+SDL_Texture *startup_t;
 SDL_Texture *itemlist_t, *skills_t, *stats_t, *logs_t, *shop_t, *help_t,
     *convo_t;
 SDL_Texture *itemlist_bg, *shop_bg;
@@ -16,6 +16,9 @@ SDL_Surface *startup_text;
 std::vector<TTF_Font *> fonts;
 std::vector<SDL_Texture *> UIs;
 
+SDL_Texture *playerIcon;
+std::map<Direction, SDL_Texture *> playerStillTextures;
+std::map<Direction, std::vector<SDL_Texture *>> playerWalkTextures;
 std::vector<SDL_Texture *> npcTextures;
 std::vector<SDL_Texture *> tileTextures;
 std::vector<SDL_Texture *> objectTextures;
@@ -69,20 +72,7 @@ bool init() {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
 
-  // player textures
-  path = IMAGE_PATH + std::string("player/player.png");
-  SDL_Surface *image = IMG_Load(path.c_str());
-  if (!image) {
-    std::cout << "Error loading image " << path << ": " << SDL_GetError()
-              << std::endl;
-  }
-  player_t = SDL_CreateTextureFromSurface(renderer, image);
-  SDL_FreeSurface(image);
-  if (!player_t) {
-    std::cout << "Error creating texture for" << path << ": " << SDL_GetError()
-              << std::endl;
-  }
-
+  init_player_texture();
   init_NPC_texture();
   init_object_texture();
   init_tile_texture();
@@ -137,6 +127,91 @@ void init_fonts() {
   }
 
   fonts = {mainL_f, mainM_f, mainS_f, mainL_bold_f, mainM_bold_f, mainS_bold_f};
+}
+
+void init_player_texture() {
+  std::string path = PLAYER_PATH + PLAYER_ICON;
+  SDL_Surface *image = IMG_Load(path.c_str());
+  if (!image) {
+    std::cout << "Error loading image " << path << ": " << SDL_GetError()
+              << std::endl;
+  }
+  playerIcon = SDL_CreateTextureFromSurface(renderer, image);
+  if (!playerIcon) {
+    std::cout << "Error creating texture for " << path << ": " << SDL_GetError()
+              << std::endl;
+  }
+  SDL_FreeSurface(image);
+
+  for (auto &s : PLAYER_LEFT) {
+    std::string path = PLAYER_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+    }
+    playerWalkTextures[Direction::LEFT].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : PLAYER_RIGHT) {
+    std::string path = PLAYER_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+    }
+    playerWalkTextures[Direction::RIGHT].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : PLAYER_UP) {
+    std::string path = PLAYER_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+    }
+    playerWalkTextures[Direction::UP].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : PLAYER_DOWN) {
+    std::string path = PLAYER_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+    }
+    playerWalkTextures[Direction::DOWN].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  playerStillTextures[Direction::LEFT] = playerWalkTextures[Direction::LEFT][0];
+  playerStillTextures[Direction::RIGHT] =
+      playerWalkTextures[Direction::RIGHT][0];
+  playerStillTextures[Direction::UP] = playerWalkTextures[Direction::UP][0];
+  playerStillTextures[Direction::DOWN] = playerWalkTextures[Direction::DOWN][0];
 }
 
 void init_NPC_texture() {
@@ -495,8 +570,10 @@ void init_NPCs() {
   CharacterNPC *npc1 =
       new CharacterNPC(npcTextures[0], NPCState::SHOP_NPC, 620, 360, 80, 80);
   npc1->setInteractRange(5, 5, 5, 5);
-  Object coin3("coin 3", "coin 00", objectTextures[0], 10, ObjectType::OTHERS,
-               600, 600);
+  Object coin3("coin 3",
+               "coin coin coin coin coin coin coin coin coin coin coin coin "
+               "coin coin coin coin coin coin",
+               objectTextures[0], 10, ObjectType::OTHERS, 600, 600);
   npc1->shop.addItem(coin3, 10);
   allNPCs.push_back(npc1);
   maps[0]->addNPC(npc1);
@@ -506,7 +583,11 @@ void init_NPCs() {
   npc2->setInteractRange(5, 5, 5, 5);
   std::vector<std::tuple<int, std::vector<std::string>>> lines;
   lines.push_back(std::make_tuple(
-      1, std::vector<std::string>{"Hello world", "Just testing"}));
+      1,
+      std::vector<std::string>{
+          "Hello world", "Just testing testing testing testing testing testing "
+                         "testing testing testing testing testing testing "
+                         "testing testing testing testing testing"}));
   lines.push_back(std::make_tuple(-1, std::vector<std::string>{"Bruh"}));
   npc2->setConvo(lines);
   allNPCs.push_back(npc2);

@@ -68,7 +68,7 @@ void Shop::close() {
   isShowing = false;
 }
 
-void Shop::onClick(Logs *logs, float x, float y) {
+void Shop::onClick(float x, float y) {
   if (!isShowing) {
     return;
   }
@@ -82,10 +82,6 @@ void Shop::onClick(Logs *logs, float x, float y) {
           curSelected->isSelected = false;
         }
         curSelected = &i;
-
-        std::string s =
-            "-Selected item: " + i.name + ", cost: " + std::to_string(i.value);
-        logs->addLog(s);
       } else {
         // unselect this
         curSelected = NULL;
@@ -186,8 +182,10 @@ void Shop::render(SDL_Renderer *renderer) {
       float h = SHOP_SELECTED_SIZE;
       curSelected->render(renderer, x, y, w, h);
       // description
-      std::string s = curSelected->name + ": " + curSelected->description;
-      SDL_Surface *d = TTF_RenderText_Solid(font, s.c_str(), text_color);
+      std::string s = curSelected->name + ": " + curSelected->description +
+                      "\n\nCost: " + std::to_string(curSelected->value);
+      SDL_Surface *d = TTF_RenderText_Blended_Wrapped(font, s.c_str(),
+                                                      text_color, panelWidth);
       if (!d) {
         std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
       }

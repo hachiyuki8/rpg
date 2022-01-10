@@ -92,10 +92,7 @@ void Skills::upgradeSkill(Logs *logs, std::string s, int exp) {
   skills[s].curExp = newExp;
 }
 
-void Skills::open(Logs *logs) {
-  isShowing = true;
-  logs->addLog("-Left click to show skill description");
-}
+void Skills::open() { isShowing = true; }
 
 void Skills::close() {
   // unselect
@@ -106,15 +103,15 @@ void Skills::close() {
   isShowing = false;
 }
 
-void Skills::onClick(Logs *logs, float x, float y, bool isLeft) {
+void Skills::onClick(float x, float y, bool isLeft) {
   if (!isShowing) {
     return;
   }
 
   if (isLeft) {
-    onLeftClick(logs, x, y);
+    onLeftClick(x, y);
   } else {
-    onRightClick(logs, x, y);
+    onRightClick(x, y);
   }
 }
 
@@ -189,8 +186,8 @@ void Skills::addSkill(std::string s, std::string d, bool isUnlocked) {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
   newSC.name_text = name_text;
-  SDL_Surface *des_text =
-      TTF_RenderText_Solid(font, newS.description.c_str(), text_color);
+  SDL_Surface *des_text = TTF_RenderText_Blended_Wrapped(
+      font, newS.description.c_str(), text_color, cardWidth * 0.8);
   if (!des_text) {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
@@ -215,7 +212,7 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, sc.name_text);
   SDL_Rect r;
   r.x = sc.xPos + (cardWidth - sc.name_text->w) / 2;
-  r.y = sc.yPos + sc.name_text->h;
+  r.y = sc.yPos + sc.name_text->h * 2;
   r.w = sc.name_text->w;
   r.h = sc.name_text->h;
   SDL_RenderCopy(renderer, t, NULL, &r);
@@ -224,7 +221,7 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   // description
   t = SDL_CreateTextureFromSurface(renderer, sc.description_text);
   r.x = sc.xPos + (cardWidth - sc.description_text->w) / 2;
-  r.y += sc.name_text->h;
+  r.y += sc.name_text->h * 2;
   r.w = sc.description_text->w;
   r.h = sc.description_text->h;
   SDL_RenderCopy(renderer, t, NULL, &r);
@@ -242,21 +239,17 @@ void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   t = SDL_CreateTextureFromSurface(renderer, level_text);
   SDL_FreeSurface(level_text);
   r.x = sc.xPos + (cardWidth - level_text->w) / 2;
-  r.y = sc.yPos + cardHeight / 2;
+  r.y = sc.yPos + cardHeight - level_text->h * 3;
   r.w = level_text->w;
   r.h = level_text->h;
   SDL_RenderCopy(renderer, t, NULL, &r);
   SDL_DestroyTexture(t);
 }
 
-void Skills::onLeftClick(Logs *logs, float x, float y) {
+void Skills::onLeftClick(float x, float y) {
   for (auto &sc : skillcards) {
     if (sc.xPos < x && x < sc.xPos + sc.width && sc.yPos < y &&
         y < sc.yPos + sc.height) {
-      std::string s = "-" + sc.skill.name + ": " +
-                      sc.skill.description; // TO-DO: need line break?
-      logs->addLog(s);
-
       if (!sc.isSelected) {
         // unselect previous and select this
         if (curSelected) {
@@ -274,4 +267,4 @@ void Skills::onLeftClick(Logs *logs, float x, float y) {
   }
 }
 
-void Skills::onRightClick(Logs *logs, float x, float y) { return; } // TO-DO
+void Skills::onRightClick(float x, float y) { return; } // TO-DO

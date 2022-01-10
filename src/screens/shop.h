@@ -31,7 +31,7 @@ public:
 
   void open(Logs *logs);
   void close();
-  void onClick(Logs *logs, float x, float y); // select item
+  void onClick(float x, float y); // select item
   void onConfirm(
       Character
           *curPlayer); // buy one of the selected item, return item value or -1

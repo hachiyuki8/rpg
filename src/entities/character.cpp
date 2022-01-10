@@ -10,7 +10,8 @@ Character::Character(float x, float y, float w, float h, float xV, float yV) {
     std::cout << "Creating character " << ID << std::endl;
   }
 
-  texture = player_t;
+  stillTextures = playerStillTextures;
+  walkTextures = playerWalkTextures;
   xPos = x;
   yPos = y;
   width = w;
@@ -98,7 +99,7 @@ void Character::showItemlist() {
 void Character::showSkills() {
   switch (uiState) {
   case UIState::IN_GAME:
-    skills.open(&logs);
+    skills.open();
     uiState = UIState::IN_SKILLS;
     break;
   case UIState::IN_SKILLS:
@@ -175,10 +176,10 @@ void Character::click(float x, float y, bool isLeft) {
     stats.increaseMoney(&logs, m);
     break;
   case UIState::IN_SKILLS:
-    skills.onClick(&logs, x, y, isLeft);
+    skills.onClick(x, y, isLeft);
     break;
   case UIState::IN_SHOP:
-    curShop->onClick(&logs, x, y);
+    curShop->onClick(x, y);
     break;
   default:
     break;
@@ -226,7 +227,26 @@ void Character::render(SDL_Renderer *renderer) {
   r.y = yPos - camY;
   r.w = width;
   r.h = height;
-  SDL_RenderCopy(renderer, texture, NULL, &r);
+
+  switch (movementState) {
+  case MovementState::STILL:
+    SDL_RenderCopy(renderer, stillTextures[direction], NULL, &r);
+    break;
+  case MovementState::WALK:
+    walkIndices[direction].second++;
+    if (walkIndices[direction].second > PER_FRAME_LENGTH) {
+      // switch to next frame
+      walkIndices[direction].second = 0;
+      walkIndices[direction].first =
+          (walkIndices[direction].first + 1) % (walkTextures[direction].size());
+    }
+    SDL_RenderCopy(renderer,
+                   walkTextures[direction][walkIndices[direction].first], NULL,
+                   &r);
+    break;
+  default:
+    break;
+  }
 
   help.render(renderer);
   itemlist.render(renderer);
@@ -244,6 +264,7 @@ void Character::render(SDL_Renderer *renderer) {
 }
 
 void Character::move(const Uint8 *keys, float dT) {
+  // update player position
   if (keys[CONTROL_UP] &&
       !curMap->isInvalidPosition(xPos, yPos - yVel * dT, width, height)) {
     yPos -= yVel * dT;
@@ -260,10 +281,10 @@ void Character::move(const Uint8 *keys, float dT) {
       !curMap->isInvalidPosition(xPos + xVel * dT, yPos, width, height)) {
     xPos += xVel * dT;
   }
-
   xPos = round(xPos);
   yPos = round(yPos);
 
+  // update camera position
   camX = xPos + width / 2 - SCREEN_WIDTH / 2;
   camY = yPos + height / 2 - SCREEN_HEIGHT / 2;
   if (camX < 0) {
@@ -277,6 +298,26 @@ void Character::move(const Uint8 *keys, float dT) {
   }
   if (camY + camH > curMap->height) {
     camY = curMap->height - camH;
+  }
+
+  // update movement state and direction
+  if (keys[CONTROL_DOWN]) {
+    direction = Direction::DOWN;
+  }
+  if (keys[CONTROL_UP]) {
+    direction = Direction::UP;
+  }
+  if (keys[CONTROL_LEFT]) {
+    direction = Direction::LEFT;
+  }
+  if (keys[CONTROL_RIGHT]) {
+    direction = Direction::RIGHT;
+  }
+  if (!keys[CONTROL_UP] && !keys[CONTROL_DOWN] && !keys[CONTROL_LEFT] &&
+      !keys[CONTROL_RIGHT]) {
+    movementState = MovementState::STILL;
+  } else {
+    movementState = MovementState::WALK;
   }
 }
 

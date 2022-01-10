@@ -45,9 +45,9 @@ public:
   void unlockSkill(std::string s);
   void upgradeSkill(Logs *logs, std::string s, int exp);
 
-  void open(Logs *logs);
+  void open();
   void close();
-  void onClick(Logs *logs, float x, float y, bool isLeft); // select skill
+  void onClick(float x, float y, bool isLeft); // select skill
   void onConfirm(); // TO-DO: maybe allocate skill points?
   void render(SDL_Renderer *renderer);
 
@@ -78,7 +78,6 @@ private:
 
   void addSkill(std::string s, std::string d, bool isUnlocked);
   void renderCard(SDL_Renderer *renderer, SkillCard sc);
-  void onLeftClick(Logs *logs, float x, float y); // select/unselect
-  void onRightClick(Logs *logs, float x,
-                    float y); // TO-DO: maybe show description?
+  void onLeftClick(float x, float y);  // select/unselect
+  void onRightClick(float x, float y); // TO-DO
 };

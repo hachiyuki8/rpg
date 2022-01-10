@@ -50,16 +50,16 @@ public:
   void testing(); // TO-DO: for testing only
 
   static int nextID;
-  Map *curMap = NULL;
-  Shop *curShop = NULL;             // shop that's currently opened
-  CharacterNPC *curConvoNPC = NULL; // TO-DO: NPC that's currently talking to
+
   UIState uiState = UIState::IN_GAME;
   Logs logs;
+  Map *curMap = NULL;
+  Shop *curShop = NULL;             // shop that's currently opened
+  CharacterNPC *curConvoNPC = NULL; // NPC that's currently talking to
 
 private:
   int ID;
   Uint32 lastUpdate;
-  SDL_Texture *texture;
 
   float xPos;
   float yPos;
@@ -72,6 +72,18 @@ private:
   float camY;
   float camW;
   float camH;
+
+  Direction direction = Direction::RIGHT;
+  MovementState movementState = MovementState::STILL;
+  std::map<Direction, SDL_Texture *> stillTextures;
+  std::map<Direction, std::vector<SDL_Texture *>> walkTextures;
+  std::map<Direction, std::pair<int, int>> walkIndices = {
+      {Direction::LEFT, std::make_pair(0, 0)},
+      {Direction::RIGHT, std::make_pair(0, 0)},
+      {Direction::UP, std::make_pair(0, 0)},
+      {Direction::DOWN,
+       std::make_pair(0, 0)}}; // first int is index of current texture, second
+                               // int is how many frames it has lasted
 
   Itemlist itemlist;
   Skills skills;
@@ -87,5 +99,5 @@ private:
   void increaseMoney(int m);
   void increaseStat(std::string s, int val);
 
-  friend class Shop;
+  friend class Shop; // TO-DO: why is this not working
 };

@@ -7,14 +7,31 @@
 
 const bool DEBUG = true;
 
+const int FRAME_RATE = 60;
+
 const std::string FONT_PATH = "../fonts/";
 const std::string IMAGE_PATH = "../assets/";
 
+const std::string PLAYER_PATH = IMAGE_PATH + "player/";
 const std::string NPC_PATH = IMAGE_PATH + "NPCs/";
 const std::string OBJECT_PATH = IMAGE_PATH + "objects/";
 const std::string TILE_PATH = IMAGE_PATH + "tiles/";
 const std::string UI_PATH = IMAGE_PATH + "UI/";
 const std::string KEY_PATH = IMAGE_PATH + "keys/";
+
+const std::string PLAYER_ICON = "right_0.png";
+const std::vector<std::string> PLAYER_LEFT = {"left_0.png", "left_1.png",
+                                              "left_2.png", "left_3.png",
+                                              "left_4.png", "left_5.png"};
+const std::vector<std::string> PLAYER_RIGHT = {"right_0.png", "right_1.png",
+                                               "right_2.png", "right_3.png",
+                                               "right_4.png", "right_5.png"};
+const std::vector<std::string> PLAYER_UP = {"right_0.png", "right_1.png",
+                                            "right_2.png", "right_3.png",
+                                            "right_4.png", "right_5.png"};
+const std::vector<std::string> PLAYER_DOWN = {"right_0.png", "right_1.png",
+                                              "right_2.png", "right_3.png",
+                                              "right_4.png", "right_5.png"};
 
 const std::vector<std::string> FONTS = {
     "0_abaddon_bold.ttf", "1_abaddon_light.ttf", "2_quicksand_regular.ttf"};
@@ -65,6 +82,8 @@ enum class UIState {
   IN_SHOP,
   IN_CONVO,
 };
+enum class Direction { LEFT, RIGHT, UP, DOWN };
+enum class MovementState { STILL, WALK };
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;

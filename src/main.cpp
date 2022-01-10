@@ -41,6 +41,8 @@ int main(int argc, char **args) {
 }
 
 bool loop() {
+  Uint64 start = SDL_GetPerformanceCounter();
+
   SDL_Event evt;
 
   // clear the screen to white
@@ -139,6 +141,13 @@ bool loop() {
   }
 
   SDL_RenderPresent(renderer);
+
+  Uint64 end = SDL_GetPerformanceCounter();
+  float elapsedMS =
+      (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
+  // Cap FPS
+  SDL_Delay(floor((1000.0f / FRAME_RATE) - elapsedMS));
+
   return true;
 }
 
@@ -169,7 +178,12 @@ void kill() {
 
   SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
-  SDL_DestroyTexture(player_t);
+
+  for (auto &ts : playerWalkTextures) {
+    for (auto &t : ts.second) {
+      SDL_DestroyTexture(t);
+    }
+  }
 
   for (auto &t : npcTextures) {
     SDL_DestroyTexture(t);

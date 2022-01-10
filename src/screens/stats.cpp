@@ -2,8 +2,7 @@
 
 int Stats::nextID = 0;
 
-Stats::Stats(std::string n, float x, float y, float w, float h,
-             std::map<int, int> exp) {
+Stats::Stats(std::string n, float x, float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -19,7 +18,6 @@ Stats::Stats(std::string n, float x, float y, float w, float h,
   offset = width / 6;
 
   name = n;
-  expPerLevel = exp;
 }
 
 Stats::~Stats() {
@@ -36,6 +34,7 @@ void Stats::print() {
   std::cout << "Stats " << ID << std::endl;
   std::cout << "-Name: " << name << std::endl;
   std::cout << "-Level " << level << ": exp " << exp << std::endl;
+  std::cout << "-HP: " << hp << std::endl;
   for (auto &s : stats) {
     std::cout << "-Stat " << s.second.name << ": " << s.second.value
               << std::endl;
@@ -44,10 +43,13 @@ void Stats::print() {
 
 void Stats::initAllStats(
     std::map<std::string, std::pair<std::string, int>> st) {
+  hp = hpPerLevel[level];
   for (auto &s : st) {
     addStat(s.first, s.second.first, s.second.second);
   }
 }
+
+void Stats::increaseHP(int h) { hp = std::max(hpPerLevel[level], hp + h); }
 
 void Stats::increaseExp(Logs *logs, int ex) {
   int newLevel = level;
@@ -66,6 +68,7 @@ void Stats::increaseExp(Logs *logs, int ex) {
   if (newLevel > level) {
     std::string s = "-Leveled up to " + std::to_string(newLevel);
     logs->addLog(s);
+    hp = hpPerLevel[newLevel]; // hp filled when leveled up
   }
   level = newLevel;
   exp = newExp;
@@ -127,6 +130,20 @@ void Stats::render(SDL_Renderer *renderer) {
     SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, text);
     r.x = xPos + offsetBorder;
     r.y = yPos + offsetBorder;
+    r.w = text->w;
+    r.h = text->h;
+    SDL_RenderCopy(renderer, t, NULL, &r);
+    SDL_FreeSurface(text);
+    SDL_DestroyTexture(t);
+
+    // HP
+    std::string h = "HP: " + std::to_string(hp);
+    text = TTF_RenderText_Solid(font, h.c_str(), text_color);
+    if (!text) {
+      std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
+    }
+    t = SDL_CreateTextureFromSurface(renderer, text);
+    r.y += offsetLine;
     r.w = text->w;
     r.h = text->h;
     SDL_RenderCopy(renderer, t, NULL, &r);
