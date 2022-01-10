@@ -28,9 +28,8 @@ int main(int argc, char **args) {
   }
 
   // player initialization
-  Character *player = new Character(80, 180);
-  player->init();
-  curPlayer = player;
+  curPlayer = new Character(80, 180);
+  curPlayer->init();
   curPlayer->curMap = maps[0];
 
   while (loop()) {
@@ -156,6 +155,7 @@ void renderStartScreen() {
 }
 
 void kill() {
+  delete curPlayer;
   for (auto &m : maps) {
     delete m;
   }

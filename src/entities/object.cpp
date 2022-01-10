@@ -128,14 +128,14 @@ void Object::render(SDL_Renderer *renderer, float camX, float camY, float camW,
   SDL_RenderCopy(renderer, texture, NULL, &r);
 }
 
-void Object::render(SDL_Renderer *renderer, float x, float y, float w,
-                    float h) const {
+void Object::render(SDL_Renderer *renderer, float x, float y, float w, float h,
+                    bool ignore) const {
   SDL_Rect r;
   r.x = x;
   r.y = y;
   r.w = w;
   r.h = h;
-  if (isSelected) {
+  if (!ignore && isSelected) {
     SDL_SetTextureColorMod(texture, 127, 127, 127); // TO-DO: highlight item?
   }
   SDL_RenderCopy(renderer, texture, NULL, &r);

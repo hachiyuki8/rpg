@@ -2,8 +2,8 @@
 
 int Itemlist::nextID = 0;
 
-Itemlist::Itemlist(float x, float y, float w, float h, float g, float o, int l,
-                   int pl) {
+Itemlist::Itemlist(float x, float y, float w, float h, float g, float o,
+                   float b, int l, int pl) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -16,8 +16,9 @@ Itemlist::Itemlist(float x, float y, float w, float h, float g, float o, int l,
   height = h;
   grid_size = g;
   object_size = o;
-  numRow = floor(height / grid_size);
-  numCol = floor(width / grid_size);
+  border = b;
+  numRow = (height - border) / (grid_size + border);
+  numCol = (width - border) / (grid_size + border);
 
   limit = l;
   perLimit = pl;
@@ -106,11 +107,17 @@ void Itemlist::onConfirm(Logs *logs) {
 
 void Itemlist::render(SDL_Renderer *renderer) {
   if (isShowing) {
+    SDL_Rect r;
+    r.x = xPos;
+    r.y = yPos;
+    r.w = width;
+    r.h = height;
+    SDL_RenderCopy(renderer, background, NULL, &r);
+
     for (int row = 0; row < numRow; row++) {
       for (int col = 0; col < numCol; col++) {
-        SDL_Rect r;
-        r.x = xPos + col * grid_size;
-        r.y = yPos + row * grid_size;
+        r.x = xPos + border + col * (grid_size + border);
+        r.y = yPos + +border + row * (grid_size + border);
         r.w = grid_size;
         r.h = grid_size;
         SDL_RenderCopy(renderer, texture, NULL, &r);
@@ -122,8 +129,8 @@ void Itemlist::render(SDL_Renderer *renderer) {
     int offset = (grid_size - object_size) / 2;
     // TO-DO: maybe use something ordered to preserve order?
     for (auto &o : items) {
-      float x = xPos + nextC * grid_size + offset;
-      float y = yPos + nextR * grid_size + offset;
+      float x = xPos + border + nextC * (grid_size + border) + offset;
+      float y = yPos + border + nextR * (grid_size + border) + offset;
 
       // item
       o.first.setItemlistPosition(x, y);

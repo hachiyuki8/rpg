@@ -19,7 +19,8 @@ public:
            float y = (SCREEN_HEIGHT - ITEMLIST_HEIGHT) / 2,
            float w = ITEMLIST_WIDTH, float h = ITEMLIST_HEIGHT,
            float g = ITEMLIST_GRID_SIZE, float o = ITEMLIST_OBJECT_SIZE,
-           int l = ITEM_LIMIT, int pl = PER_ITEM_LIMIT);
+           float b = ITEMLIST_BORDER, int l = ITEM_LIMIT,
+           int pl = PER_ITEM_LIMIT);
   virtual ~Itemlist();
 
   void print();
@@ -30,9 +31,9 @@ public:
   void open(Logs *logs);
   void close();
   int onClick(Logs *logs, float x, float y,
-              bool isLeft);   // select/sell item, return item value
-  void onConfirm(Logs *logs); // use one of the selected item
-  void render(SDL_Renderer *renderer);
+              bool isLeft);            // select/sell item, return item value
+  void onConfirm(Logs *logs);          // use one of the selected item
+  void render(SDL_Renderer *renderer); // TO-DO: make it better
 
   static int nextID;
 
@@ -46,6 +47,7 @@ private:
   float height;
   float grid_size;
   float object_size;
+  float border;
   int numRow;
   int numCol;
 
@@ -56,6 +58,7 @@ private:
   std::map<Object, int> items;
 
   SDL_Color text_color = ITEMLIST_COLOR;
+  SDL_Texture *background = UIs[ITEMLIST_BACKGROUND];
   SDL_Texture *texture = UIs[ITEMLIST_TEXTURE];
   TTF_Font *font = fonts[ITEMLIST_FONT];
 

@@ -34,9 +34,10 @@ public:
   bool onUse() const;
   void render(SDL_Renderer *renderer, float camX, float camY, float camW,
               float camH);
-  void
-  render(SDL_Renderer *renderer, float x, float y, float w,
-         float h) const; // used for rendering objects in itemlist/shops/etc
+  void render(SDL_Renderer *renderer, float x, float y, float w, float h,
+              bool ignore = false)
+      const; // used for rendering objects in itemlist/shops/etc. If ignore =
+             // true, don't render item highlight
 
   static int nextID;
 

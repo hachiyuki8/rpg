@@ -18,6 +18,7 @@ extern TTF_Font *mainL_f, *mainM_f, *mainS_f, *mainL_bold_f, *mainM_bold_f,
 extern SDL_Texture *startup_t, *player_t;
 extern SDL_Texture *itemlist_t, *skills_t, *stats_t, *logs_t, *shop_t, *help_t,
     *convo_t;
+extern SDL_Texture *itemlist_bg, *shop_bg;
 extern SDL_Surface *startup_text;
 
 extern std::vector<TTF_Font *> fonts;

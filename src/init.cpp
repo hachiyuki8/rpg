@@ -8,9 +8,11 @@ TTF_Font *mainL_f, *mainM_f, *mainS_f, *mainL_bold_f, *mainM_bold_f,
 SDL_Texture *startup_t, *player_t;
 SDL_Texture *itemlist_t, *skills_t, *stats_t, *logs_t, *shop_t, *help_t,
     *convo_t;
+SDL_Texture *itemlist_bg, *shop_bg;
 SDL_Surface *startup_text;
 
 // indices in constants.h depend on order of elements in these
+// TO-DO: one day I will restructure these
 std::vector<TTF_Font *> fonts;
 std::vector<SDL_Texture *> UIs;
 
@@ -217,7 +219,10 @@ void init_UI_texture() {
   shop_t = uiTextures[14];
   help_t = uiTextures[17];
   convo_t = uiTextures[18];
-  UIs = {itemlist_t, skills_t, stats_t, logs_t, shop_t, help_t, convo_t};
+  itemlist_bg = uiTextures[19];
+  shop_bg = uiTextures[19];
+  UIs = {itemlist_t, skills_t, stats_t,     logs_t, shop_t,
+         help_t,     convo_t,  itemlist_bg, shop_bg};
 }
 
 void init_key_texture() {
