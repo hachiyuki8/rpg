@@ -26,6 +26,7 @@ std::vector<SDL_Texture *> uiTextures;
 std::map<SDL_Keycode, SDL_Texture *> keyTextures;
 std::vector<Map *> maps;
 std::vector<CharacterNPC *> allNPCs;
+std::vector<Enemy *> allEnemies;
 
 bool init() {
   std::string path;
@@ -543,6 +544,10 @@ void init_maps() {
   Map *second = new Map(MAPS[1], MAPS[1][0].size() * TILE_SIZE,
                         MAPS[1].size() * TILE_SIZE, TILE_SIZE);
   maps.push_back(second);
+
+  Object redHouse1("big red house", "", objectTextures[23], 0,
+                   ObjectType::OTHERS, 300, 100, 200, 200);
+  maps[1]->addObject(redHouse1);
 
   std::map<std::pair<int, int>, std::pair<int, int>> sd1 = {
       {std::make_pair(17, 25), std::make_pair(1, 0)},

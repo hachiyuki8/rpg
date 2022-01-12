@@ -5,6 +5,7 @@
 #include "constants/mapfiles.h"
 #include "entities/character.h"
 #include "entities/characterNPC.h"
+#include "entities/enemy.h"
 #include "entities/object.h"
 #include "globals.h"
 #include "maps/map.h"

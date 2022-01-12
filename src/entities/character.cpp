@@ -71,6 +71,7 @@ void Character::showHelp() {
   case UIState::IN_GAME:
     help.open();
     uiState = UIState::IN_HELP;
+    movementState = MovementState::STILL;
     break;
   case UIState::IN_HELP:
     help.close();
@@ -86,6 +87,7 @@ void Character::showItemlist() {
   case UIState::IN_GAME:
     itemlist.open(&logs);
     uiState = UIState::IN_ITEMLIST;
+    movementState = MovementState::STILL;
     break;
   case UIState::IN_ITEMLIST:
     itemlist.close();
@@ -101,6 +103,7 @@ void Character::showSkills() {
   case UIState::IN_GAME:
     skills.open();
     uiState = UIState::IN_SKILLS;
+    movementState = MovementState::STILL;
     break;
   case UIState::IN_SKILLS:
     skills.close();
@@ -116,6 +119,7 @@ void Character::showStats() {
   case UIState::IN_GAME:
     stats.open();
     uiState = UIState::IN_STATS;
+    movementState = MovementState::STILL;
     break;
   case UIState::IN_STATS:
     stats.close();
@@ -160,6 +164,7 @@ void Character::interact() {
   float newX, newY;
   std::tie(newMap, newX, newY) =
       curMap->onInteract(this, curMap, xPos, yPos, width, height);
+  movementState = MovementState::STILL;
   if (newMap != curMap) {
     // change map, reset position to new tile center
     curMap = newMap;
@@ -181,6 +186,8 @@ void Character::click(float x, float y, bool isLeft) {
   case UIState::IN_SHOP:
     curShop->onClick(x, y);
     break;
+  // case UIState::IN_GAME:
+  //   attack();
   default:
     break;
   }
@@ -332,5 +339,27 @@ void Character::increaseStat(std::string s, int val) {
 }
 
 void Character::increaseMoney(int m) { stats.increaseMoney(&logs, m); }
+
+void Character::attack() {
+  std::tuple<int, Enemy *> res =
+      curMap->onAttack(stats.getStat("attack"), xPos, yPos, width, height);
+  if (std::get<0>(res) >= 0) {
+    int dmg = calculateDamage(std::get<0>(res));
+    stats.increaseHP(dmg * -1);
+    // TO-DO: if HP<0 do something?
+  }
+  if (std::get<1>(res)) {
+    // enemy killed, add reward
+    calculateReward(std::get<1>(res), std::get<0>(res));
+  }
+}
+
+int Character::calculateDamage(int diff) {
+  return diff * 10; // TO-DO: also not sure
+}
+
+void Character::calculateReward(Enemy *e, int diff) {
+  e->print(); // TO-DO: add reward
+}
 
 void Character::testing() { print(); }

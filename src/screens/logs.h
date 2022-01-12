@@ -16,8 +16,7 @@ struct Log {
 class Logs {
 public:
   Logs(float x = 0, float y = SCREEN_HEIGHT - LOGS_SCREEN_HEIGHT,
-       float w = LOGS_SCREEN_WIDTH, float h = LOGS_SCREEN_HEIGHT,
-       int l = LOGS_LINE_LIMIT);
+       float w = LOGS_SCREEN_WIDTH, float h = LOGS_SCREEN_HEIGHT);
   virtual ~Logs();
 
   void print();
@@ -42,9 +41,7 @@ private:
   TTF_Font *font = fonts[LOGS_FONT];
 
   int offset = 10;
-  int lineLimit;
   float lineHeight;
-  int curSize = 0;
 
   std::deque<Log> logs;
 };

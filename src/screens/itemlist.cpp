@@ -2,8 +2,7 @@
 
 int Itemlist::nextID = 0;
 
-Itemlist::Itemlist(float x, float y, float w, float h, float g, float o,
-                   float b, int l, int pl) {
+Itemlist::Itemlist(float x, float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -14,14 +13,8 @@ Itemlist::Itemlist(float x, float y, float w, float h, float g, float o,
   yPos = y;
   width = w;
   height = h;
-  grid_size = g;
-  object_size = o;
-  border = b;
-  numRow = (height - border) / (grid_size + border);
-  numCol = (width - border) / (grid_size + border);
-
-  limit = l;
-  perLimit = pl;
+  numRow = (height - ITEMLIST_BORDER) / (ITEMLIST_GRID_SIZE + ITEMLIST_BORDER);
+  numCol = (width - ITEMLIST_BORDER) / (ITEMLIST_GRID_SIZE + ITEMLIST_BORDER);
 }
 
 Itemlist::~Itemlist() {
@@ -32,21 +25,20 @@ Itemlist::~Itemlist() {
 
 void Itemlist::print() {
   std::cout << "Itemlist " << ID << std::endl;
-  std::cout << "-Current size: " << curSize << std::endl;
+  std::cout << "-Current size: " << items.size() << std::endl;
 }
 
 bool Itemlist::addItem(Logs *logs, Object o, int q) {
   o.isSelected = false;
   if (items.contains(o)) {
     items[o] += q;
-    if (items[o] > perLimit) {
+    if (items[o] > PER_ITEM_LIMIT) {
       logs->addLog("Max quantity per item reached");
       items[o] -= q;
       return false;
     }
   } else {
-    if (curSize + 1 <= limit) {
-      curSize++;
+    if (items.size() < ITEM_LIMIT) {
       items[o] = q;
     } else {
       logs->addLog("No more space in bag");
@@ -116,25 +108,30 @@ void Itemlist::render(SDL_Renderer *renderer) {
 
     for (int row = 0; row < numRow; row++) {
       for (int col = 0; col < numCol; col++) {
-        r.x = xPos + border + col * (grid_size + border);
-        r.y = yPos + +border + row * (grid_size + border);
-        r.w = grid_size;
-        r.h = grid_size;
+        r.x = xPos + ITEMLIST_BORDER +
+              col * (ITEMLIST_GRID_SIZE + ITEMLIST_BORDER);
+        r.y = yPos + +ITEMLIST_BORDER +
+              row * (ITEMLIST_GRID_SIZE + ITEMLIST_BORDER);
+        r.w = ITEMLIST_GRID_SIZE;
+        r.h = ITEMLIST_GRID_SIZE;
         SDL_RenderCopy(renderer, texture, NULL, &r);
       }
     }
 
     int nextR = 0;
     int nextC = 0;
-    int offset = (grid_size - object_size) / 2;
+    int offset = (ITEMLIST_GRID_SIZE - ITEMLIST_OBJECT_SIZE) / 2;
     // TO-DO: maybe use something ordered to preserve order?
     for (auto &o : items) {
-      float x = xPos + border + nextC * (grid_size + border) + offset;
-      float y = yPos + border + nextR * (grid_size + border) + offset;
+      float x = xPos + ITEMLIST_BORDER +
+                nextC * (ITEMLIST_GRID_SIZE + ITEMLIST_BORDER) + offset;
+      float y = yPos + ITEMLIST_BORDER +
+                nextR * (ITEMLIST_GRID_SIZE + ITEMLIST_BORDER) + offset;
 
       // item
       o.first.setItemlistPosition(x, y);
-      o.first.render(renderer, x, y, object_size, object_size);
+      o.first.render(renderer, x, y, ITEMLIST_OBJECT_SIZE,
+                     ITEMLIST_OBJECT_SIZE);
 
       // quantity
       SDL_Surface *q = TTF_RenderText_Solid(
@@ -144,8 +141,8 @@ void Itemlist::render(SDL_Renderer *renderer) {
       }
       SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, q);
       SDL_Rect r0;
-      r0.x = x - offset + grid_size - q->w;
-      r0.y = y - offset + grid_size - q->h;
+      r0.x = x - offset + ITEMLIST_GRID_SIZE - q->w;
+      r0.y = y - offset + ITEMLIST_GRID_SIZE - q->h;
       r0.w = q->w;
       r0.h = q->h;
       SDL_RenderCopy(renderer, t, NULL, &r0);
@@ -164,8 +161,8 @@ void Itemlist::render(SDL_Renderer *renderer) {
 
 void Itemlist::onLeftClick(Logs *logs, float x, float y) {
   for (auto &[i, q] : items) {
-    if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
-        y < i.yPosIL + object_size) {
+    if (i.xPosIL < x && x < i.xPosIL + ITEMLIST_OBJECT_SIZE && i.yPosIL < y &&
+        y < i.yPosIL + ITEMLIST_OBJECT_SIZE) {
       if (!i.isSelected) {
         // unselect previous and select this
         if (curSelected) {
@@ -188,8 +185,8 @@ void Itemlist::onLeftClick(Logs *logs, float x, float y) {
 
 int Itemlist::onRightClick(Logs *logs, float x, float y) {
   for (auto &[i, q] : items) {
-    if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
-        y < i.yPosIL + object_size) {
+    if (i.xPosIL < x && x < i.xPosIL + ITEMLIST_OBJECT_SIZE && i.yPosIL < y &&
+        y < i.yPosIL + ITEMLIST_OBJECT_SIZE) {
       if (i.isSelected && i.type != ObjectType::QUEST_OBJECT) {
         std::string s = "-Sold " + i.name + " for " + std::to_string(i.value);
         logs->addLog(s);
@@ -216,7 +213,6 @@ bool Itemlist::decreaseItem(Object o) {
   }
   items[o]--;
   if (items[o] == 0) {
-    curSize--;
     items.erase(o);
     return false;
   }

@@ -35,13 +35,11 @@ public:
   Skills(float x = (SCREEN_WIDTH - SKILLS_SCREEN_WIDTH) / 2,
          float y = (SCREEN_HEIGHT - SKILLS_SCREEN_HEIGHT) / 2,
          float w = SKILLS_SCREEN_WIDTH, float h = SKILLS_SCREEN_HEIGHT,
-         int r = SKILLCARD_ROW, int c = SKILLCARD_COL,
          std::map<int, int> exp = SKILLS_EXP_PER_LEVEL);
   virtual ~Skills();
 
   void print();
-  void initAllSkills(
-      std::map<std::string, std::pair<std::string, bool>> sk = SKILLS_ALL);
+  void initAllSkills(); // SKILLS_ALL
   void unlockSkill(std::string s);
   void upgradeSkill(Logs *logs, std::string s, int exp);
 
@@ -62,8 +60,6 @@ private:
   float width;
   float height;
 
-  int numRow;
-  int numCol;
   float cardWidth;
   float cardHeight;
   SkillCard *curSelected = NULL;

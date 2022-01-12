@@ -53,6 +53,8 @@ void Map::removeObject(Object o) {
 
 void Map::addNPC(CharacterNPC *npc) { NPCs.push_back(npc); }
 
+void Map::addEnemy(Enemy *e) { enemies.push_back(e); }
+
 bool Map::isInvalidPosition(float x, float y, float w, float h) {
   if (x < 0 || x + w > width || y < 0 || y + h > height) {
     return true;
@@ -63,6 +65,12 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
       if (t.isInvalidPosition(x, y, w, h)) {
         return true;
       }
+    }
+  }
+
+  for (auto &e : enemies) {
+    if (e->isInvalidPosition(x, y, w, h)) {
+      return true;
     }
   }
 
@@ -115,12 +123,33 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
   return std::make_tuple(curMap, x, y);
 }
 
+std::tuple<int, Enemy *> Map::onAttack(int attack, float x, float y, float w,
+                                       float h) {
+  Enemy *np = NULL;
+  for (auto &e : enemies) {
+    if (e->isInRange(x, y, w, h)) {
+      std::pair<int, int> res = e->onAttack(x, attack);
+      if (!res.second) {
+        return std::make_tuple(res.first, e);
+      } else {
+        return std::make_tuple(res.first, np);
+      }
+    }
+  }
+
+  return std::make_tuple(-1, np);
+}
+
 void Map::render(SDL_Renderer *renderer, float camX, float camY, float camW,
                  float camH) {
   for (auto &ts : tiles) {
     for (auto &t : ts) {
       t.render(renderer, camX, camY, camW, camH);
     }
+  }
+
+  for (auto &e : enemies) {
+    e->render(renderer, camX, camY, camW, camH);
   }
 
   for (auto &o : objects) {

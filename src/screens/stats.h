@@ -34,6 +34,7 @@ public:
   void increaseMoney(Logs *log, int m);
   bool decreaseMoneyIfEnough(Logs *log, int m);
   void increaseStat(Logs *log, std::string s, int val);
+  int getStat(std::string s);
 
   void open();
   void close();
@@ -52,13 +53,14 @@ private:
   float offsetLine;
   float offset;
 
+  std::map<int, int> expPerLevel = PLAYER_EXP_PER_LEVEL;
+  std::map<int, int> hpPerLevel = PLAYER_HP_PER_LEVEL;
+
   std::string name;
   int level = 0;
   int exp = 0;
   int money = 0;
   int hp;
-  std::map<int, int> expPerLevel = PLAYER_EXP_PER_LEVEL;
-  std::map<int, int> hpPerLevel = PLAYER_HP_PER_LEVEL;
 
   SDL_Color text_color = STATS_COLOR;
   SDL_Texture *texture = UIs[STATS_TEXTURE];
@@ -66,4 +68,6 @@ private:
   std::map<std::string, Stat> stats;
 
   void addStat(std::string s, std::string d, int val);
+
+  friend class Character;
 };

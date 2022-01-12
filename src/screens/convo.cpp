@@ -94,21 +94,21 @@ void Convo::render(SDL_Renderer *renderer) {
     SDL_RenderCopy(renderer, texture, NULL, &r);
 
     // speaker icon
-    r.x = xPos + border;
-    r.y = yPos + border;
-    r.w = iconSize;
-    r.h = iconSize;
+    r.x = xPos + CONVO_BORDER;
+    r.y = yPos + CONVO_BORDER;
+    r.w = CONVO_ICON_SIZE;
+    r.h = CONVO_ICON_SIZE;
     SDL_RenderCopy(renderer, allLines[curIndex].icon, NULL, &r);
 
     // text
-    r.x = xPos + border + offsetLeft;
+    r.x = xPos + CONVO_BORDER + CONVO_OFFSET_LEFT;
     for (auto &l : allLines[curIndex].line_texts) {
       r.w = l->w;
       r.h = l->h;
       SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, l);
       SDL_RenderCopy(renderer, t, NULL, &r);
       SDL_DestroyTexture(t);
-      r.y += l->h + lineHeight;
+      r.y += l->h + CONVO_LINE_HEIGHT;
     }
   }
 }

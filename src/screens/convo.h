@@ -45,11 +45,6 @@ private:
   float width;
   float height;
 
-  float offsetLeft = CONVO_OFFSET_LEFT;
-  float border = CONVO_BORDER;
-  float iconSize = CONVO_ICON_SIZE;
-  float lineHeight = CONVO_LINE_HEIGHT;
-
   std::vector<Line> allLines;
   int curIndex = 0;
 

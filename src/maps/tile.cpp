@@ -45,15 +45,19 @@ void Tile::render(SDL_Renderer *renderer, float camX, float camY, float camW,
   SDL_Rect s;
   s.x = std::max(0.0f, round(camX - xPos));
   s.y = std::max(0.0f, round(camY - yPos));
-  s.w = size - s.x;
-  s.h = size - s.y;
-  if (s.x > 0 || s.y > 0) {
-    std::cout << s.x << " " << s.y << " " << s.w << " " << s.h << std::endl;
-  }
+  // rescale
+  int actualW, actualH;
+  SDL_QueryTexture(texture, NULL, NULL, &actualW, &actualH);
+  s.x = s.x / size * actualW;
+  s.y = s.y / size * actualH;
+  s.w = actualW - s.x;
+  s.h = actualH - s.y;
+
   SDL_Rect r;
-  r.x = xPos - camX;
-  r.y = yPos - camY;
-  r.w = size;
-  r.h = size;
+  r.x = std::max(0.0f, round(xPos - camX));
+  r.y = std::max(0.0f, round(yPos - camY));
+  r.w = size - std::max(0.0f, round(camX - xPos));
+  r.h = size - std::max(0.0f, round(camY - yPos));
+
   SDL_RenderCopy(renderer, texture, &s, &r);
 }

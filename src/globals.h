@@ -9,6 +9,8 @@
 
 class CharacterNPC;
 
+class Enemy;
+
 class Map;
 
 extern SDL_Window *window;
@@ -36,3 +38,4 @@ extern std::vector<SDL_Texture *> uiTextures;
 extern std::map<SDL_Keycode, SDL_Texture *> keyTextures;
 extern std::vector<Map *> maps; // each map has Objects, Tiles, and NPCs*
 extern std::vector<CharacterNPC *> allNPCs;
+extern std::vector<Enemy *> allEnemies;

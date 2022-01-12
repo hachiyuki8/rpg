@@ -14,11 +14,10 @@
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
+#include <tuple>
 #include <vector>
 
 class Shop;
-
-class Map;
 
 class Character {
 public:
@@ -98,6 +97,9 @@ private:
   void increaseExp(int exp);
   void increaseMoney(int m);
   void increaseStat(std::string s, int val);
+  void attack(); // when attacking an enemy
+  int calculateDamage(int diff);
+  void calculateReward(Enemy *e, int diff);
 
   friend class Shop; // TO-DO: why is this not working
 };

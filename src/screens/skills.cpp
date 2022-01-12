@@ -2,8 +2,7 @@
 
 int Skills::nextID = 0;
 
-Skills::Skills(float x, float y, float w, float h, int r, int c,
-               std::map<int, int> exp) {
+Skills::Skills(float x, float y, float w, float h, std::map<int, int> exp) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -15,10 +14,8 @@ Skills::Skills(float x, float y, float w, float h, int r, int c,
   width = w;
   height = h;
 
-  numRow = r;
-  numCol = c;
-  cardWidth = width / numCol;
-  cardHeight = height / numRow;
+  cardWidth = width / SKILLCARD_COL;
+  cardHeight = height / SKILLCARD_ROW;
 
   expPerLevel = exp;
 }
@@ -42,9 +39,8 @@ void Skills::print() {
   }
 }
 
-void Skills::initAllSkills(
-    std::map<std::string, std::pair<std::string, bool>> sk) {
-  for (auto &s : sk) {
+void Skills::initAllSkills() {
+  for (auto &s : SKILLS_ALL) {
     addSkill(s.first, s.second.first, s.second.second);
   }
   if (DEBUG) {
@@ -126,8 +122,8 @@ void Skills::onConfirm() {
 void Skills::render(SDL_Renderer *renderer) {
   if (isShowing) {
     // background
-    for (int row = 0; row < numRow; row++) {
-      for (int col = 0; col < numCol; col++) {
+    for (int row = 0; row < SKILLCARD_ROW; row++) {
+      for (int col = 0; col < SKILLCARD_COL; col++) {
         SDL_Rect r;
         r.x = xPos + col * cardWidth;
         r.y = yPos + row * cardHeight;
@@ -154,9 +150,9 @@ void Skills::render(SDL_Renderer *renderer) {
 
         renderCard(renderer, sc);
 
-        if (nextC + 1 < numCol) {
+        if (nextC + 1 < SKILLCARD_COL) {
           nextC++;
-        } else if (nextR + 1 < numRow) {
+        } else if (nextR + 1 < SKILLCARD_ROW) {
           nextC = 0;
           nextR++;
         }

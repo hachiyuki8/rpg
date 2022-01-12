@@ -30,7 +30,7 @@ int main(int argc, char **args) {
   // player initialization
   curPlayer = new Character(80, 180);
   curPlayer->init();
-  curPlayer->curMap = maps[0];
+  curPlayer->curMap = maps[1];
 
   while (loop()) {
   }

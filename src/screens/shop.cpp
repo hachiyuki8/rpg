@@ -3,8 +3,7 @@
 
 int Shop::nextID = 0;
 
-Shop::Shop(float x, float y, float w, float h, float g, float o, float b,
-           float p, int pl) {
+Shop::Shop(float x, float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -15,14 +14,9 @@ Shop::Shop(float x, float y, float w, float h, float g, float o, float b,
   yPos = y;
   width = w;
   height = h;
-  grid_size = g;
-  object_size = o;
-  border = b;
-  panelWidth = p;
-  numRow = (height - border) / (grid_size + border);
-  numCol = (width - border - panelWidth) / (grid_size + border);
-
-  perLimit = pl;
+  numRow = (height - SHOP_BORDER) / (SHOP_GRID_SIZE + SHOP_BORDER);
+  numCol =
+      (width - SHOP_BORDER - SHOP_PANEL_WIDTH) / (SHOP_GRID_SIZE + SHOP_BORDER);
 }
 
 Shop::~Shop() {
@@ -36,7 +30,7 @@ void Shop::print() { std::cout << "Shop " << ID << std::endl; }
 bool Shop::addItem(Object o, int q) {
   if (items.contains(o)) {
     items[o] += q;
-    if (items[o] > perLimit) {
+    if (items[o] > SHOP_PER_ITEM_LIMIT) {
       std::cout << "Max quantity per item reached" << std::endl;
       items[o] -= q;
       return false;
@@ -74,8 +68,8 @@ void Shop::onClick(float x, float y) {
   }
 
   for (auto &[i, q] : items) {
-    if (i.xPosIL < x && x < i.xPosIL + object_size && i.yPosIL < y &&
-        y < i.yPosIL + object_size) {
+    if (i.xPosIL < x && x < i.xPosIL + SHOP_OBJECT_SIZE && i.yPosIL < y &&
+        y < i.yPosIL + SHOP_OBJECT_SIZE) {
       if (!i.isSelected) {
         // unselect previous and select this
         if (curSelected) {
@@ -129,25 +123,27 @@ void Shop::render(SDL_Renderer *renderer) {
     // grids
     for (int row = 0; row < numRow; row++) {
       for (int col = 0; col < numCol; col++) {
-        r.x = xPos + border + col * (grid_size + border);
-        r.y = yPos + border + row * (grid_size + border);
-        r.w = grid_size;
-        r.h = grid_size;
+        r.x = xPos + SHOP_BORDER + col * (SHOP_GRID_SIZE + SHOP_BORDER);
+        r.y = yPos + SHOP_BORDER + row * (SHOP_GRID_SIZE + SHOP_BORDER);
+        r.w = SHOP_GRID_SIZE;
+        r.h = SHOP_GRID_SIZE;
         SDL_RenderCopy(renderer, texture, NULL, &r);
       }
     }
 
     int nextR = 0;
     int nextC = 0;
-    int offset = (grid_size - object_size) / 2;
+    int offset = (SHOP_GRID_SIZE - SHOP_OBJECT_SIZE) / 2;
     for (auto &o : items) {
-      float x = xPos + border + nextC * (grid_size + border) + offset;
-      float y = yPos + border + nextR * (grid_size + border) + offset;
+      float x =
+          xPos + SHOP_BORDER + nextC * (SHOP_GRID_SIZE + SHOP_BORDER) + offset;
+      float y =
+          yPos + SHOP_BORDER + nextR * (SHOP_GRID_SIZE + SHOP_BORDER) + offset;
 
       // item
       o.first.setItemlistPosition(x, y); // TO-DO: reusing the same parameters
                                          // as Itemlist, may separate these two?
-      o.first.render(renderer, x, y, object_size, object_size);
+      o.first.render(renderer, x, y, SHOP_OBJECT_SIZE, SHOP_OBJECT_SIZE);
 
       // quantity
       SDL_Surface *q = TTF_RenderText_Solid(
@@ -157,8 +153,8 @@ void Shop::render(SDL_Renderer *renderer) {
       }
       SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, q);
       SDL_Rect r0;
-      r0.x = x - offset + grid_size - q->w;
-      r0.y = y - offset + grid_size - q->h;
+      r0.x = x - offset + SHOP_GRID_SIZE - q->w;
+      r0.y = y - offset + SHOP_GRID_SIZE - q->h;
       r0.w = q->w;
       r0.h = q->h;
       SDL_RenderCopy(renderer, t, NULL, &r0);
@@ -175,23 +171,23 @@ void Shop::render(SDL_Renderer *renderer) {
 
     // selected
     if (curSelected) {
-      float x = xPos + width - border * 2 - panelWidth +
-                (panelWidth - SHOP_SELECTED_SIZE) / 2;
-      float y = yPos + border + SHOP_SELECTED_SIZE;
+      float x = xPos + width - SHOP_BORDER * 2 - SHOP_PANEL_WIDTH +
+                (SHOP_PANEL_WIDTH - SHOP_SELECTED_SIZE) / 2;
+      float y = yPos + SHOP_BORDER + SHOP_SELECTED_SIZE;
       float w = SHOP_SELECTED_SIZE;
       float h = SHOP_SELECTED_SIZE;
       curSelected->render(renderer, x, y, w, h);
       // description
       std::string s = curSelected->name + ": " + curSelected->description +
                       "\n\nCost: " + std::to_string(curSelected->value);
-      SDL_Surface *d = TTF_RenderText_Blended_Wrapped(font, s.c_str(),
-                                                      text_color, panelWidth);
+      SDL_Surface *d = TTF_RenderText_Blended_Wrapped(
+          font, s.c_str(), text_color, SHOP_PANEL_WIDTH);
       if (!d) {
         std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
       }
       SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, d);
-      r.x = xPos + width - border - panelWidth;
-      r.y = yPos + border + SHOP_SELECTED_SIZE * 3;
+      r.x = xPos + width - SHOP_BORDER - SHOP_PANEL_WIDTH;
+      r.y = yPos + SHOP_BORDER + SHOP_SELECTED_SIZE * 3;
       r.w = d->w;
       r.h = d->h;
       SDL_RenderCopy(renderer, t, NULL, &r);

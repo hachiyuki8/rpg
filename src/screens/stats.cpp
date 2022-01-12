@@ -94,7 +94,7 @@ bool Stats::decreaseMoneyIfEnough(Logs *logs, int m) {
 
 void Stats::increaseStat(Logs *logs, std::string s, int val) {
   if (!stats.contains(s)) {
-    std::cout << "Stat doesn't exists" << std::endl;
+    std::cout << "Stat doesn't exist" << std::endl;
     return;
   }
   stats[s].value += val;
@@ -106,6 +106,14 @@ void Stats::increaseStat(Logs *logs, std::string s, int val) {
     s0 = "-" + stats[s].name + " reached max value";
     logs->addLog(s0);
   }
+}
+
+int Stats::getStat(std::string s) {
+  if (!stats.contains(s)) {
+    std::cout << "Stat doesn't exist" << std::endl;
+    return -1;
+  }
+  return stats[s].value;
 }
 
 void Stats::open() { isShowing = true; }

@@ -40,9 +40,6 @@ private:
   float width;
   float height;
 
-  float offsetBorder = HELP_OFFSET_BORDER;
-  float lineHeight = HELP_LINE_HEIGHT;
-
   SDL_Color text_color = HELP_COLOR;
   SDL_Texture *texture = UIs[HELP_TEXTURE];
   TTF_Font *font = fonts[HELP_FONT];

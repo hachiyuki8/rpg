@@ -20,10 +20,7 @@ class Shop {
 public:
   Shop(float x = (SCREEN_WIDTH - SHOP_SCREEN_WIDTH) / 2,
        float y = (SCREEN_HEIGHT - SHOP_SCREEN_HEIGHT) / 2,
-       float w = SHOP_SCREEN_WIDTH, float h = SHOP_SCREEN_HEIGHT,
-       float g = SHOP_GRID_SIZE, float o = SHOP_OBJECT_SIZE,
-       float b = SHOP_BORDER, float p = SHOP_PANEL_WIDTH,
-       int pl = SHOP_PER_ITEM_LIMIT);
+       float w = SHOP_SCREEN_WIDTH, float h = SHOP_SCREEN_HEIGHT);
   virtual ~Shop();
 
   void print();
@@ -49,14 +46,9 @@ private:
   float yPos;
   float width;
   float height;
-  float grid_size;
-  float object_size;
-  float border;
-  float panelWidth;
   int numRow;
   int numCol;
 
-  int perLimit;
   const Object *curSelected = NULL;
   std::map<Object, int> items;
 

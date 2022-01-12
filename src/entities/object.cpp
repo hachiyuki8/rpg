@@ -118,14 +118,21 @@ void Object::render(SDL_Renderer *renderer, float camX, float camY, float camW,
   SDL_Rect s;
   s.x = std::max(0.0f, round(camX - xPos));
   s.y = std::max(0.0f, round(camY - yPos));
-  s.w = width - s.x;
-  s.h = height - s.y;
+  // rescale
+  int actualW, actualH;
+  SDL_QueryTexture(texture, NULL, NULL, &actualW, &actualH);
+  s.x = s.x / width * actualW;
+  s.y = s.y / height * actualH;
+  s.w = actualW - s.x;
+  s.h = actualH - s.y;
+
   SDL_Rect r;
-  r.x = xPos - camX;
-  r.y = yPos - camY;
-  r.w = width;
-  r.h = height;
-  SDL_RenderCopy(renderer, texture, NULL, &r);
+  r.x = std::max(0.0f, round(xPos - camX));
+  r.y = std::max(0.0f, round(yPos - camY));
+  r.w = width - std::max(0.0f, round(camX - xPos));
+  r.h = height - std::max(0.0f, round(camY - yPos));
+
+  SDL_RenderCopy(renderer, texture, &s, &r);
 }
 
 void Object::render(SDL_Renderer *renderer, float x, float y, float w, float h,

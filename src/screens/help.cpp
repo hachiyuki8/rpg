@@ -69,8 +69,9 @@ void Help::render(SDL_Renderer *renderer) {
     for (auto &c : controls) {
       SDL_Texture *t =
           SDL_CreateTextureFromSurface(renderer, c.second.name_text);
-      r.x = xPos + offsetBorder + nextC * (width - offsetBorder * 2) / NUM_COL;
-      r.y = yPos + offsetBorder + nextR * lineHeight;
+      r.x = xPos + HELP_OFFSET_BORDER +
+            nextC * (width - HELP_OFFSET_BORDER * 2) / NUM_COL;
+      r.y = yPos + HELP_OFFSET_BORDER + nextR * HELP_LINE_HEIGHT;
       r.w = c.second.name_text->w;
       r.h = c.second.name_text->h;
       SDL_RenderCopy(renderer, t, NULL, &r);
@@ -78,9 +79,9 @@ void Help::render(SDL_Renderer *renderer) {
 
       r.w = c.second.button_width;
       r.h = c.second.button_height;
-      r.x += width / 2 - offsetBorder * 3 - r.w;
+      r.x += width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
       SDL_RenderCopy(renderer, keyTextures[c.second.key], NULL, &r);
-      r.x -= width / 2 - offsetBorder * 3 - r.w;
+      r.x -= width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
 
       if (nextR + 1 < NUM_ROW) {
         nextR++;

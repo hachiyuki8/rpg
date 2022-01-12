@@ -2,6 +2,7 @@
 
 #include "../constants/constants.h"
 #include "../entities/characterNPC.h"
+#include "../entities/enemy.h"
 #include "../entities/object.h"
 #include "../globals.h"
 #include "../maps/teleporter.h"
@@ -28,15 +29,18 @@ public:
   void addObject(Object o);
   void removeObject(Object o);
   void addNPC(CharacterNPC *npc);
+  void addEnemy(Enemy *e);
   bool isInvalidPosition(float x, float y, float w,
                          float h); // invalid if position collides with an
                                    // unreachable tile or object
-
-  // check interaction in the following order: NPC->TP->Enemy->Object, will only
+  // check interaction in the following order: NPC->TP->Object, will only
   // carry out one interaction
   std::tuple<Map *, float, float> onInteract(Character *curPlayer, Map *curMap,
                                              float x, float y, float w,
                                              float h);
+  std::tuple<int, Enemy *> onAttack(
+      int attack, float x, float y, float w,
+      float h); // return (-1 or enemy difficulty, enemy* if killed or NULL)
   void render(SDL_Renderer *renderer, float camX, float camY, float camW,
               float camH);
 
@@ -51,7 +55,8 @@ private:
   std::vector<std::vector<Tile>> tiles;
   std::vector<Teleporter> teleporters;
   std::vector<Object> objects;
-  std::vector<CharacterNPC *> NPCs; // TO-DO
+  std::vector<CharacterNPC *> NPCs;
+  std::vector<Enemy *> enemies;
 
   friend class Character;
 };

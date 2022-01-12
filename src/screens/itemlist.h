@@ -17,10 +17,7 @@ class Itemlist {
 public:
   Itemlist(float x = (SCREEN_WIDTH - ITEMLIST_WIDTH) / 2,
            float y = (SCREEN_HEIGHT - ITEMLIST_HEIGHT) / 2,
-           float w = ITEMLIST_WIDTH, float h = ITEMLIST_HEIGHT,
-           float g = ITEMLIST_GRID_SIZE, float o = ITEMLIST_OBJECT_SIZE,
-           float b = ITEMLIST_BORDER, int l = ITEM_LIMIT,
-           int pl = PER_ITEM_LIMIT);
+           float w = ITEMLIST_WIDTH, float h = ITEMLIST_HEIGHT);
   virtual ~Itemlist();
 
   void print();
@@ -45,15 +42,9 @@ private:
   float yPos;
   float width;
   float height;
-  float grid_size;
-  float object_size;
-  float border;
   int numRow;
   int numCol;
 
-  int limit;
-  int perLimit;
-  int curSize = 0;
   const Object *curSelected = NULL;
   std::map<Object, int> items;
 

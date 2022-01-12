@@ -2,7 +2,7 @@
 
 int Logs::nextID = 0;
 
-Logs::Logs(float x, float y, float w, float h, int l) {
+Logs::Logs(float x, float y, float w, float h) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -14,8 +14,7 @@ Logs::Logs(float x, float y, float w, float h, int l) {
   width = w;
   height = h;
 
-  lineLimit = l;
-  lineHeight = (height - offset * 2) / lineLimit;
+  lineHeight = (height - offset * 2) / LOGS_LINE_LIMIT;
 }
 
 Logs::~Logs() {
@@ -29,7 +28,7 @@ Logs::~Logs() {
 
 void Logs::print() {
   std::cout << "Logs " << ID << std::endl;
-  std::cout << "-curSize: " << curSize << std::endl;
+  std::cout << "-current size: " << logs.size() << std::endl;
 }
 
 void Logs::addLog(std::string s) {
@@ -41,8 +40,7 @@ void Logs::addLog(std::string s) {
   }
   l.text = text;
   logs.push_back(l);
-  curSize++;
-  if (curSize > lineLimit) {
+  if (logs.size() > LOGS_LINE_LIMIT) {
     SDL_FreeSurface(logs.front().text);
     logs.pop_front();
   }
