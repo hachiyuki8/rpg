@@ -97,7 +97,7 @@ void Shop::onConfirm(Character *curPlayer) {
     }
     if (curPlayer->stats.decreaseMoneyIfEnough(&curPlayer->logs,
                                                curSelected->value) &&
-        curPlayer->itemlist.addItem(&curPlayer->logs, *curSelected, 1)) {
+        curPlayer->inventory.addItem(&curPlayer->logs, *curSelected, 1)) {
       std::string s = "-Bought " + curSelected->name;
       curPlayer->logs.addLog(s);
       items[*curSelected]--;
@@ -141,8 +141,9 @@ void Shop::render(SDL_Renderer *renderer) {
           yPos + SHOP_BORDER + nextR * (SHOP_GRID_SIZE + SHOP_BORDER) + offset;
 
       // item
-      o.first.setItemlistPosition(x, y); // TO-DO: reusing the same parameters
-                                         // as Itemlist, may separate these two?
+      o.first.setInventoryPosition(x,
+                                   y); // TODO: reusing the same parameters
+                                       // as Inventory, may separate these two?
       o.first.render(renderer, x, y, SHOP_OBJECT_SIZE, SHOP_OBJECT_SIZE);
 
       // quantity
@@ -176,7 +177,7 @@ void Shop::render(SDL_Renderer *renderer) {
       float y = yPos + SHOP_BORDER + SHOP_SELECTED_SIZE;
       float w = SHOP_SELECTED_SIZE;
       float h = SHOP_SELECTED_SIZE;
-      curSelected->render(renderer, x, y, w, h);
+      curSelected->render(renderer, x, y, w, h, true);
       // description
       std::string s = curSelected->name + ": " + curSelected->description +
                       "\n\nCost: " + std::to_string(curSelected->value);

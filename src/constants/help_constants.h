@@ -26,7 +26,7 @@ const std::map<std::string, SDL_Keycode> HELP_ALL = {
     {"move down", DOWN},
     {"move right", RIGHT},
     {"toggle help page", HELP},
-    {"toggle item list", SHOW_ITEMS},
+    {"toggle item list", SHOW_INVENTORY},
     {"toggle skills", SHOW_SKILLS},
     {"toggle player info", SHOW_STATS},
     {"toggle logs screen", SHOW_LOGS},

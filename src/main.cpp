@@ -78,9 +78,9 @@ bool loop() {
           curPlayer->showHelp();
         }
         break;
-      case SHOW_ITEMS:
+      case SHOW_INVENTORY:
         if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->showItemlist();
+          curPlayer->showInventory();
         }
         break;
       case SHOW_SKILLS:

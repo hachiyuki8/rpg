@@ -46,7 +46,6 @@ public:
   void open();
   void close();
   void onClick(float x, float y, bool isLeft); // select skill
-  void onConfirm(); // TO-DO: maybe allocate skill points?
   void render(SDL_Renderer *renderer);
 
   static int nextID;
@@ -75,5 +74,5 @@ private:
   void addSkill(std::string s, std::string d, bool isUnlocked);
   void renderCard(SDL_Renderer *renderer, SkillCard sc);
   void onLeftClick(float x, float y);  // select/unselect
-  void onRightClick(float x, float y); // TO-DO
+  void onRightClick(float x, float y); // TODO
 };

@@ -74,7 +74,7 @@ void Object::setPosition(float x, float y) {
   yPos = y;
 }
 
-void Object::setItemlistPosition(float x, float y) const {
+void Object::setInventoryPosition(float x, float y) const {
   xPosIL = x;
   yPosIL = y;
 }
@@ -85,7 +85,7 @@ bool Object::onInteract(float x, float y, float w, float h) {
     return false;
   }
 
-  // TO-DO: do something to interact
+  // TODO: do something to interact
   if (DEBUG) {
     std::cout << "Interacting with object " << ID << std::endl;
   }
@@ -97,7 +97,7 @@ bool Object::onUse() const {
     return false;
   }
 
-  // TO-DO: do something to use
+  // TODO: do something to use
   if (DEBUG) {
     std::cout << "Using item " << ID << std::endl;
   }
@@ -143,7 +143,7 @@ void Object::render(SDL_Renderer *renderer, float x, float y, float w, float h,
   r.w = w;
   r.h = h;
   if (!ignore && isSelected) {
-    SDL_SetTextureColorMod(texture, 127, 127, 127); // TO-DO: highlight item?
+    SDL_SetTextureColorMod(texture, 127, 127, 127); // TODO: highlight item?
   }
   SDL_RenderCopy(renderer, texture, NULL, &r);
   SDL_SetTextureColorMod(texture, 255, 255, 255);

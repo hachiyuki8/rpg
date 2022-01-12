@@ -11,7 +11,7 @@ const SDL_Keycode DOWN = SDLK_s;
 const SDL_Keycode RIGHT = SDLK_d;
 
 const SDL_Keycode HELP = SDLK_h;
-const SDL_Keycode SHOW_ITEMS = SDLK_TAB;
+const SDL_Keycode SHOW_INVENTORY = SDLK_TAB;
 const SDL_Keycode SHOW_SKILLS = SDLK_LSHIFT;
 const SDL_Keycode SHOW_STATS = SDLK_p;
 const SDL_Keycode SHOW_LOGS = SDLK_l;

@@ -76,7 +76,7 @@ enum class GameState { PAUSE, IN_PROGRESS };
 enum class UIState {
   IN_GAME,
   IN_HELP,
-  IN_ITEMLIST,
+  IN_INVENTORY,
   IN_SKILLS,
   IN_STATS,
   IN_SHOP,

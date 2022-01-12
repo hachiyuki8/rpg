@@ -10,6 +10,13 @@
 #include <stdlib.h>
 #include <vector>
 
+/*
+ * enemy.h
+ *
+ * This file defines all enemy states and refers to enemy_constants.h.
+ *
+ */
+
 class Character;
 
 class Enemy {
@@ -23,15 +30,59 @@ public:
   virtual ~Enemy();
 
   void print();
+
+  /**
+   * @brief Check if the given position collides with enemy
+   *
+   * @param x
+   * @param y
+   * @param w
+   * @param h
+   * @return true if collides with enemy collider (not interaction collider)
+   */
   bool isInvalidPosition(float x, float y, float w, float h);
+
+  /**
+   * @brief Add given items to enemy's reward list
+   *
+   * @param o item
+   * @param q quantity
+   */
   void addReward(Object o, int q);
 
-  bool isInRange(float x, float y, float w,
-                 float h); // if collides with enemy's interaction range
-  std::pair<int, int> onAttack(float x,
-                               int attack); // return difficulty & isAlive
-  void render(SDL_Renderer *renderer, float camX, float camY, float width,
-              float height);
+  /**
+   * @brief Check if given position collides with interaction collider
+   *
+   * @param x
+   * @param y
+   * @param w
+   * @param h
+   * @return bool
+   */
+  bool isInRange(float x, float y, float w, float h);
+
+  /**
+   * @brief When ATTACK is pressed (left mouse button), update enemy HP and
+   * state. Caller should ensure player's position collides with enemy first.
+   *
+   * @param x x position of the player
+   * @param attack player's attack attribute
+   * @return std::pair<int, int> (difficulty, 1 if alive/0 if killed), (-1, -1)
+   * if last attack animation hasn't finished yet
+   */
+  std::pair<int, int> onAttack(float x, int attack);
+
+  /**
+   * @brief Update enemy position, then render based on camera position
+   *
+   * @param renderer
+   * @param camX
+   * @param camY
+   * @param camW
+   * @param camH
+   */
+  void render(SDL_Renderer *renderer, float camX, float camY, float camW,
+              float camH);
 
   static int nextID;
 
@@ -39,19 +90,18 @@ private:
   int ID;
   Uint32 lastUpdate;
 
-  // range of movement, no meaning if movement type is STILL
-  float xPosMin;
-  float xPosMax;
-  float yPosMin;
-  float yPosMax;
-
-  // current position
+  // enemy position
   float xPos;
   float yPos;
   float width;
   float height;
 
-  // movement velocity
+  // enemy movement state
+  MovementState movement;
+  Direction xDirection = Direction::RIGHT;
+  Direction yDirection = Direction::DOWN;
+  // everytime direction is changed, velocity randomized to somewhere between
+  // base and base+range
   int xVel;
   int yVel;
   int xVelBase;
@@ -59,34 +109,40 @@ private:
   int yVelBase;
   int yVelRange;
 
-  // textures
+  // enemy movement range, no meaning if movement is STILL
+  float xPosMin;
+  float xPosMax;
+  float yPosMin;
+  float yPosMax;
+
+  // enemy properties
+  int hp;
+  int difficulty; // integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
+  std::vector<std::tuple<Object, int>> rewards; // upon being killed
+
+  bool isAttacked = false; // whether or not still in attack animation
+  bool isAlive = true;
+
+  // enemy textures with animations
+  // in xxxIndices, first value is index of current texture, second value is
+  // number of frames it has lasted
   SDL_Texture *stillTexture;
   std::map<Direction, std::vector<SDL_Texture *>> movingTextures;
   std::map<Direction, std::pair<int, int>> movingIndices = {
       {Direction::LEFT, std::make_pair(0, 0)},
       {Direction::RIGHT, std::make_pair(0, 0)},
       {Direction::UP, std::make_pair(0, 0)},
-      {Direction::DOWN,
-       std::make_pair(0, 0)}}; // first int is index of current texture, second
-                               // int is how many frames it has lasted
-  std::map<Direction, std::vector<SDL_Texture *>>
-      attackTextures; // for enemy that doesn't attack, this will be attacked
-                      // animation
+      {Direction::DOWN, std::make_pair(0, 0)}};
+  // attacking or attacked animation
+  std::map<Direction, std::vector<SDL_Texture *>> attackTextures;
   std::map<Direction, std::pair<int, int>> attackIndices = {
       {Direction::LEFT, std::make_pair(0, 0)},
       {Direction::RIGHT, std::make_pair(0, 0)}};
 
-  int hp;
-  int difficulty;
-  bool isAttacked = false;
-  bool isAlive = true;
-  std::vector<std::tuple<Object, int>> rewards;
+  // Calculate damage taken according to player attack and enemy difficulty
+  int calculateDamage(int attack);
 
-  MovementState movement;
-  Direction xDirection = Direction::RIGHT;
-  Direction yDirection = Direction::DOWN;
-
-  int calculateDamage(int attack); // TO-DO: not sure how to calculate it
+  // Update enemy position
   void move();
 
   friend class Character;

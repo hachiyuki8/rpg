@@ -34,17 +34,17 @@ Character::~Character() {
   }
 }
 
+void Character::print() {
+  std::cout << "Character " << ID << std::endl;
+  std::cout << "-pos: (" << xPos << ", " << yPos << ")" << std::endl;
+  std::cout << "-cam: (" << camX << ", " << camY << ")" << std::endl;
+}
+
 void Character::init() {
   stats.initAllStats();
   skills.initAllSkills();
   help.init();
   logs.addLog("-Press H to see help/controls");
-}
-
-void Character::print() {
-  std::cout << "Character " << ID << std::endl;
-  std::cout << "-pos: (" << xPos << ", " << yPos << ")" << std::endl;
-  std::cout << "-cam: (" << camX << ", " << camY << ")" << std::endl;
 }
 
 bool Character::quit() {
@@ -82,15 +82,15 @@ void Character::showHelp() {
   }
 }
 
-void Character::showItemlist() {
+void Character::showInventory() {
   switch (uiState) {
   case UIState::IN_GAME:
-    itemlist.open(&logs);
-    uiState = UIState::IN_ITEMLIST;
+    inventory.open(&logs);
+    uiState = UIState::IN_INVENTORY;
     movementState = MovementState::STILL;
     break;
-  case UIState::IN_ITEMLIST:
-    itemlist.close();
+  case UIState::IN_INVENTORY:
+    inventory.close();
     uiState = UIState::IN_GAME;
     break;
   default:
@@ -143,7 +143,7 @@ void Character::pickupObject() {
         stats.increaseMoney(&logs, o.value);
         curMap->removeObject(o);
       } else {
-        bool success = itemlist.addItem(&logs, o, 1);
+        bool success = inventory.addItem(&logs, o, 1);
         if (success) {
           std::string s = "-Picked up " + o.name;
           logs.addLog(s);
@@ -176,8 +176,8 @@ void Character::interact() {
 void Character::click(float x, float y, bool isLeft) {
   int m;
   switch (uiState) {
-  case UIState::IN_ITEMLIST:
-    m = itemlist.onClick(&logs, x, y, isLeft); // m > 0 if selling items
+  case UIState::IN_INVENTORY:
+    m = inventory.onClick(&logs, x, y, isLeft); // m > 0 if selling items
     stats.increaseMoney(&logs, m);
     break;
   case UIState::IN_SKILLS:
@@ -186,8 +186,9 @@ void Character::click(float x, float y, bool isLeft) {
   case UIState::IN_SHOP:
     curShop->onClick(x, y);
     break;
-  // case UIState::IN_GAME:
-  //   attack();
+  case UIState::IN_GAME:
+    attack();
+    break;
   default:
     break;
   }
@@ -195,11 +196,8 @@ void Character::click(float x, float y, bool isLeft) {
 
 void Character::confirm() {
   switch (uiState) {
-  case UIState::IN_ITEMLIST:
-    itemlist.onConfirm(&logs);
-    break;
-  case UIState::IN_SKILLS:
-    skills.onConfirm();
+  case UIState::IN_INVENTORY:
+    inventory.onConfirm(&logs);
     break;
   case UIState::IN_SHOP:
     curShop->onConfirm(this);
@@ -256,7 +254,7 @@ void Character::render(SDL_Renderer *renderer) {
   }
 
   help.render(renderer);
-  itemlist.render(renderer);
+  inventory.render(renderer);
   skills.render(renderer);
   stats.render(renderer);
   if (curShop) {
@@ -346,7 +344,7 @@ void Character::attack() {
   if (std::get<0>(res) >= 0) {
     int dmg = calculateDamage(std::get<0>(res));
     stats.increaseHP(dmg * -1);
-    // TO-DO: if HP<0 do something?
+    // TODO: if HP<0 do something?
   }
   if (std::get<1>(res)) {
     // enemy killed, add reward
@@ -355,11 +353,11 @@ void Character::attack() {
 }
 
 int Character::calculateDamage(int diff) {
-  return diff * 10; // TO-DO: also not sure
+  return diff * 10; // TODO: also not sure
 }
 
 void Character::calculateReward(Enemy *e, int diff) {
-  e->print(); // TO-DO: add reward
+  e->print(); // TODO: add reward
 }
 
 void Character::testing() { print(); }

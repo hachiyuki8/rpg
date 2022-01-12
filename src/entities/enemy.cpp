@@ -63,12 +63,15 @@ bool Enemy::isInRange(float x, float y, float w, float h) {
 }
 
 std::pair<int, int> Enemy::onAttack(float x, int attack) {
-  isAttacked = true; // flag reset after rendering
+  if (isAttacked) {
+    return std::make_pair(-1, -1);
+  }
+
+  isAttacked = true;
   hp -= calculateDamage(attack);
   if (hp <= 0) {
     hp = 0;
     isAlive = false;
-    // TO-DO: do something? drops?
   }
 
   if (x > xPos + width / 2) {
@@ -96,7 +99,7 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     int actualW, actualH;
     SDL_QueryTexture(
         stillTexture, NULL, NULL, &actualW,
-        &actualH); // TO-DO: here assuming all textures have the same size
+        &actualH); // TODO: here assuming all textures have the same size
     s.x = s.x / width * actualW;
     s.y = s.y / height * actualH;
     s.w = actualW - s.x;
@@ -108,7 +111,7 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     r.w = width - std::max(0.0f, round(camX - xPos));
     r.h = height - std::max(0.0f, round(camY - yPos));
 
-    // TO-DO: there should be a delay before isAttacked and start of attack
+    // TODO: there should be a delay before isAttacked and start of attack
     // animation
     if (!isAttacked) {
       if (movement == MovementState::STILL) {
@@ -136,20 +139,23 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
             (attackIndices[xDirection].first + 1) %
             (attackTextures[xDirection].size());
       }
+      if (attackIndices[xDirection].first == 0) {
+        isAttacked = false; // flag reset after rendering the entire animation
+      }
       SDL_RenderCopy(
           renderer, attackTextures[xDirection][attackIndices[xDirection].first],
           &s, &r);
     }
   } else {
-    // TO-DO: death animation?
+    // TODO: death animation?
   }
 }
 
 int Enemy::calculateDamage(int attack) {
-  return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY));
+  return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY)); // TODO: not sure
 }
 
-// TO-DO: right now may move into other objects on the map
+// TODO: right now may move into other objects on the map
 void Enemy::move() {
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;

@@ -111,14 +111,6 @@ void Skills::onClick(float x, float y, bool isLeft) {
   }
 }
 
-void Skills::onConfirm() {
-  if (!isShowing) {
-    return;
-  }
-
-  return; // TO-DO
-}
-
 void Skills::render(SDL_Renderer *renderer) {
   if (isShowing) {
     // background
@@ -194,7 +186,7 @@ void Skills::addSkill(std::string s, std::string d, bool isUnlocked) {
 
 void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   if (sc.isSelected) {
-    SDL_SetTextureColorMod(texture, 127, 127, 127); // TO-DO: highlight item?
+    SDL_SetTextureColorMod(texture, 127, 127, 127); // TODO: highlight item?
     SDL_Rect r;
     r.x = sc.xPos;
     r.y = sc.yPos;
@@ -253,7 +245,7 @@ void Skills::onLeftClick(float x, float y) {
         }
         curSelected = &sc;
 
-        // TO-DO: skill clicked, show actions
+        // TODO: skill clicked, show actions
       } else {
         // unselect this
         curSelected = NULL;
@@ -263,4 +255,4 @@ void Skills::onLeftClick(float x, float y) {
   }
 }
 
-void Skills::onRightClick(float x, float y) { return; } // TO-DO
+void Skills::onRightClick(float x, float y) { return; } // TODO

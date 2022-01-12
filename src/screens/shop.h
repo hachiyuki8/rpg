@@ -14,7 +14,7 @@
 
 class Character;
 
-// TO-DO: currently almost exactly the same as Itemlist, maybe will consolidate
+// TODO: currently almost exactly the same as Inventory, maybe will consolidate
 // these two in the future...
 class Shop {
 public:
@@ -34,7 +34,7 @@ public:
           *curPlayer); // buy one of the selected item, return item value or -1
                        // Character handles the logic of checking if item fits
                        // in the bag; if not, item need to be manually re-added
-  void render(SDL_Renderer *renderer); // TO-DO: make it better
+  void render(SDL_Renderer *renderer); // TODO: make it better
 
   static int nextID;
 

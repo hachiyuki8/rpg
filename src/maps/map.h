@@ -38,9 +38,10 @@ public:
   std::tuple<Map *, float, float> onInteract(Character *curPlayer, Map *curMap,
                                              float x, float y, float w,
                                              float h);
-  std::tuple<int, Enemy *> onAttack(
-      int attack, float x, float y, float w,
-      float h); // return (-1 or enemy difficulty, enemy* if killed or NULL)
+  std::tuple<int, Enemy *>
+  onAttack(int attack, float x, float y, float w,
+           float h); // return (-1 if invalid or enemy difficulty, enemy* if
+                     // killed or NULL)
   void render(SDL_Renderer *renderer, float camX, float camY, float camW,
               float camH);
 

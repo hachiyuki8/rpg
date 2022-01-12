@@ -1,9 +1,9 @@
 all: main
 
-main: main.o init.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o itemlist.o skills.o stats.o logs.o shop.o help.o convo.o
-	clang++ -std=c++20 -g -o main main.o init.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o itemlist.o skills.o stats.o logs.o shop.o help.o convo.o -L/opt/homebrew/Cellar/sdl2/2.0.18/lib -L/opt/homebrew/Cellar/sdl2_ttf/2.0.15/lib -L/opt/homebrew/Cellar/sdl2_image/2.0.5/lib -lSDL2 -lSDL2_ttf -lSDL2_image
+main: main.o init.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o inventory.o skills.o stats.o logs.o shop.o help.o convo.o
+	clang++ -std=c++20 -g -o main main.o init.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o inventory.o skills.o stats.o logs.o shop.o help.o convo.o -L/opt/homebrew/Cellar/sdl2/2.0.18/lib -L/opt/homebrew/Cellar/sdl2_ttf/2.0.15/lib -L/opt/homebrew/Cellar/sdl2_image/2.0.5/lib -lSDL2 -lSDL2_ttf -lSDL2_image
 
-character.o: entities/character.cpp entities/character.h globals.h constants/character_constants.h constants/controls.h maps/map.h screens/itemlist.h screens/skills.h screens/stats.h screens/shop.h screens/logs.h screens/help.h
+character.o: entities/character.cpp entities/character.h globals.h constants/character_constants.h constants/controls.h maps/map.h screens/inventory.h screens/skills.h screens/stats.h screens/shop.h screens/logs.h screens/help.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 entities/character.cpp
 
 characterNPC.o: entities/characterNPC.cpp entities/characterNPC.h globals.h constants/npc_constants.h screens/shop.h entities/character.h screens/convo.h
@@ -24,8 +24,8 @@ teleporter.o: maps/teleporter.cpp maps/teleporter.h constants/constants.h
 object.o: entities/object.cpp entities/object.h constants/object_constants.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 entities/object.cpp
 
-itemlist.o: screens/itemlist.cpp screens/itemlist.h globals.h constants/itemlist_constants.h constants/controls.h entities/object.h screens/logs.h
-	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/itemlist.cpp
+inventory.o: screens/inventory.cpp screens/inventory.h globals.h constants/inventory_constants.h constants/controls.h entities/object.h screens/logs.h
+	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/inventory.cpp
 
 skills.o: screens/skills.cpp screens/skills.h globals.h constants/skills_constants.h screens/logs.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 screens/skills.cpp

@@ -17,13 +17,47 @@
 #include <tuple>
 #include <vector>
 
+/*
+ * init.h
+ *
+ * This file includes initializations of all resources except the player, which
+ * is currently done in main.cpp. Most functions return false upon failure.
+ *
+ * TODO: move player initialization to this file as well
+ */
+
+/**
+ * Initialize libraries, fonts, and all game assets listed below
+ *
+ * @return false if any initialization failed
+ */
 bool init();
-void init_fonts();
-void init_player_texture();
-void init_NPC_texture();
-void init_object_texture();
-void init_tile_texture();
-void init_UI_texture();
-void init_key_texture();
+
+// Initialize all fonts in FONTS and store in fonts
+bool init_fonts();
+
+// Initialize all textures in PLAYER_LEFT/RIGHT/UP/DOWN and store in
+// playerStillTextures and playerWalkTextures
+bool init_player_texture();
+
+// Initialize all textures in CHARACTERS and store in npcTextures
+bool init_NPC_texture();
+
+// Initialize all textures in OBJECTS and store in objectTextures
+bool init_object_texture();
+
+// Initialize all textures in TILES and store in tileTextures
+bool init_tile_texture();
+
+// Initialize all textures in UI and store in UIs
+bool init_UI_texture();
+
+// Initialize all textures in KEYBOARD and store in keyTextures
+bool init_key_texture();
+
+// Create all maps in MAPS from mapfiles.h, manually add objects and
+// teleporters, and store in maps
 void init_maps();
+
+// Create all NPCs manually and store in allNPCs
 void init_NPCs();
