@@ -5,7 +5,7 @@ An unknown theme 2D RPG written in C++ from scratch using SDL (in development)
 
 - characters (players, NPCs, enemies) with animations
 - maps (tile-based) and objects
-- interactions between players and the environment (conversations, attack, item pickup)
+- interactions between players and the environment (conversations, combat, item pickup)
 - inventory and shops
 - naive level and skill systems
 
