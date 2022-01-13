@@ -11,7 +11,7 @@ const int ITEM_LIMIT = (INVENTORY_WIDTH - INVENTORY_BORDER) /
                        (INVENTORY_GRID_SIZE + INVENTORY_BORDER) *
                        (INVENTORY_HEIGHT - INVENTORY_BORDER) /
                        (INVENTORY_GRID_SIZE + INVENTORY_BORDER);
-const int PER_ITEM_LIMIT = 99;
+const int PER_ITEM_LIMIT = 99; // ideally this number should not be reached
 const int INVENTORY_TEXTURE = 0;
 const int INVENTORY_BACKGROUND = 7;
 const int INVENTORY_FONT = 2;

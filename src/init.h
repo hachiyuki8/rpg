@@ -61,3 +61,8 @@ void init_maps();
 
 // Create all NPCs manually and store in allNPCs
 void init_NPCs();
+
+// Initialize all textures in ENEMY_WALK/ATTACK_LEFT/RIGHT and store in
+// enemyStillTexture, enemyWalkTextures and enemyAttackTextures, and create all
+// enemies manually and store in allEnemies
+bool init_enemies(); // TODO: need to be restructured at some point

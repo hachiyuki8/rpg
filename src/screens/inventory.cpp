@@ -30,12 +30,17 @@ void Inventory::print() {
   std::cout << "-Current size: " << items.size() << std::endl;
 }
 
-bool Inventory::addItem(Logs *logs, Object o, int q) {
+bool Inventory::addItem(Logs *logs, Object o, int q, bool suppressLog) {
   o.isSelected = false;
+  if (!suppressLog) {
+    std::string s = "-Got " + std::to_string(q) + " " + o.name;
+    logs->addLog(s);
+  }
+
   if (items.contains(o)) {
     items[o] += q;
     if (items[o] > PER_ITEM_LIMIT) {
-      logs->addLog("Max quantity per item reached");
+      logs->addLog("-Max quantity per item reached");
       items[o] -= q;
       return false;
     }
@@ -43,7 +48,7 @@ bool Inventory::addItem(Logs *logs, Object o, int q) {
     if (items.size() < ITEM_LIMIT) {
       items[o] = q;
     } else {
-      logs->addLog("No more space in bag");
+      logs->addLog("-No more space in bag");
       return false;
     }
   }

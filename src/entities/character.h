@@ -187,6 +187,12 @@ private:
       {Direction::RIGHT, std::make_pair(0, 0)},
       {Direction::UP, std::make_pair(0, 0)},
       {Direction::DOWN, std::make_pair(0, 0)}};
+  std::map<Direction, std::vector<SDL_Texture *>> attackTextures;
+  std::map<Direction, std::pair<int, int>> attackIndices = {
+      {Direction::LEFT, std::make_pair(0, 0)},
+      {Direction::RIGHT, std::make_pair(0, 0)},
+      {Direction::UP, std::make_pair(0, 0)},
+      {Direction::DOWN, std::make_pair(0, 0)}};
 
   // Update player position, then the camera position and movement states
   void move(const Uint8 *keys, float dT);

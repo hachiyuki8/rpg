@@ -31,6 +31,11 @@ extern SDL_Texture *inventory_bg, *shop_bg;
 extern SDL_Texture *playerIcon;
 extern std::map<Direction, SDL_Texture *> playerStillTextures;
 extern std::map<Direction, std::vector<SDL_Texture *>> playerWalkTextures;
+extern std::map<Direction, std::vector<SDL_Texture *>> playerAttackTextures;
+// enemy textures only need left and right (no up and down)
+extern SDL_Texture *enemyStillTexture;
+extern std::map<Direction, std::vector<SDL_Texture *>> enemyWalkTextures;
+extern std::map<Direction, std::vector<SDL_Texture *>> enemyAttackTextures;
 extern std::vector<SDL_Texture *> npcTextures;
 extern std::vector<SDL_Texture *> tileTextures;
 extern std::vector<SDL_Texture *> objectTextures;

@@ -97,7 +97,9 @@ private:
   float height;
 
   // enemy movement state
-  MovementState movement;
+  MovementState movementState;
+  MovementState oldMovementState; // used to store old value of movement when
+                                  // it's changed to ATTACK temporarily
   Direction xDirection = Direction::RIGHT;
   Direction yDirection = Direction::DOWN;
   // everytime direction is changed, velocity randomized to somewhere between
@@ -120,7 +122,6 @@ private:
   int difficulty; // integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
   std::vector<std::tuple<Object, int>> rewards; // upon being killed
 
-  bool isAttacked = false; // whether or not still in attack animation
   bool isAlive = true;
 
   // enemy textures with animations

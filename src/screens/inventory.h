@@ -22,7 +22,7 @@ public:
 
   void print();
   void setInteractRange(float left, float right, float up, float down);
-  bool addItem(Logs *logs, Object o, int q);
+  bool addItem(Logs *logs, Object o, int q = 1, bool suppressLog = false);
   void useItem(Object o); // TODO
 
   void open(Logs *logs);

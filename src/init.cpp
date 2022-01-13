@@ -19,6 +19,10 @@ SDL_Texture *inventory_bg, *shop_bg;
 SDL_Texture *playerIcon;
 std::map<Direction, SDL_Texture *> playerStillTextures;
 std::map<Direction, std::vector<SDL_Texture *>> playerWalkTextures;
+std::map<Direction, std::vector<SDL_Texture *>> playerAttackTextures;
+SDL_Texture *enemyStillTexture;
+std::map<Direction, std::vector<SDL_Texture *>> enemyWalkTextures;
+std::map<Direction, std::vector<SDL_Texture *>> enemyAttackTextures;
 std::vector<SDL_Texture *> npcTextures;
 std::vector<SDL_Texture *> tileTextures;
 std::vector<SDL_Texture *> objectTextures;
@@ -103,6 +107,7 @@ bool init() {
 
   init_maps();
   init_NPCs();
+  init_enemies();
 
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderClear(renderer);
@@ -644,4 +649,91 @@ void init_NPCs() {
   npc2->setConvo(lines);
   allNPCs.push_back(npc2);
   maps[0]->addNPC(npc2);
+}
+
+bool init_enemies() {
+  for (auto &s : ENEMY_WALK_LEFT) {
+    std::string path = ENEMY_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+      return false;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+      return false;
+    }
+    enemyWalkTextures[Direction::LEFT].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : ENEMY_WALK_RIGHT) {
+    std::string path = ENEMY_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+      return false;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+      return false;
+    }
+    enemyWalkTextures[Direction::RIGHT].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : ENEMY_ATTACK_LEFT) {
+    std::string path = ENEMY_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+      return false;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+      return false;
+    }
+    enemyAttackTextures[Direction::LEFT].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : ENEMY_ATTACK_RIGHT) {
+    std::string path = ENEMY_PATH + s;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+      return false;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+      return false;
+    }
+    enemyAttackTextures[Direction::RIGHT].push_back(texture);
+    SDL_FreeSurface(image);
+  }
+
+  enemyStillTexture = enemyWalkTextures[Direction::LEFT][0];
+
+  Enemy *enemy = new Enemy(400, 600, 400, 800, MovementState::WALK, 100, 1, 40,
+                           40, 30, 30, 0, 0);
+  Object flowerReward1("blue flower", "", objectTextures[3], 20,
+                       ObjectType::OTHERS, 0, 0, 0, 0);
+  Object flowerReward2("red flower", "", objectTextures[28], 20,
+                       ObjectType::OTHERS, 0, 0, 0, 0);
+  enemy->addReward(flowerReward1, 2);
+  enemy->addReward(flowerReward2, 99);
+  maps[1]->addEnemy(enemy);
+  return true;
 }

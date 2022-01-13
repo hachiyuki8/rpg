@@ -30,7 +30,12 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax,
 
   hp = p;
   difficulty = diff;
-  movement = state;
+  movementState = state;
+
+  // TODO: need to generalize it
+  stillTexture = enemyStillTexture;
+  movingTextures = enemyWalkTextures;
+  attackTextures = enemyAttackTextures;
 
   lastUpdate = SDL_GetTicks();
 }
@@ -63,16 +68,19 @@ bool Enemy::isInRange(float x, float y, float w, float h) {
 }
 
 std::pair<int, int> Enemy::onAttack(float x, int attack) {
-  if (isAttacked) {
+  if (movementState == MovementState::ATTACK) {
     return std::make_pair(-1, -1);
   }
 
-  isAttacked = true;
+  oldMovementState = movementState;
+  movementState = MovementState::ATTACK;
   hp -= calculateDamage(attack);
   if (hp <= 0) {
     hp = 0;
     isAlive = false;
   }
+
+  std::cout << "HP: " << hp << std::endl;
 
   if (x > xPos + width / 2) {
     xDirection = Direction::RIGHT;
@@ -111,26 +119,26 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     r.w = width - std::max(0.0f, round(camX - xPos));
     r.h = height - std::max(0.0f, round(camY - yPos));
 
-    // TODO: there should be a delay before isAttacked and start of attack
+    // TODO: there should be a delay before attacked and start of attack
     // animation
-    if (!isAttacked) {
-      if (movement == MovementState::STILL) {
-        SDL_RenderCopy(renderer, stillTexture, &s, &r);
-      } else {
-        movingIndices[xDirection].second++;
-        if (movingIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-          // switch to next frame
-          movingIndices[xDirection].second = 0;
-          movingIndices[xDirection].first =
-              (movingIndices[xDirection].first + 1) %
-              (movingTextures[xDirection].size());
-        }
-        SDL_RenderCopy(
-            renderer,
-            movingTextures[xDirection][movingIndices[xDirection].first], &s,
-            &r);
+    switch (movementState) {
+    case MovementState::STILL:
+      SDL_RenderCopy(renderer, stillTexture, &s, &r);
+      break;
+    case MovementState::WALK:
+      movingIndices[xDirection].second++;
+      if (movingIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
+        // switch to next frame
+        movingIndices[xDirection].second = 0;
+        movingIndices[xDirection].first =
+            (movingIndices[xDirection].first + 1) %
+            (movingTextures[xDirection].size());
       }
-    } else {
+      SDL_RenderCopy(
+          renderer, movingTextures[xDirection][movingIndices[xDirection].first],
+          &s, &r);
+      break;
+    case MovementState::ATTACK:
       attackIndices[xDirection].second++;
       if (attackIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
         // switch to next frame
@@ -138,14 +146,18 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
         attackIndices[xDirection].first =
             (attackIndices[xDirection].first + 1) %
             (attackTextures[xDirection].size());
-      }
-      if (attackIndices[xDirection].first == 0) {
-        isAttacked = false; // flag reset after rendering the entire animation
+
+        if (attackIndices[xDirection].first == 0) {
+          movementState = oldMovementState;
+        }
       }
       SDL_RenderCopy(
           renderer, attackTextures[xDirection][attackIndices[xDirection].first],
           &s, &r);
+    default:
+      break;
     }
+
   } else {
     // TODO: death animation?
   }
@@ -155,25 +167,29 @@ int Enemy::calculateDamage(int attack) {
   return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY)); // TODO: not sure
 }
 
-// TODO: right now may move into other objects on the map
+// TODO: right now may move into other objects on the map including the player
 void Enemy::move() {
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 
-  if (movement == MovementState::WALK && !isAttacked && isAlive) {
+  if (movementState == MovementState::WALK && isAlive) {
     if (xDirection == Direction::LEFT) {
       xPos -= xVel * dT;
       if (xPos < xPosMin) {
         xPos += xVel * dT;
         xDirection = Direction::RIGHT;
-        xVel = rand() % xVelRange + xVelBase;
+        if (xVelRange > 0) {
+          xVel = rand() % xVelRange + xVelBase;
+        }
       }
     } else {
       xPos += xVel * dT;
       if (xPos > xPosMax) {
         xPos -= xVel * dT;
         xDirection = Direction::LEFT;
-        xVel = rand() % xVelRange + xVelBase;
+        if (xVelRange > 0) {
+          xVel = rand() % xVelRange + xVelBase;
+        }
       }
     }
 
@@ -182,14 +198,18 @@ void Enemy::move() {
       if (yPos < yPosMin) {
         yPos += yVel * dT;
         yDirection = Direction::DOWN;
-        yVel = rand() % yVelRange + yVelBase;
+        if (yVelRange > 0) {
+          yVel = rand() % yVelRange + yVelBase;
+        }
       }
     } else {
       yPos += yVel * dT;
       if (yPos > yPosMax) {
         yPos -= yVel * dT;
         yDirection = Direction::UP;
-        yVel = rand() % yVelRange + yVelBase;
+        if (yVelRange > 0) {
+          yVel = rand() % yVelRange + yVelBase;
+        }
       }
     }
   }

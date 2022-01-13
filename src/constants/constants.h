@@ -18,6 +18,7 @@ const std::string OBJECT_PATH = IMAGE_PATH + "objects/";
 const std::string TILE_PATH = IMAGE_PATH + "tiles/";
 const std::string UI_PATH = IMAGE_PATH + "UI/";
 const std::string KEY_PATH = IMAGE_PATH + "keys/";
+const std::string ENEMY_PATH = IMAGE_PATH + "enemies/";
 
 const std::string PLAYER_ICON = "right_0.png";
 const std::vector<std::string> PLAYER_LEFT = {"left_0.png", "left_1.png",
@@ -71,6 +72,25 @@ const std::map<SDL_Keycode, std::string> KEYBOARD = {
     {SDLK_f, "f.png"},           {SDLK_TAB, "tab.png"},
     {SDLK_LSHIFT, "shift.png"},  {SDLK_RETURN, "return.png"},
     {SDLK_CAPSLOCK, "caps.png"}, {SDLK_ESCAPE, "esc.png"}};
+const std::vector<std::string> ENEMY_WALK_LEFT = {
+    "walk_left_0.png", "walk_left_1.png", "walk_left_2.png", "walk_left_3.png",
+    "walk_left_4.png", "walk_left_5.png", "walk_left_6.png", "walk_left_7.png",
+};
+const std::vector<std::string> ENEMY_WALK_RIGHT = {
+    "walk_right_0.png", "walk_right_1.png", "walk_right_2.png",
+    "walk_right_3.png", "walk_right_4.png", "walk_right_5.png",
+    "walk_right_6.png", "walk_right_7.png",
+};
+const std::vector<std::string> ENEMY_ATTACK_LEFT = {
+    "attack_left_0.png", "attack_left_1.png", "attack_left_2.png",
+    "attack_left_3.png", "attack_left_4.png", "attack_left_5.png",
+    "attack_left_6.png", "attack_left_7.png",
+};
+const std::vector<std::string> ENEMY_ATTACK_RIGHT = {
+    "attack_right_0.png", "attack_right_1.png", "attack_right_2.png",
+    "attack_right_3.png", "attack_right_4.png", "attack_right_5.png",
+    "attack_right_6.png", "attack_right_7.png",
+};
 
 enum class GameState { PAUSE, IN_PROGRESS };
 enum class UIState {
@@ -83,7 +103,7 @@ enum class UIState {
   IN_CONVO,
 };
 enum class Direction { LEFT, RIGHT, UP, DOWN };
-enum class MovementState { STILL, WALK };
+enum class MovementState { STILL, WALK, ATTACK };
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;

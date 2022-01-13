@@ -249,6 +249,20 @@ void Character::render(SDL_Renderer *renderer) {
                    walkTextures[direction][walkIndices[direction].first], NULL,
                    &r);
     break;
+  case MovementState::ATTACK:
+    attackIndices[direction].second++;
+    if (attackIndices[direction].second > PER_FRAME_LENGTH) {
+      // switch to next frame
+      attackIndices[direction].second = 0;
+      attackIndices[direction].first = (attackIndices[direction].first + 1) %
+                                       (attackTextures[direction].size());
+      if (attackIndices[direction].first == 0) {
+        movementState = MovementState::STILL;
+      }
+      SDL_RenderCopy(renderer,
+                     attackTextures[direction][attackIndices[direction].first],
+                     NULL, &r);
+    }
   default:
     break;
   }
@@ -339,16 +353,33 @@ void Character::increaseStat(std::string s, int val) {
 void Character::increaseMoney(int m) { stats.increaseMoney(&logs, m); }
 
 void Character::attack() {
+  if (movementState == MovementState::ATTACK) {
+    return; // don't register if still in last attack animation
+  }
+
   std::tuple<int, Enemy *> res =
       curMap->onAttack(stats.getStat("attack"), xPos, yPos, width, height);
-  if (std::get<0>(res) >= 0) {
-    int dmg = calculateDamage(std::get<0>(res));
+  int diff = std::get<0>(res);
+  Enemy *enemy = std::get<1>(res);
+  if (diff >= 0) {
+    movementState = MovementState::ATTACK;
+    int dmg = calculateDamage(diff);
+    std::cout << "Dmg: " << dmg << std::endl;
     stats.increaseHP(dmg * -1);
     // TODO: if HP<0 do something?
   }
-  if (std::get<1>(res)) {
+  if (enemy) {
     // enemy killed, add reward
-    calculateReward(std::get<1>(res), std::get<0>(res));
+    calculateReward(enemy, diff);
+    for (auto &r : enemy->rewards) {
+      std::string s =
+          "-Got " + std::to_string(std::get<1>(r)) + " " + std::get<0>(r).name;
+      logs.addLog(s);
+      // add items one at a time to max out quantity until item limit reached
+      for (int i = 0; i < std::get<1>(r); i++) {
+        inventory.addItem(&logs, std::get<0>(r), 1, true);
+      }
+    }
   }
 }
 
