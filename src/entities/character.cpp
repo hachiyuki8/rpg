@@ -10,8 +10,6 @@ Character::Character(float x, float y, float w, float h, float xV, float yV) {
     std::cout << "Creating character " << ID << std::endl;
   }
 
-  stillTextures = playerStillTextures;
-  walkTextures = playerWalkTextures;
   xPos = x;
   yPos = y;
   width = w;
@@ -235,7 +233,16 @@ void Character::render(SDL_Renderer *renderer) {
 
   switch (movementState) {
   case MovementState::STILL:
-    SDL_RenderCopy(renderer, stillTextures[direction], NULL, &r);
+    stillIndices[direction].second++;
+    if (stillIndices[direction].second > PER_FRAME_LENGTH) {
+      // switch to next frame
+      stillIndices[direction].second = 0;
+      stillIndices[direction].first = (stillIndices[direction].first + 1) %
+                                      (stillTextures[direction].size());
+    }
+    SDL_RenderCopy(renderer,
+                   stillTextures[direction][stillIndices[direction].first],
+                   NULL, &r);
     break;
   case MovementState::WALK:
     walkIndices[direction].second++;

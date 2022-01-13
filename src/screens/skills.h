@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/skills_constants.h"
-#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -64,8 +64,8 @@ private:
   SkillCard *curSelected = NULL;
 
   SDL_Color text_color = SKILLS_COLOR;
-  SDL_Texture *texture = UIs[SKILLS_TEXTURE];
-  TTF_Font *font = fonts[SKILLS_FONT];
+  SDL_Texture *texture = AssetManager::uiTextures[SKILLS_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[SKILLS_FONT][SKILLS_FONT_SIZE];
 
   std::map<std::string, Skill> skills;
   std::vector<SkillCard> skillcards;

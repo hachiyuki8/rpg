@@ -32,16 +32,17 @@ void Convo::print() {
             << curIndex << std::endl;
 }
 
-void Convo::init(std::vector<std::tuple<int, std::vector<std::string>>> lines) {
+void Convo::init(
+    std::vector<std::tuple<std::string, std::vector<std::string>>> lines) {
   for (auto &ls : lines) {
-    int index = std::get<0>(ls);
+    std::string name = std::get<0>(ls);
     std::vector<std::string> lines = std::get<1>(ls);
 
     struct Line newL;
-    if (index < 0) {
-      newL.icon = playerIcon;
+    if (name.empty()) {
+      newL.icon = AssetManager::playerIcon;
     } else {
-      newL.icon = npcTextures[index];
+      newL.icon = AssetManager::npcTextures[name];
     }
 
     for (auto &l : lines) {

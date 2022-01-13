@@ -1,5 +1,5 @@
 #pragma once
-#include "../globals.h"
+#include "../assetManager.h"
 #include "constants.h"
 #include <map>
 #include <stdlib.h>
@@ -19,6 +19,8 @@ const std::map<std::string, std::pair<std::string, bool>> SKILLS_ALL = {
     {"testing 3", std::make_pair("333", true)},
     {"testing 4", std::make_pair("444", false)},
     {"testing 5", std::make_pair("555", true)}};
-const int SKILLS_TEXTURE = 1;
-const int SKILLS_FONT = 2;
+
+const std::string SKILLS_TEXTURE = "16_grid5.png";
+const std::string SKILLS_FONT = "1_abaddon_light.ttf";
+const int SKILLS_FONT_SIZE = 18;
 const SDL_Color SKILLS_COLOR = {0, 0, 0};

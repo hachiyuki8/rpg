@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/stats_constants.h"
-#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -63,8 +63,8 @@ private:
   int hp;
 
   SDL_Color text_color = STATS_COLOR;
-  SDL_Texture *texture = UIs[STATS_TEXTURE];
-  TTF_Font *font = fonts[STATS_FONT];
+  SDL_Texture *texture = AssetManager::uiTextures[STATS_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[STATS_FONT][STATS_FONT_SIZE];
   std::map<std::string, Stat> stats;
 
   void addStat(std::string s, std::string d, int val);

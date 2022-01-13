@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "assetManager.h"
 #include "init.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -17,20 +17,26 @@ void renderStartScreen();
 Character *curPlayer;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 static GameState gameState = GameState::PAUSE;
+SDL_Texture *startup_t;
 
 /*
  * game
  */
 int main(int argc, char **args) {
-  if (!init()) {
+  AssetManager assetManager;
+  // game assets initialization
+  if (!AssetManager::init()) {
     system("pause");
     return 1;
   }
 
+  // game content initialization
+  init();
+
   // player initialization
   curPlayer = new Character(80, 180);
   curPlayer->init();
-  curPlayer->curMap = maps[1];
+  curPlayer->curMap = AssetManager::allMaps[1];
 
   while (loop()) {
   }
@@ -46,8 +52,8 @@ bool loop() {
   SDL_Event evt;
 
   // clear the screen to white
-  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-  SDL_RenderClear(renderer);
+  SDL_SetRenderDrawColor(AssetManager::renderer, 255, 255, 255, 255);
+  SDL_RenderClear(AssetManager::renderer);
 
   if (gameState == GameState::PAUSE) {
     renderStartScreen();
@@ -140,7 +146,7 @@ bool loop() {
     renderPlayer();
   }
 
-  SDL_RenderPresent(renderer);
+  SDL_RenderPresent(AssetManager::renderer);
 
   Uint64 end = SDL_GetPerformanceCounter();
   float elapsedMS =
@@ -153,58 +159,21 @@ bool loop() {
 
 void updatePlayer(const Uint8 *keys) { curPlayer->update(keys); }
 
-void renderPlayer() { curPlayer->render(renderer); }
+void renderPlayer() { curPlayer->render(AssetManager::renderer); }
 
 void renderStartScreen() {
-  startup_t = SDL_CreateTextureFromSurface(renderer, startup_text);
-  SDL_Rect dest = {(SCREEN_WIDTH - startup_text->w) / 2,
-                   (SCREEN_HEIGHT - startup_text->h) / 2, startup_text->w,
-                   startup_text->h};
-  SDL_RenderCopy(renderer, startup_t, NULL, &dest);
+  startup_t = SDL_CreateTextureFromSurface(AssetManager::renderer,
+                                           AssetManager::startup_text);
+  SDL_Rect dest = {(SCREEN_WIDTH - AssetManager::startup_text->w) / 2,
+                   (SCREEN_HEIGHT - AssetManager::startup_text->h) / 2,
+                   AssetManager::startup_text->w,
+                   AssetManager::startup_text->h};
+  SDL_RenderCopy(AssetManager::renderer, startup_t, NULL, &dest);
 }
 
 void kill() {
   delete curPlayer;
-  for (auto &m : maps) {
-    delete m;
-  }
-  for (auto &npc : allNPCs) {
-    delete npc;
-  }
-
-  for (auto &f : fonts) {
-    TTF_CloseFont(f);
-  }
-
-  SDL_FreeSurface(startup_text);
   SDL_DestroyTexture(startup_t);
 
-  for (auto &ts : playerWalkTextures) {
-    for (auto &t : ts.second) {
-      SDL_DestroyTexture(t);
-    }
-  }
-
-  for (auto &t : npcTextures) {
-    SDL_DestroyTexture(t);
-  }
-  for (auto &t : tileTextures) {
-    SDL_DestroyTexture(t);
-  }
-  for (auto &t : objectTextures) {
-    SDL_DestroyTexture(t);
-  }
-  for (auto &t : uiTextures) {
-    SDL_DestroyTexture(t);
-  }
-  for (auto &t : keyTextures) {
-    SDL_DestroyTexture(t.second);
-  }
-
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-
-  IMG_Quit();
-  TTF_Quit();
-  SDL_Quit();
+  AssetManager::free();
 }

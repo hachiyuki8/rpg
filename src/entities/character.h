@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/character_constants.h"
 #include "../constants/controls.h"
-#include "../globals.h"
 #include "../maps/map.h"
 #include "../screens/help.h"
 #include "../screens/inventory.h"
@@ -180,14 +180,22 @@ private:
   // player textures with animations
   // in xxxIndices, first value is index of current texture, second value is
   // number of frames it has lasted
-  std::map<Direction, SDL_Texture *> stillTextures;
-  std::map<Direction, std::vector<SDL_Texture *>> walkTextures;
+  std::map<Direction, std::vector<SDL_Texture *>> stillTextures =
+      AssetManager::playerTextures[MovementState::STILL];
+  std::map<Direction, std::pair<int, int>> stillIndices = {
+      {Direction::LEFT, std::make_pair(0, 0)},
+      {Direction::RIGHT, std::make_pair(0, 0)},
+      {Direction::UP, std::make_pair(0, 0)},
+      {Direction::DOWN, std::make_pair(0, 0)}};
+  std::map<Direction, std::vector<SDL_Texture *>> walkTextures =
+      AssetManager::playerTextures[MovementState::WALK];
   std::map<Direction, std::pair<int, int>> walkIndices = {
       {Direction::LEFT, std::make_pair(0, 0)},
       {Direction::RIGHT, std::make_pair(0, 0)},
       {Direction::UP, std::make_pair(0, 0)},
       {Direction::DOWN, std::make_pair(0, 0)}};
-  std::map<Direction, std::vector<SDL_Texture *>> attackTextures;
+  std::map<Direction, std::vector<SDL_Texture *>> attackTextures =
+      AssetManager::playerTextures[MovementState::ATTACK];
   std::map<Direction, std::pair<int, int>> attackIndices = {
       {Direction::LEFT, std::make_pair(0, 0)},
       {Direction::RIGHT, std::make_pair(0, 0)},

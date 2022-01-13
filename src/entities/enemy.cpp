@@ -2,7 +2,7 @@
 
 int Enemy::nextID = 0;
 
-Enemy::Enemy(float xMin, float xMax, float yMin, float yMax,
+Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
              MovementState state, int p, int diff, float w, float h, int xVBase,
              int yVBase, int xVRange, int yVRange) {
   ID = nextID;
@@ -10,6 +10,11 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax,
   if (DEBUG) {
     std::cout << "Creating enemy " << ID << std::endl;
   }
+
+  name = n;
+  stillTextures = AssetManager::enemyTextures[name][MovementState::STILL];
+  movingTextures = AssetManager::enemyTextures[name][MovementState::WALK];
+  attackTextures = AssetManager::enemyTextures[name][MovementState::ATTACK];
 
   xPosMin = xMin;
   xPosMax = xMax;
@@ -32,11 +37,6 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax,
   difficulty = diff;
   movementState = state;
 
-  // TODO: need to generalize it
-  stillTexture = enemyStillTexture;
-  movingTextures = enemyWalkTextures;
-  attackTextures = enemyAttackTextures;
-
   lastUpdate = SDL_GetTicks();
 }
 
@@ -52,7 +52,7 @@ void Enemy::print() {
 }
 
 bool Enemy::isInvalidPosition(float x, float y, float w, float h) {
-  return (xPos < x + w && x < xPos + width && yPos < y + h &&
+  return (isAlive && xPos < x + w && x < xPos + width && yPos < y + h &&
           y < yPos + height);
 }
 
@@ -106,7 +106,7 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     // rescale
     int actualW, actualH;
     SDL_QueryTexture(
-        stillTexture, NULL, NULL, &actualW,
+        stillTextures[Direction::LEFT][0], NULL, NULL, &actualW,
         &actualH); // TODO: here assuming all textures have the same size
     s.x = s.x / width * actualW;
     s.y = s.y / height * actualH;
@@ -123,7 +123,16 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     // animation
     switch (movementState) {
     case MovementState::STILL:
-      SDL_RenderCopy(renderer, stillTexture, &s, &r);
+      stillIndices[xDirection].second++;
+      if (stillIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
+        // switch to next frame
+        stillIndices[xDirection].second = 0;
+        stillIndices[xDirection].first = (stillIndices[xDirection].first + 1) %
+                                         (stillTextures[xDirection].size());
+      }
+      SDL_RenderCopy(renderer,
+                     stillTextures[xDirection][stillIndices[xDirection].first],
+                     &s, &r);
       break;
     case MovementState::WALK:
       movingIndices[xDirection].second++;

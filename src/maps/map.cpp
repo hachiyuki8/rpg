@@ -18,12 +18,12 @@ Map::Map(std::vector<std::vector<int>> mapfile, float w, float h, float s) {
     for (int col = 0; col < width / tileSize; col++) {
       int index = mapfile[row][col];
       if (index >= 0) {
-        Tile t(tileTextures[index], col * tileSize, row * tileSize, tileSize,
-               TileState::REACHABLE);
+        Tile t(AssetManager::tileTextures[TILES[index]], col * tileSize,
+               row * tileSize, tileSize, TileState::REACHABLE);
         vec.push_back(t);
       } else {
-        Tile t(tileTextures[-index], col * tileSize, row * tileSize, tileSize,
-               TileState::UNREACHABLE);
+        Tile t(AssetManager::tileTextures[TILES[-index]], col * tileSize,
+               row * tileSize, tileSize, TileState::UNREACHABLE);
         vec.push_back(t);
       }
     }

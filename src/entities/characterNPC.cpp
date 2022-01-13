@@ -77,7 +77,7 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
 }
 
 void CharacterNPC::setConvo(
-    std::vector<std::tuple<int, std::vector<std::string>>> lines) {
+    std::vector<std::tuple<std::string, std::vector<std::string>>> lines) {
   convo.clear();
   convo.init(lines);
 }

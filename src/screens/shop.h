@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/controls.h"
 #include "../constants/shop_constants.h"
 #include "../entities/object.h"
-#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -53,7 +53,7 @@ private:
   std::map<Object, int> items;
 
   SDL_Color text_color = SHOP_COLOR;
-  SDL_Texture *background = UIs[SHOP_BACKGROUND];
-  SDL_Texture *texture = UIs[SHOP_TEXTURE];
-  TTF_Font *font = fonts[SHOP_FONT];
+  SDL_Texture *background = AssetManager::uiTextures[SHOP_BACKGROUND];
+  SDL_Texture *texture = AssetManager::uiTextures[SHOP_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[SHOP_FONT][SHOP_FONT_SIZE];
 };

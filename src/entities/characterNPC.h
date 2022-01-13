@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/npc_constants.h"
-#include "../globals.h"
 #include "../screens/convo.h"
 #include "../screens/shop.h"
 #include <SDL.h>
@@ -68,10 +68,11 @@ public:
   /**
    * @brief Reset conversation contents for NPCs
    *
-   * @param lines a list of (speaker texture index, lines to be shown on the
-   * same screen), where index refers to npcTextures or playerIcon if -1
+   * @param lines a list of (speaker texture name, lines to be shown on the
+   * same screen), where name refers to npcTextures or playerIcon if empty
    */
-  void setConvo(std::vector<std::tuple<int, std::vector<std::string>>> lines);
+  void setConvo(
+      std::vector<std::tuple<std::string, std::vector<std::string>>> lines);
 
   /**
    * @brief Show the next screen of the conversation

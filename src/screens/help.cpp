@@ -80,7 +80,8 @@ void Help::render(SDL_Renderer *renderer) {
       r.w = c.second.button_width;
       r.h = c.second.button_height;
       r.x += width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
-      SDL_RenderCopy(renderer, keyTextures[c.second.key], NULL, &r);
+      SDL_RenderCopy(renderer, AssetManager::keyTextures[c.second.key], NULL,
+                     &r); // TODO: add mouse button
       r.x -= width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
 
       if (nextR + 1 < NUM_ROW) {

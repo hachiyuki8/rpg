@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/enemy_constants.h"
-#include "../globals.h"
 #include "object.h"
 #include <SDL.h>
 #include <iostream>
@@ -21,7 +21,7 @@ class Character;
 
 class Enemy {
 public:
-  Enemy(float xMin, float xMax, float yMin, float yMax,
+  Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
         MovementState state = MovementState::STILL, int p = ENEMY_HP,
         int diff = ENEMY_DIFFICULTY, float w = ENEMY_WIDTH,
         float h = ENEMY_HEIGHT, int xVBase = ENEMY_XVELOCITY_BASE,
@@ -89,6 +89,7 @@ public:
 private:
   int ID;
   Uint32 lastUpdate;
+  std::string name;
 
   // enemy position
   float xPos;
@@ -127,13 +128,14 @@ private:
   // enemy textures with animations
   // in xxxIndices, first value is index of current texture, second value is
   // number of frames it has lasted
-  SDL_Texture *stillTexture;
+  std::map<Direction, std::vector<SDL_Texture *>> stillTextures;
+  std::map<Direction, std::pair<int, int>> stillIndices = {
+      {Direction::LEFT, std::make_pair(0, 0)},
+      {Direction::RIGHT, std::make_pair(0, 0)}};
   std::map<Direction, std::vector<SDL_Texture *>> movingTextures;
   std::map<Direction, std::pair<int, int>> movingIndices = {
       {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)},
-      {Direction::UP, std::make_pair(0, 0)},
-      {Direction::DOWN, std::make_pair(0, 0)}};
+      {Direction::RIGHT, std::make_pair(0, 0)}};
   // attacking or attacked animation
   std::map<Direction, std::vector<SDL_Texture *>> attackTextures;
   std::map<Direction, std::pair<int, int>> attackIndices = {

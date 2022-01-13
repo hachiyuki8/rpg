@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/convo_constants.h"
-#include "../globals.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -25,8 +25,8 @@ public:
 
   void print();
   void
-  init(std::vector<std::tuple<int, std::vector<std::string>>>
-           lines); // int is index into npcTextures or -1 for player texture
+  init(std::vector<std::tuple<std::string, std::vector<std::string>>>
+           lines); // string is index into npcTextures or "" for player texture
   void clear();
 
   void open();
@@ -49,6 +49,6 @@ private:
   int curIndex = 0;
 
   SDL_Color text_color = CONVO_COLOR;
-  SDL_Texture *texture = UIs[CONVO_TEXTURE];
-  TTF_Font *font = fonts[CONVO_FONT];
+  SDL_Texture *texture = AssetManager::uiTextures[CONVO_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[CONVO_FONT][CONVO_FONT_SIZE];
 };

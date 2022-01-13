@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/controls.h"
 #include "../constants/inventory_constants.h"
 #include "../entities/object.h"
-#include "../globals.h"
 #include "logs.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -49,9 +49,9 @@ private:
   std::map<Object, int> items;
 
   SDL_Color text_color = INVENTORY_COLOR;
-  SDL_Texture *background = UIs[INVENTORY_BACKGROUND];
-  SDL_Texture *texture = UIs[INVENTORY_TEXTURE];
-  TTF_Font *font = fonts[INVENTORY_FONT];
+  SDL_Texture *background = AssetManager::uiTextures[INVENTORY_BACKGROUND];
+  SDL_Texture *texture = AssetManager::uiTextures[INVENTORY_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[INVENTORY_FONT][INVENTORY_FONT_SIZE];
 
   void onLeftClick(Logs *logs, float x, float y); // select/unselect
   int onRightClick(Logs *logs, float x,

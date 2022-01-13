@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/constants.h"
 #include "../entities/characterNPC.h"
 #include "../entities/enemy.h"
 #include "../entities/object.h"
-#include "../globals.h"
 #include "../maps/teleporter.h"
 #include "../maps/tile.h"
 #include <SDL.h>

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/logs_constants.h"
-#include "../globals.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <deque>
@@ -37,8 +37,8 @@ private:
   float height;
 
   SDL_Color text_color = LOGS_COLOR;
-  SDL_Texture *texture = UIs[LOGS_TEXTURE];
-  TTF_Font *font = fonts[LOGS_FONT];
+  SDL_Texture *texture = AssetManager::uiTextures[LOGS_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[LOGS_FONT][LOGS_FONT_SIZE];
 
   int offset = 10;
   float lineHeight;

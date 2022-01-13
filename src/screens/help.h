@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../assetManager.h"
 #include "../constants/help_constants.h"
-#include "../globals.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -41,8 +41,8 @@ private:
   float height;
 
   SDL_Color text_color = HELP_COLOR;
-  SDL_Texture *texture = UIs[HELP_TEXTURE];
-  TTF_Font *font = fonts[HELP_FONT];
+  SDL_Texture *texture = AssetManager::uiTextures[HELP_TEXTURE];
+  TTF_Font *font = AssetManager::allFonts[HELP_FONT][HELP_FONT_SIZE];
 
   std::map<std::string, Control> controls;
 };

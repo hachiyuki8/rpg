@@ -92,5 +92,5 @@ const std::vector<std::vector<int>> INITIAL_MAP_2 = {
      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 };
 
-const std::vector<std::vector<std::vector<int>>> MAPS = {INITIAL_MAP,
-                                                         INITIAL_MAP_2};
+const std::vector<std::vector<std::vector<int>>> MAPFILES = {INITIAL_MAP,
+                                                             INITIAL_MAP_2};
