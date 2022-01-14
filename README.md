@@ -1,6 +1,10 @@
 # rpg
 An unknown theme 2D RPG written in C++ from scratch using SDL (in development)
 
+### Progress
+
+***12/29/2021-present:*** Currently writing my own framework. Haven't decided what the actual story will be.
+
 ### Implemented Features
 
 - characters (players, NPCs, enemies) with animations
@@ -15,6 +19,7 @@ An unknown theme 2D RPG written in C++ from scratch using SDL (in development)
 - https://lazyfoo.net/tutorials/SDL/
 
 ### Screenshots
+*(UIs below are mostly placeholders for the sake of testing)*
 
 <img src="https://user-images.githubusercontent.com/57233990/149397011-773c87dd-17f6-43ce-9b6f-b7baa18595bf.png" width=500px>
 <img src="https://user-images.githubusercontent.com/57233990/149397019-038bb432-d66c-45e8-9505-95c9a883ee95.png" width=500px>
