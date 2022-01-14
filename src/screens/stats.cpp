@@ -24,7 +24,7 @@ Stats::~Stats() {
   if (DEBUG) {
     std::cout << "Destroying stats " << ID << std::endl;
   }
-  for (auto &s : stats) {
+  for (auto &s : attributes) {
     SDL_FreeSurface(s.second.name_text);
     SDL_FreeSurface(s.second.description_text);
   }
@@ -35,17 +35,16 @@ void Stats::print() {
   std::cout << "-Name: " << name << std::endl;
   std::cout << "-Level " << level << ": exp " << exp << std::endl;
   std::cout << "-HP: " << hp << std::endl;
-  for (auto &s : stats) {
-    std::cout << "-Stat " << s.second.name << ": " << s.second.value
+  for (auto &s : attributes) {
+    std::cout << "-Attribute " << s.second.name << ": " << s.second.value
               << std::endl;
   }
 }
 
-void Stats::initAllStats(
-    std::map<std::string, std::pair<std::string, int>> st) {
+void Stats::initAllStats() {
   hp = hpPerLevel[level];
-  for (auto &s : st) {
-    addStat(s.first, s.second.first, s.second.second);
+  for (auto &s : STATS_ALL_ATTRIBUTES) {
+    addAttribute(s.first, s.second.first, s.second.second);
   }
 }
 
@@ -101,28 +100,28 @@ bool Stats::decreaseMoneyIfEnough(Logs *logs, int m) {
   }
 }
 
-void Stats::increaseStat(Logs *logs, std::string s, int val) {
-  if (!stats.contains(s)) {
-    std::cout << "Stat doesn't exist" << std::endl;
+void Stats::increaseAttribute(Logs *logs, std::string s, int val) {
+  if (!attributes.contains(s)) {
+    std::cout << "Attribute doesn't exist" << std::endl;
     return;
   }
-  stats[s].value += val;
-  std::string s0 =
-      "-" + stats[s].name + " increased to " + std::to_string(stats[s].value);
+  attributes[s].value += val;
+  std::string s0 = "-" + attributes[s].name + " increased to " +
+                   std::to_string(attributes[s].value);
   logs->addLog(s0);
-  if (stats[s].value > stats[s].maxValue) {
-    stats[s].value = stats[s].maxValue;
-    s0 = "-" + stats[s].name + " reached max value";
+  if (attributes[s].value > attributes[s].maxValue) {
+    attributes[s].value = attributes[s].maxValue;
+    s0 = "-" + attributes[s].name + " reached max value";
     logs->addLog(s0);
   }
 }
 
-int Stats::getStat(std::string s) {
-  if (!stats.contains(s)) {
-    std::cout << "Stat doesn't exist" << std::endl;
+int Stats::getAttribute(std::string s) {
+  if (!attributes.contains(s)) {
+    std::cout << "Attribute doesn't exist" << std::endl;
     return -1;
   }
-  return stats[s].value;
+  return attributes[s].value;
 }
 
 void Stats::open() { isShowing = true; }
@@ -199,8 +198,8 @@ void Stats::render(SDL_Renderer *renderer) {
 
     r.y += offsetLine;
 
-    // stats
-    for (auto &s : stats) {
+    // attributes
+    for (auto &s : attributes) {
       t = SDL_CreateTextureFromSurface(renderer, s.second.name_text);
       r.y += offsetLine;
       r.w = s.second.name_text->w;
@@ -225,28 +224,28 @@ void Stats::render(SDL_Renderer *renderer) {
   }
 };
 
-void Stats::addStat(std::string s, std::string d, int val) {
-  if (stats.contains(s)) {
-    std::cout << "Stat already exists" << std::endl;
+void Stats::addAttribute(std::string s, std::string d, int val) {
+  if (attributes.contains(s)) {
+    std::cout << "Attribute already exists" << std::endl;
     return;
   }
 
-  struct Stat newS;
-  newS.name = s;
-  newS.description = d;
-  newS.value = val;
+  struct Attribute newA;
+  newA.name = s;
+  newA.description = d;
+  newA.value = val;
   SDL_Surface *name_text =
-      TTF_RenderText_Solid(font, newS.name.c_str(), text_color);
+      TTF_RenderText_Solid(font, newA.name.c_str(), text_color);
   if (!name_text) {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
-  newS.name_text = name_text;
+  newA.name_text = name_text;
   SDL_Surface *des_text =
-      TTF_RenderText_Solid(font, newS.description.c_str(), text_color);
+      TTF_RenderText_Solid(font, newA.description.c_str(), text_color);
   if (!des_text) {
     std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
   }
-  newS.description_text = des_text;
+  newA.description_text = des_text;
 
-  stats[s] = newS;
+  attributes[s] = newA;
 }

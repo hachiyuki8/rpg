@@ -23,6 +23,24 @@ class Character;
 
 class Enemy {
  public:
+  /**
+   * @brief Construct a new enemy
+   *
+   * @param xMin movement range
+   * @param xMax
+   * @param yMin
+   * @param yMax
+   * @param n name, should match the folder name containing all textures
+   * @param state either IDLE (then position is alwasy (xMin, yMin)) or WALK
+   * @param p HP
+   * @param diff an integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
+   * @param w dimension
+   * @param h
+   * @param xVBase velocity range
+   * @param yVBase
+   * @param xVRange
+   * @param yVRange
+   */
   Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
         MovementState state = MovementState::IDLE, int p = ENEMY_HP,
         int diff = ENEMY_DIFFICULTY, float w = ENEMY_WIDTH,
@@ -34,13 +52,14 @@ class Enemy {
   void print();
 
   /**
-   * @brief Check if the given position collides with enemy
+   * @brief Check if the given position collides with living enemy
    *
    * @param x
    * @param y
    * @param w
    * @param h
-   * @return true if collides with enemy collider (not interaction collider)
+   * @return true if collides with enemy collider (not interaction collider) and
+   * enemy is alive
    */
   bool isInvalidPosition(float x, float y, float w, float h);
 
@@ -59,18 +78,18 @@ class Enemy {
    * @param y
    * @param w
    * @param h
-   * @return bool
+   * @return true if collides with interaction collider and enemy is alive
    */
   bool isInRange(float x, float y, float w, float h);
 
   /**
-   * @brief When ATTACK is pressed (left mouse button), update enemy HP and
-   * state. Caller should ensure player's position collides with enemy first.
+   * @brief When ATTACK is pressed, update enemy HP and state. Caller should
+   * ensure player's position collides with enemy first by calling isInRange.
    *
    * @param x x position of the player
    * @param attack player's attack attribute
-   * @return std::pair<int, int> (difficulty, 1 if alive/0 if killed), (-1, -1)
-   * if last attack animation hasn't finished yet
+   * @return (-1, -1) if attack is invalid (enemy dead already or still in last
+   * animation), or (enemy difficulty, 1 if alive/0 if killed)
    */
   std::pair<int, int> onAttack(float x, int attack);
 
@@ -122,32 +141,30 @@ class Enemy {
 
   // enemy properties
   int hp;
-  int difficulty;  // integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
+  int difficulty;
   std::vector<std::tuple<Object, int>> rewards;  // upon being killed
 
   bool isAlive = true;
 
   // enemy textures with animations
-  // in xxxIndices, first value is index of current texture, second value is
-  // number of frames it has lasted
-  std::map<Direction, std::vector<SDL_Texture *>> idleTextures;
-  std::map<Direction, std::pair<int, int>> idleIndices = {
-      {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)}};
-  std::map<Direction, std::vector<SDL_Texture *>> movingTextures;
-  std::map<Direction, std::pair<int, int>> movingIndices = {
-      {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)}};
-  // attacking or attacked animation
-  std::map<Direction, std::vector<SDL_Texture *>> attackTextures;
-  std::map<Direction, std::pair<int, int>> attackIndices = {
-      {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)}};
+  std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>
+      enemyTextures;
+  // (index of current texture, number of frames it has lasted)
+  std::map<MovementState, std::map<Direction, std::pair<int, int>>>
+      enemyIndices = {{MovementState::IDLE,
+                       {{Direction::LEFT, std::make_pair(0, 0)},
+                        {Direction::RIGHT, std::make_pair(0, 0)}}},
+                      {MovementState::WALK,
+                       {{Direction::LEFT, std::make_pair(0, 0)},
+                        {Direction::RIGHT, std::make_pair(0, 0)}}},
+                      {MovementState::ATTACK,
+                       {{Direction::LEFT, std::make_pair(0, 0)},
+                        {Direction::RIGHT, std::make_pair(0, 0)}}}};
 
   // Calculate damage taken according to player attack and enemy difficulty
   int calculateDamage(int attack);
 
-  // Update enemy position
+  // Update enemy position if is alive and movement state is WALK
   void move();
 
   friend class Character;

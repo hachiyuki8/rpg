@@ -35,13 +35,13 @@ bool Inventory::addItem(Logs *logs, Object o, int q) {
 
   if (items.contains(o)) {
     items[o] += q;
-    if (items[o] > PER_ITEM_LIMIT) {
+    if (items[o] > INVENTORY_PER_ITEM_LIMIT) {
       logs->addLog("-Max quantity per item reached");
       items[o] -= q;
       return false;
     }
   } else {
-    if (items.size() < ITEM_LIMIT) {
+    if (items.size() < INVENTORY_ITEM_LIMIT) {
       items[o] = q;
     } else {
       logs->addLog("-No more space in bag");
@@ -50,7 +50,6 @@ bool Inventory::addItem(Logs *logs, Object o, int q) {
   }
   return true;
 }
-void Inventory::useItem(Object o){};
 
 void Inventory::open(Logs *logs) {
   isShowing = true;
@@ -113,7 +112,7 @@ void Inventory::render(SDL_Renderer *renderer) {
       for (int col = 0; col < numCol; col++) {
         r.x = xPos + INVENTORY_BORDER +
               col * (INVENTORY_GRID_SIZE + INVENTORY_BORDER);
-        r.y = yPos + +INVENTORY_BORDER +
+        r.y = yPos + INVENTORY_BORDER +
               row * (INVENTORY_GRID_SIZE + INVENTORY_BORDER);
         r.w = INVENTORY_GRID_SIZE;
         r.h = INVENTORY_GRID_SIZE;
@@ -124,7 +123,6 @@ void Inventory::render(SDL_Renderer *renderer) {
     int nextR = 0;
     int nextC = 0;
     int offset = (INVENTORY_GRID_SIZE - INVENTORY_OBJECT_SIZE) / 2;
-    // TODO: maybe use something ordered to preserve order?
     for (auto &o : items) {
       float x = xPos + INVENTORY_BORDER +
                 nextC * (INVENTORY_GRID_SIZE + INVENTORY_BORDER) + offset;
@@ -173,7 +171,7 @@ void Inventory::onLeftClick(Logs *logs, float x, float y) {
         }
         curSelected = &i;
 
-        // use a UI similar to shop instead of writing to logs
+        // TODO: use a UI similar to shop instead of writing to logs
         std::string s =
             "-Selected item: " + i.name + ", value: " + std::to_string(i.value);
         logs->addLog(s);

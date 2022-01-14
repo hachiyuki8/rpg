@@ -24,6 +24,8 @@ Help::~Help() {
   }
 }
 
+void Help::print() { std::cout << "Help " << ID << std::endl; }
+
 void Help::init() {
   for (auto &c : HELP_KEY) {
     struct Control newC;
@@ -58,8 +60,6 @@ void Help::init() {
     controls.push_back(newC);
   }
 }
-
-void Help::print() { std::cout << "Help " << ID << std::endl; }
 
 void Help::open() { isShowing = true; }
 

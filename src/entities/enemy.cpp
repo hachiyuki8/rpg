@@ -12,9 +12,12 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
   }
 
   name = n;
-  idleTextures = AssetManager::enemyTextures[name][MovementState::IDLE];
-  movingTextures = AssetManager::enemyTextures[name][MovementState::WALK];
-  attackTextures = AssetManager::enemyTextures[name][MovementState::ATTACK];
+  enemyTextures = {{MovementState::IDLE,
+                    AssetManager::enemyTextures[name][MovementState::IDLE]},
+                   {MovementState::WALK,
+                    AssetManager::enemyTextures[name][MovementState::WALK]},
+                   {MovementState::ATTACK,
+                    AssetManager::enemyTextures[name][MovementState::ATTACK]}};
 
   xPosMin = xMin;
   xPosMax = xMax;
@@ -61,14 +64,14 @@ void Enemy::addReward(Object o, int q) {
 }
 
 bool Enemy::isInRange(float x, float y, float w, float h) {
-  return (xPos - ENEMY_INTERACTION_RANGE <= x + w &&
+  return (isAlive && xPos - ENEMY_INTERACTION_RANGE <= x + w &&
           x <= xPos + width + ENEMY_INTERACTION_RANGE &&
           yPos - ENEMY_INTERACTION_RANGE <= y + h &&
           y <= yPos + height + ENEMY_INTERACTION_RANGE);
 }
 
 std::pair<int, int> Enemy::onAttack(float x, int attack) {
-  if (movementState == MovementState::ATTACK) {
+  if (!isAlive || movementState == MovementState::ATTACK) {
     return std::make_pair(-1, -1);
   }
 
@@ -104,10 +107,10 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     s.x = std::max(0.0f, round(camX - xPos));
     s.y = std::max(0.0f, round(camY - yPos));
     // rescale
+    // TODO: here assuming all textures have the same size
     int actualW, actualH;
-    SDL_QueryTexture(
-        idleTextures[Direction::LEFT][0], NULL, NULL, &actualW,
-        &actualH);  // TODO: here assuming all textures have the same size
+    SDL_QueryTexture(enemyTextures[MovementState::IDLE][Direction::LEFT][0],
+                     NULL, NULL, &actualW, &actualH);
     s.x = s.x / width * actualW;
     s.y = s.y / height * actualH;
     s.w = actualW - s.x;
@@ -119,56 +122,26 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     r.w = width - std::max(0.0f, round(camX - xPos));
     r.h = height - std::max(0.0f, round(camY - yPos));
 
-    // TODO: there should be a delay before attacked and start of attack
-    // animation
-    switch (movementState) {
-      case MovementState::IDLE:
-        idleIndices[xDirection].second++;
-        if (idleIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-          // switch to next frame
-          idleIndices[xDirection].second = 0;
-          idleIndices[xDirection].first = (idleIndices[xDirection].first + 1) %
-                                          (idleTextures[xDirection].size());
-        }
-        SDL_RenderCopy(renderer,
-                       idleTextures[xDirection][idleIndices[xDirection].first],
-                       &s, &r);
-        break;
-      case MovementState::WALK:
-        movingIndices[xDirection].second++;
-        if (movingIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-          // switch to next frame
-          movingIndices[xDirection].second = 0;
-          movingIndices[xDirection].first =
-              (movingIndices[xDirection].first + 1) %
-              (movingTextures[xDirection].size());
-        }
-        SDL_RenderCopy(
-            renderer,
-            movingTextures[xDirection][movingIndices[xDirection].first], &s,
-            &r);
-        break;
-      case MovementState::ATTACK:
-        attackIndices[xDirection].second++;
-        if (attackIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-          // switch to next frame
-          attackIndices[xDirection].second = 0;
-          attackIndices[xDirection].first =
-              (attackIndices[xDirection].first + 1) %
-              (attackTextures[xDirection].size());
+    // TODO: should be a delay before attacked and start of attack animation
+    enemyIndices[movementState][xDirection].second++;
+    if (enemyIndices[movementState][xDirection].second >
+        ENEMY_PER_FRAME_LENGTH) {
+      // switch to next frame
+      enemyIndices[movementState][xDirection].second = 0;
+      enemyIndices[movementState][xDirection].first += 1;
+      enemyIndices[movementState][xDirection].first %=
+          enemyTextures[movementState][xDirection].size();
 
-          if (attackIndices[xDirection].first == 0) {
-            movementState = oldMovementState;
-          }
-        }
-        SDL_RenderCopy(
-            renderer,
-            attackTextures[xDirection][attackIndices[xDirection].first], &s,
-            &r);
-      default:
-        break;
+      // update movement state after attack animation finished
+      if (movementState == MovementState::ATTACK &&
+          enemyIndices[movementState][xDirection].first == 0) {
+        movementState = oldMovementState;
+      }
     }
-
+    SDL_RenderCopy(renderer,
+                   enemyTextures[movementState][xDirection]
+                                [enemyIndices[movementState][xDirection].first],
+                   NULL, &r);
   } else {
     // TODO: death animation?
   }

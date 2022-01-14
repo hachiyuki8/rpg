@@ -156,7 +156,7 @@ void Character::interact() {
   Map *newMap;
   float newX, newY;
   std::tie(newMap, newX, newY) =
-      curMap->onInteract(this, curMap, xPos, yPos, width, height);
+      curMap->onInteract(this, xPos, yPos, width, height);
   movementState = MovementState::IDLE;
   if (newMap != curMap) {
     // change map, reset position to new tile center
@@ -326,7 +326,7 @@ void Character::upgradeSkill(std::string s, int exp) {
 void Character::increaseExp(int exp) { stats.increaseExp(&logs, exp); }
 
 void Character::increaseStat(std::string s, int val) {
-  stats.increaseStat(&logs, s, val);
+  stats.increaseAttribute(&logs, s, val);
 }
 
 void Character::increaseMoney(int m) { stats.increaseMoney(&logs, m); }
@@ -337,7 +337,7 @@ void Character::attack() {
   }
 
   std::tuple<int, Enemy *> res =
-      curMap->onAttack(stats.getStat("attack"), xPos, yPos, width, height);
+      curMap->onAttack(stats.getAttribute("attack"), xPos, yPos, width, height);
   int diff = std::get<0>(res);
   Enemy *enemy = std::get<1>(res);
   if (diff >= 0) {

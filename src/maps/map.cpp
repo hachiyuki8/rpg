@@ -43,7 +43,13 @@ void Map::print() {
             << std::endl;
 }
 
-void Map::addTeleporter(Teleporter tp) { teleporters.push_back(tp); }
+void Map::addTeleporter(Teleporter tp) {
+  if (tp.src_map != this && tp.dest_map != this) {
+    std::cout << "Invalid teleporter to be added to map " << ID << std::endl;
+    return;
+  }
+  teleporters.push_back(tp);
+}
 
 void Map::addObject(Object o) { objects.push_back(o); }
 
@@ -89,17 +95,16 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
   return false;
 }
 
-std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
-                                                Map *curMap, float x, float y,
-                                                float w, float h) {
+std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer, float x,
+                                                float y, float w, float h) {
   for (auto &npc : NPCs) {
     if (npc->onInteract(curPlayer, x, y, w, h)) {
-      return std::make_tuple(curMap, x, y);
+      return std::make_tuple(this, x, y);
     }
   }
 
   for (auto &tp : teleporters) {
-    if (tp.src_map == curMap) {
+    if (tp.src_map == this) {
       for (auto &sd : tp.srcToDest) {
         if (tiles[sd.first.first][sd.first.second].isInTile(x, y, w, h)) {
           // change map and return new tile center
@@ -116,11 +121,11 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer,
 
   for (auto &o : objects) {
     if (o.onInteract(x, y, w, h)) {
-      return std::make_tuple(curMap, x, y);
+      return std::make_tuple(this, x, y);
     }
   }
 
-  return std::make_tuple(curMap, x, y);
+  return std::make_tuple(this, x, y);
 }
 
 std::tuple<int, Enemy *> Map::onAttack(int attack, float x, float y, float w,

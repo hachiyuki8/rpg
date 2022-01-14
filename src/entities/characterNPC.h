@@ -24,6 +24,16 @@ class Character;
 
 class CharacterNPC {
  public:
+  /**
+   * @brief Construct a new NPC
+   *
+   * @param t NPC texture (TODO: currently no animation supported)
+   * @param st NPC type
+   * @param x position
+   * @param y
+   * @param w dimension
+   * @param h
+   */
   CharacterNPC(SDL_Texture *t, NPCState st = NPCState::SHOP_NPC,
                float x = (SCREEN_WIDTH - DEFAULT_NPC_WIDTH) / 2,
                float y = (SCREEN_HEIGHT - DEFAULT_NPC_HEIGHT) / 2,
@@ -77,11 +87,11 @@ class CharacterNPC {
   void onQuit();
 
   /**
-   * @brief When left or right mouse button is pressed, do one of the followings
+   * @brief When left mouse button is pressed, do one of the followings
    * depending on state:
    * - select/unselect items in shop
    *
-   * @param x
+   * @param x cursor position
    * @param y
    */
   void onClick(float x, float y);
@@ -114,7 +124,8 @@ class CharacterNPC {
   void addToShop(std::vector<std::tuple<Object, int>> items);
 
   /**
-   * @brief Render the NPC based on camera position
+   * @brief Render the NPC based on camera position. Note that the associated UI
+   * screen will not be rendered.
    *
    * @param renderer
    * @param camX
@@ -126,8 +137,8 @@ class CharacterNPC {
               float camH);
 
   /**
-   * @brief Render the NPC's associated screen depending on state, being one of
-   * the followings:
+   * @brief Render the NPC's associated UI screen depending on state, being one
+   * of the followings:
    * - shop
    * - conversation
    *
@@ -146,7 +157,6 @@ class CharacterNPC {
   Convo convo;
 
   // NPC textures
-  // TODO: add animations
   SDL_Texture *texture;
 
   // NPC position
@@ -164,6 +174,6 @@ class CharacterNPC {
   float widthI;
   float heightI;
 
-  // Return true if given position colliders with interaction collider
+  // Return true if given position collides with interaction collider
   bool isInRange(float x, float y, float w, float h);
 };

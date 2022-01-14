@@ -18,6 +18,20 @@
 
 class Object {
  public:
+  /**
+   * @brief Construct a new object
+   *
+   * @param n name - different usable/pickable objects must have unique name
+  since inventory and shops group items based on name instead of ID
+   * @param d description
+   * @param t texture
+   * @param v item value
+   * @param type object type determines what happens upon use
+   * @param x position
+   * @param y
+   * @param w dimension
+   * @param h
+   */
   Object(std::string n, std::string d, SDL_Texture *t, int v = 0,
          ObjectType type = ObjectType::OTHERS, float x = 0, float y = 0,
          float w = OBJECT_SIZE, float h = OBJECT_SIZE);
@@ -174,12 +188,10 @@ class Object {
   mutable bool isSelected = false;
 
   // object properties
-  // different usable/pickable objects must have unique name since inventory and
-  // shops group items based on name instead of ID
   std::string name;
   std::string description;
   int value;
-  ObjectType type;  // determines what happens upon use
+  ObjectType type;
   std::set<ObjectProperty> properties;
 
   // Return true if given position collides with object collider

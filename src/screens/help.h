@@ -10,6 +10,15 @@
 #include "../assetManager.h"
 #include "../constants/help_constants.h"
 
+/*
+ * help.h
+ *
+ * This file defines all help page states and refers to help_constants.h.
+ *
+ */
+
+// Each Control forms a separate entry on the help page. Only one of key or
+// mouse field is meaningful depending on isKey.
 struct Control {
   bool isKey;
   SDL_Keycode key;
@@ -21,16 +30,44 @@ struct Control {
 
 class Help {
  public:
+  /**
+   * @brief Construct a new help page
+   *
+   * @param x screen position and dimension
+   * @param y
+   * @param w
+   * @param h
+   */
   Help(float x = (SCREEN_WIDTH - HELP_SCREEN_WIDTH) / 2,
        float y = (SCREEN_HEIGHT - HELP_SCREEN_HEIGHT) / 2,
        float w = HELP_SCREEN_WIDTH, float h = HELP_SCREEN_HEIGHT);
   virtual ~Help();
 
-  void init();
   void print();
 
+  /**
+   * @brief Initialize the help page content from HELP_KEY and HELP_MOUSE
+   *
+   */
+  void init();
+
+  /**
+   * @brief Open the help page
+   *
+   */
   void open();
+
+  /**
+   * @brief Close the help page
+   *
+   */
   void close();
+
+  /**
+   * @brief Render the help page
+   *
+   * @param renderer
+   */
   void render(SDL_Renderer *renderer);
 
   static int nextID;

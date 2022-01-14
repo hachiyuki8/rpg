@@ -104,7 +104,7 @@ void Skills::onClick(float x, float y, bool isLeft) {
   if (isLeft) {
     onLeftClick(x, y);
   } else {
-    onRightClick(x, y);
+    // TODO
   }
 }
 
@@ -251,5 +251,3 @@ void Skills::onLeftClick(float x, float y) {
     }
   }
 }
-
-void Skills::onRightClick(float x, float y) { return; }  // TODO

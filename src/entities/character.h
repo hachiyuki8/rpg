@@ -30,6 +30,16 @@ class Shop;
 
 class Character {
  public:
+  /**
+   * @brief Construct a new character
+   *
+   * @param x position
+   * @param y
+   * @param w dimension
+   * @param h
+   * @param xV velocity
+   * @param yV
+   */
   Character(float x = (SCREEN_WIDTH - CHARACTER_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - CHARACTER_HEIGHT) / 2,
             float w = CHARACTER_WIDTH, float h = CHARACTER_HEIGHT,
@@ -107,8 +117,8 @@ class Character {
    * - select/unselect skills
    * - attack an enemy in range
    *
-   * @param x cursor x position
-   * @param y cursor y position
+   * @param x cursor position
+   * @param y
    * @param isLeft true if left click
    */
   void click(float x, float y, bool isLeft);

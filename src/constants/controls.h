@@ -21,3 +21,5 @@ const SDL_Keycode CONFIRM = SDLK_RETURN;
 
 const SDL_Keycode START_GAME = SDLK_CAPSLOCK;
 const SDL_Keycode QUIT = SDLK_ESCAPE;
+
+const Uint8 ATTACK = SDL_BUTTON_LEFT;

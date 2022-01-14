@@ -142,9 +142,7 @@ void Shop::render(SDL_Renderer *renderer) {
           yPos + SHOP_BORDER + nextR * (SHOP_GRID_SIZE + SHOP_BORDER) + offset;
 
       // item
-      o.first.setInventoryPosition(x,
-                                   y);  // TODO: reusing the same parameters
-                                        // as Inventory, may separate these two?
+      o.first.setInventoryPosition(x, y);
       o.first.render(renderer, x, y, SHOP_OBJECT_SIZE, SHOP_OBJECT_SIZE);
 
       // quantity
