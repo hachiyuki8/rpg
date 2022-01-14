@@ -15,14 +15,9 @@ bool AssetManager::init() {
     return false;
   }
 
-  // TODO: starting screen (temporary)
-  SDL_Color text_color = {0, 0, 0};
-  std::string s = "Press " + std::string(SDL_GetKeyName(START_GAME)) +
-                  " to start/resume the game";
-  startup_text = TTF_RenderText_Solid(allFonts["0_abaddon_bold.ttf"][36],
-                                      s.c_str(), text_color);
-  if (!startup_text) {
-    std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
+  if (!initStartingScreen()) {
+    std::cout << "[Asset Manager] Starting screen initialization failed"
+              << std::endl;
     return false;
   }
 
@@ -56,7 +51,7 @@ bool AssetManager::init() {
     return false;
   }
 
-  if (!initTextures_Key()) {
+  if (!initTextures_KeyMouse()) {
     std::cout << "[Asset Manager] Key texture initialization failed"
               << std::endl;
     return false;
@@ -71,24 +66,15 @@ bool AssetManager::init() {
   return true;
 }
 
-void AssetManager::free() {
-  for (auto &m : allMaps) {
-    delete m;
-  }
-  for (auto &n : allNPCs) {
-    delete n;
-  }
-  for (auto &e : allEnemies) {
-    delete e;
-  }
-
+void AssetManager::quit() {
   for (auto &kv : allFonts) {
     for (auto &kv2 : kv.second) {
       TTF_CloseFont(kv2.second);
     }
   }
 
-  SDL_FreeSurface(startup_text); // TODO
+  SDL_FreeSurface(startingScreen_text);
+  SDL_DestroyTexture(startingScreen_t);
 
   SDL_DestroyTexture(playerIcon);
   for (auto &kv : playerTextures) {
@@ -175,6 +161,18 @@ bool AssetManager::initFonts() {
       }
       allFonts[s][size] = font;
     }
+  }
+  return true;
+}
+
+bool AssetManager::initStartingScreen() {
+  std::string s = "Press " + std::string(SDL_GetKeyName(START_GAME)) +
+                  " to start/resume the game";
+  startingScreen_text = TTF_RenderText_Solid(allFonts["0_abaddon_bold.ttf"][36],
+                                             s.c_str(), {0, 0, 0});
+  if (!startingScreen_text) {
+    std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
+    return false;
   }
   return true;
 }
@@ -306,7 +304,7 @@ bool AssetManager::initTextures_UI() {
   return true;
 }
 
-bool AssetManager::initTextures_Key() {
+bool AssetManager::initTextures_KeyMouse() {
   for (auto &s : KEYS) {
     std::string path = KEY_PATH + s.second;
     SDL_Surface *image = IMG_Load(path.c_str());
@@ -322,6 +320,24 @@ bool AssetManager::initTextures_Key() {
       return false;
     }
     keyTextures[s.first] = texture;
+    SDL_FreeSurface(image);
+  }
+
+  for (auto &s : MOUSE) {
+    std::string path = KEY_PATH + s.second;
+    SDL_Surface *image = IMG_Load(path.c_str());
+    if (!image) {
+      std::cout << "Error loading image " << path << ": " << SDL_GetError()
+                << std::endl;
+      return false;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+      std::cout << "Error creating texture for " << path << ": "
+                << SDL_GetError() << std::endl;
+      return false;
+    }
+    mouseTextures[s.first] = texture;
     SDL_FreeSurface(image);
   }
   return true;
@@ -360,7 +376,9 @@ bool AssetManager::initTextures_Enemy() {
 
 SDL_Window *AssetManager::window;
 SDL_Renderer *AssetManager::renderer;
-SDL_Surface *AssetManager::startup_text;
+Character *AssetManager::player;
+SDL_Surface *AssetManager::startingScreen_text;
+SDL_Texture *AssetManager::startingScreen_t;
 std::map<std::string, std::map<int, TTF_Font *>> AssetManager::allFonts;
 SDL_Texture *AssetManager::playerIcon;
 std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>
@@ -373,6 +391,7 @@ std::map<std::string, SDL_Texture *> AssetManager::objectTextures;
 std::map<std::string, SDL_Texture *> AssetManager::tileTextures;
 std::map<std::string, SDL_Texture *> AssetManager::uiTextures;
 std::map<SDL_Keycode, SDL_Texture *> AssetManager::keyTextures;
+std::map<Uint8, SDL_Texture *> AssetManager::mouseTextures;
 std::vector<Map *> AssetManager::allMaps;
 std::vector<CharacterNPC *> AssetManager::allNPCs;
 std::vector<Enemy *> AssetManager::allEnemies;

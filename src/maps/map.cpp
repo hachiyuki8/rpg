@@ -130,10 +130,10 @@ std::tuple<int, Enemy *> Map::onAttack(int attack, float x, float y, float w,
     if (e->isInRange(x, y, w, h)) {
       std::pair<int, int> res = e->onAttack(x, attack);
       if (res.first == -1 && res.second == -1) {
-        return std::make_tuple(-1, np); // still in last attack animation
+        return std::make_tuple(-1, np);  // still in last attack animation
       }
       if (!res.second) {
-        return std::make_tuple(res.first, e); // enemy killed
+        return std::make_tuple(res.first, e);  // enemy killed
       } else {
         return std::make_tuple(res.first, np);
       }

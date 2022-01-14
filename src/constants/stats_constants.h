@@ -1,8 +1,10 @@
 #pragma once
+#include <stdlib.h>
+
+#include <map>
+
 #include "../assetManager.h"
 #include "constants.h"
-#include <map>
-#include <stdlib.h>
 
 const int STATS_SCREEN_WIDTH = 480;
 const int STATS_SCREEN_HEIGHT = 270;

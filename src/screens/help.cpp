@@ -20,32 +20,42 @@ Help::~Help() {
     std::cout << "Destroying help " << ID << std::endl;
   }
   for (auto &c : controls) {
-    SDL_FreeSurface(c.second.name_text);
+    SDL_FreeSurface(c.name_text);
   }
 }
 
 void Help::init() {
-  for (auto &c : HELP_ALL) {
-    if (controls.contains(c.first)) {
-      std::cout << "Control already exists" << std::endl;
-      return;
-    }
-
+  for (auto &c : HELP_KEY) {
     struct Control newC;
-    newC.key = c.second;
-    SDL_Surface *text = TTF_RenderText_Solid(font, c.first.c_str(), text_color);
+    newC.isKey = true;
+    newC.key = std::get<1>(c);
+    SDL_Surface *text =
+        TTF_RenderText_Solid(font, std::get<0>(c).c_str(), text_color);
     if (!text) {
       std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
     }
     newC.name_text = text;
     switch (newC.key) {
-    case SDLK_TAB:
-    case SDLK_LSHIFT:
-    case SDLK_RETURN:
-    case SDLK_CAPSLOCK:
-      newC.button_width = 2 * HELP_ICON_HEIGHT;
+      case SDLK_TAB:
+      case SDLK_LSHIFT:
+      case SDLK_RETURN:
+      case SDLK_CAPSLOCK:
+        newC.button_width = 2 * HELP_ICON_HEIGHT;
     }
-    controls[c.first] = newC;
+    controls.push_back(newC);
+  }
+
+  for (auto &c : HELP_MOUSE) {
+    struct Control newC;
+    newC.isKey = false;
+    newC.mouse = std::get<1>(c);
+    SDL_Surface *text =
+        TTF_RenderText_Solid(font, std::get<0>(c).c_str(), text_color);
+    if (!text) {
+      std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
+    }
+    newC.name_text = text;
+    controls.push_back(newC);
   }
 }
 
@@ -67,21 +77,25 @@ void Help::render(SDL_Renderer *renderer) {
     int nextR = 0;
     int nextC = 0;
     for (auto &c : controls) {
-      SDL_Texture *t =
-          SDL_CreateTextureFromSurface(renderer, c.second.name_text);
+      SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, c.name_text);
       r.x = xPos + HELP_OFFSET_BORDER +
             nextC * (width - HELP_OFFSET_BORDER * 2) / NUM_COL;
       r.y = yPos + HELP_OFFSET_BORDER + nextR * HELP_LINE_HEIGHT;
-      r.w = c.second.name_text->w;
-      r.h = c.second.name_text->h;
+      r.w = c.name_text->w;
+      r.h = c.name_text->h;
       SDL_RenderCopy(renderer, t, NULL, &r);
       SDL_DestroyTexture(t);
 
-      r.w = c.second.button_width;
-      r.h = c.second.button_height;
+      r.w = c.button_width;
+      r.h = c.button_height;
       r.x += width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
-      SDL_RenderCopy(renderer, AssetManager::keyTextures[c.second.key], NULL,
-                     &r); // TODO: add mouse button
+      if (c.isKey) {
+        SDL_RenderCopy(renderer, AssetManager::keyTextures[c.key], NULL, &r);
+      } else {
+        SDL_RenderCopy(renderer, AssetManager::mouseTextures[c.mouse], NULL,
+                       &r);
+      }
+
       r.x -= width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
 
       if (nextR + 1 < NUM_ROW) {

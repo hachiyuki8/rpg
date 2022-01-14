@@ -143,7 +143,7 @@ void Object::render(SDL_Renderer *renderer, float x, float y, float w, float h,
   r.w = w;
   r.h = h;
   if (!ignore && isSelected) {
-    SDL_SetTextureColorMod(texture, 127, 127, 127); // TODO: highlight item?
+    SDL_SetTextureColorMod(texture, 127, 127, 127);  // TODO: highlight item?
   }
   SDL_RenderCopy(renderer, texture, NULL, &r);
   SDL_SetTextureColorMod(texture, 255, 255, 255);

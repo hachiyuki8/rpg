@@ -1,5 +1,14 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <math.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <tuple>
+#include <vector>
+
 #include "../assetManager.h"
 #include "../constants/character_constants.h"
 #include "../constants/controls.h"
@@ -9,13 +18,6 @@
 #include "../screens/logs.h"
 #include "../screens/skills.h"
 #include "../screens/stats.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <math.h>
-#include <stdlib.h>
-#include <tuple>
-#include <vector>
 
 /*
  * character.h
@@ -27,13 +29,11 @@
 class Shop;
 
 class Character {
-public:
-  Character(float x = (SCREEN_WIDTH - DEFAULT_CHARACTER_WIDTH) / 2,
-            float y = (SCREEN_HEIGHT - DEFAULT_CHARACTER_HEIGHT) / 2,
-            float w = DEFAULT_CHARACTER_WIDTH,
-            float h = DEFAULT_CHARACTER_HEIGHT,
-            float xV = DEFAULT_CHARACTER_XVELOCITY,
-            float yV = DEFAULT_CHARACTER_YVELOCITY);
+ public:
+  Character(float x = (SCREEN_WIDTH - CHARACTER_WIDTH) / 2,
+            float y = (SCREEN_HEIGHT - CHARACTER_HEIGHT) / 2,
+            float w = CHARACTER_WIDTH, float h = CHARACTER_HEIGHT,
+            float xV = CHARACTER_XVELOCITY, float yV = CHARACTER_YVELOCITY);
   virtual ~Character();
 
   void print();
@@ -138,17 +138,16 @@ public:
    */
   void render(SDL_Renderer *renderer);
 
-  void testing(); // TODO: for testing only
+  void testing();  // TODO: for testing only
 
   static int nextID;
 
   UIState uiState = UIState::IN_GAME;
   Logs logs;
   Map *curMap = NULL;
-  Shop *curShop = NULL;             // shop that's currently opened
-  CharacterNPC *curConvoNPC = NULL; // NPC that's currently talking to
+  CharacterNPC *curNPC = NULL;  // current NPC interacting with
 
-private:
+ private:
   int ID;
   Uint32 lastUpdate;
 
@@ -162,7 +161,7 @@ private:
   float xVel;
   float yVel;
   Direction direction = Direction::RIGHT;
-  MovementState movementState = MovementState::STILL;
+  MovementState movementState = MovementState::IDLE;
 
   // camera position, centered on player when possible
   float camX;
@@ -178,29 +177,30 @@ private:
   // TODO: quest screen, map, etc.
 
   // player textures with animations
-  // in xxxIndices, first value is index of current texture, second value is
-  // number of frames it has lasted
-  std::map<Direction, std::vector<SDL_Texture *>> stillTextures =
-      AssetManager::playerTextures[MovementState::STILL];
-  std::map<Direction, std::pair<int, int>> stillIndices = {
-      {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)},
-      {Direction::UP, std::make_pair(0, 0)},
-      {Direction::DOWN, std::make_pair(0, 0)}};
-  std::map<Direction, std::vector<SDL_Texture *>> walkTextures =
-      AssetManager::playerTextures[MovementState::WALK];
-  std::map<Direction, std::pair<int, int>> walkIndices = {
-      {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)},
-      {Direction::UP, std::make_pair(0, 0)},
-      {Direction::DOWN, std::make_pair(0, 0)}};
-  std::map<Direction, std::vector<SDL_Texture *>> attackTextures =
-      AssetManager::playerTextures[MovementState::ATTACK];
-  std::map<Direction, std::pair<int, int>> attackIndices = {
-      {Direction::LEFT, std::make_pair(0, 0)},
-      {Direction::RIGHT, std::make_pair(0, 0)},
-      {Direction::UP, std::make_pair(0, 0)},
-      {Direction::DOWN, std::make_pair(0, 0)}};
+  std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>
+      playerTextures = {{MovementState::IDLE,
+                         AssetManager::playerTextures[MovementState::IDLE]},
+                        {MovementState::WALK,
+                         AssetManager::playerTextures[MovementState::WALK]},
+                        {MovementState::ATTACK,
+                         AssetManager::playerTextures[MovementState::ATTACK]}};
+  // (index of current texture, number of frames it has lasted)
+  std::map<MovementState, std::map<Direction, std::pair<int, int>>>
+      playerIndices = {{MovementState::IDLE,
+                        {{Direction::LEFT, std::make_pair(0, 0)},
+                         {Direction::RIGHT, std::make_pair(0, 0)},
+                         {Direction::UP, std::make_pair(0, 0)},
+                         {Direction::DOWN, std::make_pair(0, 0)}}},
+                       {MovementState::WALK,
+                        {{Direction::LEFT, std::make_pair(0, 0)},
+                         {Direction::RIGHT, std::make_pair(0, 0)},
+                         {Direction::UP, std::make_pair(0, 0)},
+                         {Direction::DOWN, std::make_pair(0, 0)}}},
+                       {MovementState::ATTACK,
+                        {{Direction::LEFT, std::make_pair(0, 0)},
+                         {Direction::RIGHT, std::make_pair(0, 0)},
+                         {Direction::UP, std::make_pair(0, 0)},
+                         {Direction::DOWN, std::make_pair(0, 0)}}}};
 
   // Update player position, then the camera position and movement states
   void move(const Uint8 *keys, float dT);
@@ -226,5 +226,5 @@ private:
   // Calculate rewards based on enemy difficulty
   void calculateReward(Enemy *e, int diff);
 
-  friend class Shop; // TODO: why is this not working
+  friend class Shop;  // TODO: why is this not working
 };

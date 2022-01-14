@@ -1,9 +1,11 @@
 #pragma once
-#include "constants.h"
 #include <SDL.h>
+
 #include <map>
 #include <string>
 #include <vector>
+
+#include "constants.h"
 
 const std::string FONT_PATH = "../fonts/";
 const std::string IMAGE_PATH = "../assets/";
@@ -21,15 +23,15 @@ const std::vector<std::string> FONTS = {
     "0_abaddon_bold.ttf", "1_abaddon_light.ttf", "2_quicksand_regular.ttf"};
 
 const std::string PLAYER_ICON = "right_0.png";
-const std::vector<std::string> PLAYER_STILL_LEFT = {"left_0.png"};
-const std::vector<std::string> PLAYER_STILL_RIGHT = {"right_0.png"};
-const std::vector<std::string> PLAYER_STILL_UP = {"right_0.png"};
-const std::vector<std::string> PLAYER_STILL_DOWN = {"right_0.png"};
-const std::map<Direction, std::vector<std::string>> PLAYER_STILL = {
-    {Direction::LEFT, PLAYER_STILL_LEFT},
-    {Direction::RIGHT, PLAYER_STILL_RIGHT},
-    {Direction::UP, PLAYER_STILL_UP},
-    {Direction::DOWN, PLAYER_STILL_DOWN}};
+const std::vector<std::string> PLAYER_IDLE_LEFT = {"left_0.png"};
+const std::vector<std::string> PLAYER_IDLE_RIGHT = {"right_0.png"};
+const std::vector<std::string> PLAYER_IDLE_UP = {"right_0.png"};
+const std::vector<std::string> PLAYER_IDLE_DOWN = {"right_0.png"};
+const std::map<Direction, std::vector<std::string>> PLAYER_IDLE = {
+    {Direction::LEFT, PLAYER_IDLE_LEFT},
+    {Direction::RIGHT, PLAYER_IDLE_RIGHT},
+    {Direction::UP, PLAYER_IDLE_UP},
+    {Direction::DOWN, PLAYER_IDLE_DOWN}};
 const std::vector<std::string> PLAYER_WALK_LEFT = {"left_0.png", "left_1.png",
                                                    "left_2.png", "left_3.png",
                                                    "left_4.png", "left_5.png"};
@@ -65,7 +67,7 @@ const std::map<Direction, std::vector<std::string>> PLAYER_ATTACK = {
     {Direction::UP, PLAYER_ATTACK_UP},
     {Direction::DOWN, PLAYER_ATTACK_DOWN}};
 const std::map<MovementState, std::map<Direction, std::vector<std::string>>>
-    PLAYER_TEXTURES = {{MovementState::STILL, PLAYER_STILL},
+    PLAYER_TEXTURES = {{MovementState::IDLE, PLAYER_IDLE},
                        {MovementState::WALK, PLAYER_WALK},
                        {MovementState::ATTACK, PLAYER_ATTACK}};
 
@@ -105,13 +107,14 @@ const std::map<SDL_Keycode, std::string> KEYS = {
     {SDLK_f, "f.png"},           {SDLK_TAB, "tab.png"},
     {SDLK_LSHIFT, "shift.png"},  {SDLK_RETURN, "return.png"},
     {SDLK_CAPSLOCK, "caps.png"}, {SDLK_ESCAPE, "esc.png"}};
+const std::map<Uint8, std::string> MOUSE = {{SDL_BUTTON_LEFT, "left.png"},
+                                            {SDL_BUTTON_RIGHT, "right.png"}};
 
 const std::string ENEMY1_PATH = "enemy1/";
-const std::vector<std::string> ENEMY1_STILL_LEFT = {"walk_left_0.png"};
-const std::vector<std::string> ENEMY1_STILL_RIGHT = {"walk_right_0.png"};
-const std::map<Direction, std::vector<std::string>> ENEMY1_STILL = {
-    {Direction::LEFT, ENEMY1_STILL_LEFT},
-    {Direction::RIGHT, ENEMY1_STILL_RIGHT}};
+const std::vector<std::string> ENEMY1_IDLE_LEFT = {"walk_left_0.png"};
+const std::vector<std::string> ENEMY1_IDLE_RIGHT = {"walk_right_0.png"};
+const std::map<Direction, std::vector<std::string>> ENEMY1_IDLE = {
+    {Direction::LEFT, ENEMY1_IDLE_LEFT}, {Direction::RIGHT, ENEMY1_IDLE_RIGHT}};
 const std::vector<std::string> ENEMY1_WALK_LEFT = {
     "walk_left_0.png", "walk_left_1.png", "walk_left_2.png", "walk_left_3.png",
     "walk_left_4.png", "walk_left_5.png", "walk_left_6.png", "walk_left_7.png",
@@ -137,7 +140,7 @@ const std::map<Direction, std::vector<std::string>> ENEMY1_ATTACK = {
     {Direction::LEFT, ENEMY1_ATTACK_LEFT},
     {Direction::RIGHT, ENEMY1_ATTACK_RIGHT}};
 const std::map<MovementState, std::map<Direction, std::vector<std::string>>>
-    ENEMY1_TEXTURES = {{MovementState::STILL, ENEMY1_STILL},
+    ENEMY1_TEXTURES = {{MovementState::IDLE, ENEMY1_IDLE},
                        {MovementState::WALK, ENEMY1_WALK},
                        {MovementState::ATTACK, ENEMY1_ATTACK}};
 const std::map<

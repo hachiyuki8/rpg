@@ -1,11 +1,13 @@
 #pragma once
 
-#include "../constants/object_constants.h"
 #include <SDL.h>
-#include <iostream>
 #include <math.h>
-#include <set>
 #include <stdlib.h>
+
+#include <iostream>
+#include <set>
+
+#include "../constants/object_constants.h"
 
 /*
  * object.h
@@ -15,7 +17,7 @@
  */
 
 class Object {
-public:
+ public:
   Object(std::string n, std::string d, SDL_Texture *t, int v = 0,
          ObjectType type = ObjectType::OTHERS, float x = 0, float y = 0,
          float w = OBJECT_SIZE, float h = OBJECT_SIZE);
@@ -149,7 +151,7 @@ public:
 
   static int nextID;
 
-private:
+ private:
   int ID;
   SDL_Texture *texture;
 
@@ -177,7 +179,7 @@ private:
   std::string name;
   std::string description;
   int value;
-  ObjectType type; // determines what happens upon use
+  ObjectType type;  // determines what happens upon use
   std::set<ObjectProperty> properties;
 
   // Return true if given position collides with object collider

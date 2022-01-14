@@ -1,5 +1,4 @@
 #include "character.h"
-#include "../screens/shop.h"
 
 int Character::nextID = 0;
 
@@ -47,84 +46,80 @@ void Character::init() {
 
 bool Character::quit() {
   switch (uiState) {
-  case UIState::IN_GAME:
-    return true;
-  case UIState::IN_SHOP:
-    curShop->close();
-    curShop = NULL;
-    uiState = UIState::IN_GAME;
-    return false;
-  case UIState::IN_CONVO:
-    curConvoNPC->quitConvo();
-    curConvoNPC = NULL;
-    uiState = UIState::IN_GAME;
-    return false;
-  default:
-    return false;
+    case UIState::IN_GAME:
+      return true;
+    case UIState::IN_SHOP:
+    case UIState::IN_CONVO:
+      curNPC->onQuit();
+      curNPC = NULL;
+      uiState = UIState::IN_GAME;
+      return false;
+    default:
+      return false;
   }
 }
 
 void Character::showHelp() {
   switch (uiState) {
-  case UIState::IN_GAME:
-    help.open();
-    uiState = UIState::IN_HELP;
-    movementState = MovementState::STILL;
-    break;
-  case UIState::IN_HELP:
-    help.close();
-    uiState = UIState::IN_GAME;
-    break;
-  default:
-    break;
+    case UIState::IN_GAME:
+      help.open();
+      uiState = UIState::IN_HELP;
+      movementState = MovementState::IDLE;
+      break;
+    case UIState::IN_HELP:
+      help.close();
+      uiState = UIState::IN_GAME;
+      break;
+    default:
+      break;
   }
 }
 
 void Character::showInventory() {
   switch (uiState) {
-  case UIState::IN_GAME:
-    inventory.open(&logs);
-    uiState = UIState::IN_INVENTORY;
-    movementState = MovementState::STILL;
-    break;
-  case UIState::IN_INVENTORY:
-    inventory.close();
-    uiState = UIState::IN_GAME;
-    break;
-  default:
-    break;
+    case UIState::IN_GAME:
+      inventory.open(&logs);
+      uiState = UIState::IN_INVENTORY;
+      movementState = MovementState::IDLE;
+      break;
+    case UIState::IN_INVENTORY:
+      inventory.close();
+      uiState = UIState::IN_GAME;
+      break;
+    default:
+      break;
   }
 }
 
 void Character::showSkills() {
   switch (uiState) {
-  case UIState::IN_GAME:
-    skills.open();
-    uiState = UIState::IN_SKILLS;
-    movementState = MovementState::STILL;
-    break;
-  case UIState::IN_SKILLS:
-    skills.close();
-    uiState = UIState::IN_GAME;
-    break;
-  default:
-    break;
+    case UIState::IN_GAME:
+      skills.open();
+      uiState = UIState::IN_SKILLS;
+      movementState = MovementState::IDLE;
+      break;
+    case UIState::IN_SKILLS:
+      skills.close();
+      uiState = UIState::IN_GAME;
+      break;
+    default:
+      break;
   }
 }
 
 void Character::showStats() {
   switch (uiState) {
-  case UIState::IN_GAME:
-    stats.open();
-    uiState = UIState::IN_STATS;
-    movementState = MovementState::STILL;
-    break;
-  case UIState::IN_STATS:
-    stats.close();
-    uiState = UIState::IN_GAME;
-    break;
-  default:
-    break;
+    case UIState::IN_GAME:
+      stats.open();
+      uiState = UIState::IN_STATS;
+      movementState = MovementState::IDLE;
+      break;
+    case UIState::IN_STATS:
+      stats.close();
+      uiState = UIState::IN_GAME;
+      break;
+    default:
+      break;
   }
 }
 
@@ -162,7 +157,7 @@ void Character::interact() {
   float newX, newY;
   std::tie(newMap, newX, newY) =
       curMap->onInteract(this, curMap, xPos, yPos, width, height);
-  movementState = MovementState::STILL;
+  movementState = MovementState::IDLE;
   if (newMap != curMap) {
     // change map, reset position to new tile center
     curMap = newMap;
@@ -174,40 +169,40 @@ void Character::interact() {
 void Character::click(float x, float y, bool isLeft) {
   int m;
   switch (uiState) {
-  case UIState::IN_INVENTORY:
-    m = inventory.onClick(&logs, x, y, isLeft); // m > 0 if selling items
-    stats.increaseMoney(&logs, m);
-    break;
-  case UIState::IN_SKILLS:
-    skills.onClick(x, y, isLeft);
-    break;
-  case UIState::IN_SHOP:
-    curShop->onClick(x, y);
-    break;
-  case UIState::IN_GAME:
-    attack();
-    break;
-  default:
-    break;
+    case UIState::IN_INVENTORY:
+      m = inventory.onClick(&logs, x, y, isLeft);  // m > 0 if selling items
+      stats.increaseMoney(&logs, m);
+      break;
+    case UIState::IN_SKILLS:
+      skills.onClick(x, y, isLeft);
+      break;
+    case UIState::IN_SHOP:
+      curNPC->onClick(x, y);
+      break;
+    case UIState::IN_GAME:
+      attack();
+      break;
+    default:
+      break;
   }
 }
 
 void Character::confirm() {
   switch (uiState) {
-  case UIState::IN_INVENTORY:
-    inventory.onConfirm(&logs);
-    break;
-  case UIState::IN_SHOP:
-    curShop->onConfirm(this);
-    break;
-  case UIState::IN_CONVO:
-    if (!curConvoNPC->nextConvo()) {
-      curConvoNPC = NULL;
-      uiState = UIState::IN_GAME;
-    }
-    break;
-  default:
-    break;
+    case UIState::IN_INVENTORY:
+      inventory.onConfirm(&logs);
+      break;
+    case UIState::IN_SHOP:
+      curNPC->onConfirm(this);
+      break;
+    case UIState::IN_CONVO:
+      if (!curNPC->onConfirm(this)) {
+        curNPC = NULL;
+        uiState = UIState::IN_GAME;
+      }
+      break;
+    default:
+      break;
   }
 }
 
@@ -223,68 +218,45 @@ void Character::update(const Uint8 *keys) {
 }
 
 void Character::render(SDL_Renderer *renderer) {
+  // map
   curMap->render(renderer, camX, camY, camW, camH);
 
+  // animation
   SDL_Rect r;
   r.x = xPos - camX;
   r.y = yPos - camY;
   r.w = width;
   r.h = height;
+  playerIndices[movementState][direction].second++;
+  if (playerIndices[movementState][direction].second >
+      CHARACTER_PER_FRAME_LENGTH) {
+    // switch to next frame
+    playerIndices[movementState][direction].second = 0;
+    playerIndices[movementState][direction].first += 1;
+    playerIndices[movementState][direction].first %=
+        playerTextures[movementState][direction].size();
 
-  switch (movementState) {
-  case MovementState::STILL:
-    stillIndices[direction].second++;
-    if (stillIndices[direction].second > PER_FRAME_LENGTH) {
-      // switch to next frame
-      stillIndices[direction].second = 0;
-      stillIndices[direction].first = (stillIndices[direction].first + 1) %
-                                      (stillTextures[direction].size());
+    // update movement state after attack animation finished
+    if (movementState == MovementState::ATTACK &&
+        playerIndices[movementState][direction].first == 0) {
+      movementState = MovementState::IDLE;
     }
-    SDL_RenderCopy(renderer,
-                   stillTextures[direction][stillIndices[direction].first],
-                   NULL, &r);
-    break;
-  case MovementState::WALK:
-    walkIndices[direction].second++;
-    if (walkIndices[direction].second > PER_FRAME_LENGTH) {
-      // switch to next frame
-      walkIndices[direction].second = 0;
-      walkIndices[direction].first =
-          (walkIndices[direction].first + 1) % (walkTextures[direction].size());
-    }
-    SDL_RenderCopy(renderer,
-                   walkTextures[direction][walkIndices[direction].first], NULL,
-                   &r);
-    break;
-  case MovementState::ATTACK:
-    attackIndices[direction].second++;
-    if (attackIndices[direction].second > PER_FRAME_LENGTH) {
-      // switch to next frame
-      attackIndices[direction].second = 0;
-      attackIndices[direction].first = (attackIndices[direction].first + 1) %
-                                       (attackTextures[direction].size());
-      if (attackIndices[direction].first == 0) {
-        movementState = MovementState::STILL;
-      }
-      SDL_RenderCopy(renderer,
-                     attackTextures[direction][attackIndices[direction].first],
-                     NULL, &r);
-    }
-  default:
-    break;
   }
+  SDL_RenderCopy(renderer,
+                 playerTextures[movementState][direction]
+                               [playerIndices[movementState][direction].first],
+                 NULL, &r);
 
+  // screens
   help.render(renderer);
   inventory.render(renderer);
   skills.render(renderer);
   stats.render(renderer);
-  if (curShop) {
-    curShop->render(renderer);
+  if (curNPC) {
+    curNPC->renderScreen(renderer);
   }
 
-  if (curConvoNPC) {
-    curConvoNPC->convo.render(renderer);
-  } else {
+  if (uiState != UIState::IN_CONVO) {
     logs.render(renderer);
   }
 }
@@ -341,7 +313,7 @@ void Character::move(const Uint8 *keys, float dT) {
   }
   if (!keys[CONTROL_UP] && !keys[CONTROL_DOWN] && !keys[CONTROL_LEFT] &&
       !keys[CONTROL_RIGHT]) {
-    movementState = MovementState::STILL;
+    movementState = MovementState::IDLE;
   } else {
     movementState = MovementState::WALK;
   }
@@ -361,7 +333,7 @@ void Character::increaseMoney(int m) { stats.increaseMoney(&logs, m); }
 
 void Character::attack() {
   if (movementState == MovementState::ATTACK) {
-    return; // don't register if still in last attack animation
+    return;  // don't register if still in last attack animation
   }
 
   std::tuple<int, Enemy *> res =
@@ -384,18 +356,18 @@ void Character::attack() {
       logs.addLog(s);
       // add items one at a time to max out quantity until item limit reached
       for (int i = 0; i < std::get<1>(r); i++) {
-        inventory.addItem(&logs, std::get<0>(r), 1, true);
+        inventory.addItem(&logs, std::get<0>(r), 1);
       }
     }
   }
 }
 
 int Character::calculateDamage(int diff) {
-  return diff * 10; // TODO: also not sure
+  return diff * 10;  // TODO: also not sure
 }
 
 void Character::calculateReward(Enemy *e, int diff) {
-  e->print(); // TODO: add reward
+  e->print();  // TODO: add reward
 }
 
 void Character::testing() { print(); }

@@ -1,4 +1,5 @@
 #include "characterNPC.h"
+
 #include "character.h"
 
 int CharacterNPC::nextID = 0;
@@ -55,36 +56,81 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
   }
 
   switch (state) {
-  case NPCState::SHOP_NPC:
-    if (curPlayer->uiState == UIState::IN_GAME) {
-      shop.open(&curPlayer->logs);
-      curPlayer->uiState = UIState::IN_SHOP;
-      curPlayer->curShop = &shop;
-    }
-    return true;
-  case NPCState::CONVO_NPC:
-    if (curPlayer->uiState == UIState::IN_GAME) {
-      convo.open();
-      curPlayer->uiState = UIState::IN_CONVO;
-      curPlayer->curConvoNPC = this;
-    }
-    return true;
-  default: // TODO: other NPC types
-    break;
+    case NPCState::SHOP_NPC:
+      if (curPlayer->uiState == UIState::IN_GAME) {
+        shop.open(&curPlayer->logs);
+        curPlayer->uiState = UIState::IN_SHOP;
+        curPlayer->curNPC = this;
+      }
+      return true;
+    case NPCState::CONVO_NPC:
+      if (curPlayer->uiState == UIState::IN_GAME) {
+        convo.open();
+        curPlayer->uiState = UIState::IN_CONVO;
+        curPlayer->curNPC = this;
+      }
+      return true;
+    default:  // TODO: other NPC types
+      break;
   }
 
   return false;
 }
 
+void CharacterNPC::onQuit() {
+  switch (state) {
+    case NPCState::SHOP_NPC:
+      shop.close();
+      break;
+    case NPCState::CONVO_NPC:
+      convo.close();
+      break;
+    default:
+      break;
+  }
+}
+
+void CharacterNPC::onClick(float x, float y) {
+  switch (state) {
+    case NPCState::SHOP_NPC:
+      shop.onClick(x, y);
+      break;
+    default:
+      break;
+  }
+}
+
+bool CharacterNPC::onConfirm(Character *curPlayer) {
+  switch (state) {
+    case NPCState::SHOP_NPC:
+      shop.onConfirm(curPlayer);
+      return true;
+    case NPCState::CONVO_NPC:
+      return convo.next();
+    default:
+      return true;
+  }
+}
+
 void CharacterNPC::setConvo(
     std::vector<std::tuple<std::string, std::vector<std::string>>> lines) {
+  if (state != NPCState::CONVO_NPC) {
+    std::cout << "Cannot set conversation for non CONVO_NPC" << std::endl;
+    return;
+  }
   convo.clear();
   convo.init(lines);
 }
 
-bool CharacterNPC::nextConvo() { return convo.next(); }
-
-void CharacterNPC::quitConvo() { convo.close(); }
+void CharacterNPC::addToShop(std::vector<std::tuple<Object, int>> items) {
+  if (state != NPCState::SHOP_NPC) {
+    std::cout << "Cannot add shop items for non SHOP_NPC" << std::endl;
+    return;
+  }
+  for (auto &t : items) {
+    shop.addItem(std::get<0>(t), std::get<1>(t));
+  }
+}
 
 void CharacterNPC::render(SDL_Renderer *renderer, float camX, float camY,
                           float camW, float camH) {
@@ -111,6 +157,22 @@ void CharacterNPC::render(SDL_Renderer *renderer, float camX, float camY,
   r.h = height - std::max(0.0f, round(camY - yPos));
 
   SDL_RenderCopy(renderer, texture, &s, &r);
+
+  shop.render(renderer);
+  convo.render(renderer);
+}
+
+void CharacterNPC::renderScreen(SDL_Renderer *renderer) {
+  switch (state) {
+    case NPCState::SHOP_NPC:
+      shop.render(renderer);
+      break;
+    case NPCState::CONVO_NPC:
+      convo.render(renderer);
+      break;
+    default:
+      break;
+  }
 }
 
 bool CharacterNPC::isInRange(float x, float y, float w, float h) {

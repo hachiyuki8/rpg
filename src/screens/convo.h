@@ -1,14 +1,16 @@
 #pragma once
 
-#include "../assetManager.h"
-#include "../constants/convo_constants.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <stdlib.h>
+
 #include <iostream>
 #include <map>
-#include <stdlib.h>
 #include <tuple>
 #include <vector>
+
+#include "../assetManager.h"
+#include "../constants/convo_constants.h"
 
 struct Line {
   SDL_Texture *icon;
@@ -17,26 +19,26 @@ struct Line {
 };
 
 class Convo {
-public:
+ public:
   Convo(float x = (SCREEN_WIDTH - CONVO_SCREEN_WIDTH) / 2,
         float y = (SCREEN_HEIGHT - CONVO_SCREEN_HEIGHT),
         float w = CONVO_SCREEN_WIDTH, float h = CONVO_SCREEN_HEIGHT);
   virtual ~Convo();
 
   void print();
-  void
-  init(std::vector<std::tuple<std::string, std::vector<std::string>>>
-           lines); // string is index into npcTextures or "" for player texture
+  void init(
+      std::vector<std::tuple<std::string, std::vector<std::string>>>
+          lines);  // string is index into npcTextures or "" for player texture
   void clear();
 
   void open();
   void close();
-  bool next(); // return false if convo ends
+  bool next();  // return false if convo ends
   void render(SDL_Renderer *renderer);
 
   static int nextID;
 
-private:
+ private:
   int ID;
   bool isShowing = false;
 

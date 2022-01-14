@@ -1,4 +1,5 @@
 #include "shop.h"
+
 #include "../entities/character.h"
 
 int Shop::nextID = 0;
@@ -98,7 +99,7 @@ void Shop::onConfirm(Character *curPlayer) {
     if (curPlayer->stats.decreaseMoneyIfEnough(&curPlayer->logs,
                                                curSelected->value) &&
         curPlayer->inventory.addItem(&curPlayer->logs, *curSelected, 1)) {
-      std::string s = "-Bought " + curSelected->name;
+      std::string s = "-Bought 1 " + curSelected->name;
       curPlayer->logs.addLog(s);
       items[*curSelected]--;
       if (items[*curSelected] == 0) {
@@ -142,8 +143,8 @@ void Shop::render(SDL_Renderer *renderer) {
 
       // item
       o.first.setInventoryPosition(x,
-                                   y); // TODO: reusing the same parameters
-                                       // as Inventory, may separate these two?
+                                   y);  // TODO: reusing the same parameters
+                                        // as Inventory, may separate these two?
       o.first.render(renderer, x, y, SHOP_OBJECT_SIZE, SHOP_OBJECT_SIZE);
 
       // quantity

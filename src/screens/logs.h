@@ -1,12 +1,14 @@
 #pragma once
 
-#include "../assetManager.h"
-#include "../constants/logs_constants.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <stdlib.h>
+
 #include <deque>
 #include <iostream>
-#include <stdlib.h>
+
+#include "../assetManager.h"
+#include "../constants/logs_constants.h"
 
 struct Log {
   std::string content;
@@ -14,7 +16,7 @@ struct Log {
 };
 
 class Logs {
-public:
+ public:
   Logs(float x = 0, float y = SCREEN_HEIGHT - LOGS_SCREEN_HEIGHT,
        float w = LOGS_SCREEN_WIDTH, float h = LOGS_SCREEN_HEIGHT);
   virtual ~Logs();
@@ -27,7 +29,7 @@ public:
 
   static int nextID;
 
-private:
+ private:
   int ID;
   bool isShowing = true;
 

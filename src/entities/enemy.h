@@ -1,14 +1,16 @@
 #pragma once
 
+#include <SDL.h>
+#include <math.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <map>
+#include <vector>
+
 #include "../assetManager.h"
 #include "../constants/enemy_constants.h"
 #include "object.h"
-#include <SDL.h>
-#include <iostream>
-#include <map>
-#include <math.h>
-#include <stdlib.h>
-#include <vector>
 
 /*
  * enemy.h
@@ -20,9 +22,9 @@
 class Character;
 
 class Enemy {
-public:
+ public:
   Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
-        MovementState state = MovementState::STILL, int p = ENEMY_HP,
+        MovementState state = MovementState::IDLE, int p = ENEMY_HP,
         int diff = ENEMY_DIFFICULTY, float w = ENEMY_WIDTH,
         float h = ENEMY_HEIGHT, int xVBase = ENEMY_XVELOCITY_BASE,
         int yVBase = ENEMY_YVELOCITY_BASE, int xVRange = ENEMY_XVELOCITY_RANGE,
@@ -86,7 +88,7 @@ public:
 
   static int nextID;
 
-private:
+ private:
   int ID;
   Uint32 lastUpdate;
   std::string name;
@@ -99,8 +101,8 @@ private:
 
   // enemy movement state
   MovementState movementState;
-  MovementState oldMovementState; // used to store old value of movement when
-                                  // it's changed to ATTACK temporarily
+  MovementState oldMovementState;  // used to store old value of movement when
+                                   // it's changed to ATTACK temporarily
   Direction xDirection = Direction::RIGHT;
   Direction yDirection = Direction::DOWN;
   // everytime direction is changed, velocity randomized to somewhere between
@@ -112,7 +114,7 @@ private:
   int yVelBase;
   int yVelRange;
 
-  // enemy movement range, no meaning if movement is STILL
+  // enemy movement range, no meaning if movement is IDLE
   float xPosMin;
   float xPosMax;
   float yPosMin;
@@ -120,16 +122,16 @@ private:
 
   // enemy properties
   int hp;
-  int difficulty; // integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
-  std::vector<std::tuple<Object, int>> rewards; // upon being killed
+  int difficulty;  // integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
+  std::vector<std::tuple<Object, int>> rewards;  // upon being killed
 
   bool isAlive = true;
 
   // enemy textures with animations
   // in xxxIndices, first value is index of current texture, second value is
   // number of frames it has lasted
-  std::map<Direction, std::vector<SDL_Texture *>> stillTextures;
-  std::map<Direction, std::pair<int, int>> stillIndices = {
+  std::map<Direction, std::vector<SDL_Texture *>> idleTextures;
+  std::map<Direction, std::pair<int, int>> idleIndices = {
       {Direction::LEFT, std::make_pair(0, 0)},
       {Direction::RIGHT, std::make_pair(0, 0)}};
   std::map<Direction, std::vector<SDL_Texture *>> movingTextures;

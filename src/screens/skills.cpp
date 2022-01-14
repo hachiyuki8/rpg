@@ -43,9 +43,6 @@ void Skills::initAllSkills() {
   for (auto &s : SKILLS_ALL) {
     addSkill(s.first, s.second.first, s.second.second);
   }
-  if (DEBUG) {
-    print();
-  }
 }
 
 void Skills::unlockSkill(std::string s) {
@@ -186,7 +183,7 @@ void Skills::addSkill(std::string s, std::string d, bool isUnlocked) {
 
 void Skills::renderCard(SDL_Renderer *renderer, SkillCard sc) {
   if (sc.isSelected) {
-    SDL_SetTextureColorMod(texture, 127, 127, 127); // TODO: highlight item?
+    SDL_SetTextureColorMod(texture, 127, 127, 127);  // TODO: highlight item?
     SDL_Rect r;
     r.x = sc.xPos;
     r.y = sc.yPos;
@@ -255,4 +252,4 @@ void Skills::onLeftClick(float x, float y) {
   }
 }
 
-void Skills::onRightClick(float x, float y) { return; } // TODO
+void Skills::onRightClick(float x, float y) { return; }  // TODO

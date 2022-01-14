@@ -1,14 +1,17 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <math.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <tuple>
+
 #include "../assetManager.h"
 #include "../constants/npc_constants.h"
 #include "../screens/convo.h"
 #include "../screens/shop.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <math.h>
-#include <stdlib.h>
 
 /*
  * characterNPC.h
@@ -20,7 +23,7 @@
 class Character;
 
 class CharacterNPC {
-public:
+ public:
   CharacterNPC(SDL_Texture *t, NPCState st = NPCState::SHOP_NPC,
                float x = (SCREEN_WIDTH - DEFAULT_NPC_WIDTH) / 2,
                float y = (SCREEN_HEIGHT - DEFAULT_NPC_HEIGHT) / 2,
@@ -66,26 +69,49 @@ public:
   bool onInteract(Character *curPlayer, float x, float y, float w, float h);
 
   /**
-   * @brief Reset conversation contents for NPCs
+   * @brief When QUIT is pressed, do one of the followings depending on state:
+   * - quit the conversation (progress lost)
+   * - close the shop
    *
-   * @param lines a list of (speaker texture name, lines to be shown on the
+   */
+  void onQuit();
+
+  /**
+   * @brief When left or right mouse button is pressed, do one of the followings
+   * depending on state:
+   * - select/unselect items in shop
+   *
+   * @param x
+   * @param y
+   */
+  void onClick(float x, float y);
+
+  /**
+   * @brief When CONFIRM is pressed, do one of the followings
+   * depending on state:
+   * - buy one selected item in shop
+   * - proceed the current conversation
+   *
+   * @param curPlayer
+   * @return false if is CONVO_NPC and current conversation ended
+   */
+  bool onConfirm(Character *curPlayer);
+
+  /**
+   * @brief Reset conversation contents for CONVO_NPC, no-op for other NPC type
+   *
+   * @param lines a vector of (speaker texture name, lines to be shown on the
    * same screen), where name refers to npcTextures or playerIcon if empty
    */
   void setConvo(
       std::vector<std::tuple<std::string, std::vector<std::string>>> lines);
 
   /**
-   * @brief Show the next screen of the conversation
+   * @brief Add given items to SHOP_NPC's shop, no-op for other NPC type
    *
-   * @return false if conversation ends
+   * @param items a vector of (object, quantity)
    */
-  bool nextConvo();
-
-  /**
-   * @brief Quit the conversation, progress not preserved
-   *
-   */
-  void quitConvo();
+  void addToShop(std::vector<std::tuple<Object, int>> items);
 
   /**
    * @brief Render the NPC based on camera position
@@ -99,16 +125,25 @@ public:
   void render(SDL_Renderer *renderer, float camX, float camY, float camW,
               float camH);
 
+  /**
+   * @brief Render the NPC's associated screen depending on state, being one of
+   * the followings:
+   * - shop
+   * - conversation
+   *
+   * @param renderer
+   */
+  void renderScreen(SDL_Renderer *renderer);
+
   static int nextID;
 
-  // depending on NPC's state, at most one of the followings will be meaningful
-  Shop shop;
-  Convo convo;
-
-private:
+ private:
   int ID;
 
   NPCState state;
+  // depending on NPC's state, at most one of the followings will be meaningful
+  Shop shop;
+  Convo convo;
 
   // NPC textures
   // TODO: add animations

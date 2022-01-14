@@ -1,14 +1,16 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <map>
+#include <vector>
+
 #include "../assetManager.h"
 #include "../constants/skills_constants.h"
 #include "logs.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <map>
-#include <stdlib.h>
-#include <vector>
 
 struct Skill {
   std::string name;
@@ -31,7 +33,7 @@ struct SkillCard {
 };
 
 class Skills {
-public:
+ public:
   Skills(float x = (SCREEN_WIDTH - SKILLS_SCREEN_WIDTH) / 2,
          float y = (SCREEN_HEIGHT - SKILLS_SCREEN_HEIGHT) / 2,
          float w = SKILLS_SCREEN_WIDTH, float h = SKILLS_SCREEN_HEIGHT,
@@ -39,18 +41,18 @@ public:
   virtual ~Skills();
 
   void print();
-  void initAllSkills(); // SKILLS_ALL
+  void initAllSkills();  // SKILLS_ALL
   void unlockSkill(std::string s);
   void upgradeSkill(Logs *logs, std::string s, int exp);
 
   void open();
   void close();
-  void onClick(float x, float y, bool isLeft); // select skill
+  void onClick(float x, float y, bool isLeft);  // select skill
   void render(SDL_Renderer *renderer);
 
   static int nextID;
 
-private:
+ private:
   int ID;
   bool isShowing = false;
 
@@ -73,6 +75,6 @@ private:
 
   void addSkill(std::string s, std::string d, bool isUnlocked);
   void renderCard(SDL_Renderer *renderer, SkillCard sc);
-  void onLeftClick(float x, float y);  // select/unselect
-  void onRightClick(float x, float y); // TODO
+  void onLeftClick(float x, float y);   // select/unselect
+  void onRightClick(float x, float y);  // TODO
 };

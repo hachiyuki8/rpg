@@ -12,7 +12,7 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
   }
 
   name = n;
-  stillTextures = AssetManager::enemyTextures[name][MovementState::STILL];
+  idleTextures = AssetManager::enemyTextures[name][MovementState::IDLE];
   movingTextures = AssetManager::enemyTextures[name][MovementState::WALK];
   attackTextures = AssetManager::enemyTextures[name][MovementState::ATTACK];
 
@@ -106,8 +106,8 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     // rescale
     int actualW, actualH;
     SDL_QueryTexture(
-        stillTextures[Direction::LEFT][0], NULL, NULL, &actualW,
-        &actualH); // TODO: here assuming all textures have the same size
+        idleTextures[Direction::LEFT][0], NULL, NULL, &actualW,
+        &actualH);  // TODO: here assuming all textures have the same size
     s.x = s.x / width * actualW;
     s.y = s.y / height * actualH;
     s.w = actualW - s.x;
@@ -122,49 +122,51 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     // TODO: there should be a delay before attacked and start of attack
     // animation
     switch (movementState) {
-    case MovementState::STILL:
-      stillIndices[xDirection].second++;
-      if (stillIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-        // switch to next frame
-        stillIndices[xDirection].second = 0;
-        stillIndices[xDirection].first = (stillIndices[xDirection].first + 1) %
-                                         (stillTextures[xDirection].size());
-      }
-      SDL_RenderCopy(renderer,
-                     stillTextures[xDirection][stillIndices[xDirection].first],
-                     &s, &r);
-      break;
-    case MovementState::WALK:
-      movingIndices[xDirection].second++;
-      if (movingIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-        // switch to next frame
-        movingIndices[xDirection].second = 0;
-        movingIndices[xDirection].first =
-            (movingIndices[xDirection].first + 1) %
-            (movingTextures[xDirection].size());
-      }
-      SDL_RenderCopy(
-          renderer, movingTextures[xDirection][movingIndices[xDirection].first],
-          &s, &r);
-      break;
-    case MovementState::ATTACK:
-      attackIndices[xDirection].second++;
-      if (attackIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
-        // switch to next frame
-        attackIndices[xDirection].second = 0;
-        attackIndices[xDirection].first =
-            (attackIndices[xDirection].first + 1) %
-            (attackTextures[xDirection].size());
-
-        if (attackIndices[xDirection].first == 0) {
-          movementState = oldMovementState;
+      case MovementState::IDLE:
+        idleIndices[xDirection].second++;
+        if (idleIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
+          // switch to next frame
+          idleIndices[xDirection].second = 0;
+          idleIndices[xDirection].first = (idleIndices[xDirection].first + 1) %
+                                          (idleTextures[xDirection].size());
         }
-      }
-      SDL_RenderCopy(
-          renderer, attackTextures[xDirection][attackIndices[xDirection].first],
-          &s, &r);
-    default:
-      break;
+        SDL_RenderCopy(renderer,
+                       idleTextures[xDirection][idleIndices[xDirection].first],
+                       &s, &r);
+        break;
+      case MovementState::WALK:
+        movingIndices[xDirection].second++;
+        if (movingIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
+          // switch to next frame
+          movingIndices[xDirection].second = 0;
+          movingIndices[xDirection].first =
+              (movingIndices[xDirection].first + 1) %
+              (movingTextures[xDirection].size());
+        }
+        SDL_RenderCopy(
+            renderer,
+            movingTextures[xDirection][movingIndices[xDirection].first], &s,
+            &r);
+        break;
+      case MovementState::ATTACK:
+        attackIndices[xDirection].second++;
+        if (attackIndices[xDirection].second > ENEMY_PER_FRAME_LENGTH) {
+          // switch to next frame
+          attackIndices[xDirection].second = 0;
+          attackIndices[xDirection].first =
+              (attackIndices[xDirection].first + 1) %
+              (attackTextures[xDirection].size());
+
+          if (attackIndices[xDirection].first == 0) {
+            movementState = oldMovementState;
+          }
+        }
+        SDL_RenderCopy(
+            renderer,
+            attackTextures[xDirection][attackIndices[xDirection].first], &s,
+            &r);
+      default:
+        break;
     }
 
   } else {
@@ -173,7 +175,7 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
 }
 
 int Enemy::calculateDamage(int attack) {
-  return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY)); // TODO: not sure
+  return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY));  // TODO: not sure
 }
 
 // TODO: right now may move into other objects on the map including the player

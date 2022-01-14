@@ -1,9 +1,4 @@
 #pragma once
-#include <SDL.h>
-#include <map>
-#include <stdlib.h>
-#include <string>
-#include <vector>
 
 const bool DEBUG = true;
 
@@ -20,7 +15,7 @@ enum class UIState {
   IN_CONVO,
 };
 enum class Direction { LEFT, RIGHT, UP, DOWN };
-enum class MovementState { STILL, WALK, ATTACK };
+enum class MovementState { IDLE, WALK, ATTACK };
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;

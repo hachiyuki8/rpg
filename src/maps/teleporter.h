@@ -1,15 +1,17 @@
 #pragma once
 
-#include "../constants/constants.h"
 #include <SDL.h>
+#include <stdlib.h>
+
 #include <iostream>
 #include <map>
-#include <stdlib.h>
+
+#include "../constants/constants.h"
 
 class Map;
 
 class Teleporter {
-public:
+ public:
   Teleporter(Map *src, Map *dest,
              std::map<std::pair<int, int>, std::pair<int, int>> sd);
   virtual ~Teleporter();
@@ -18,7 +20,7 @@ public:
 
   static int nextID;
 
-private:
+ private:
   int ID;
 
   Map *src_map;

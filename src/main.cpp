@@ -1,29 +1,24 @@
-#include "assetManager.h"
-#include "init.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <iostream>
 #include <stdlib.h>
+
+#include <iostream>
 #include <string>
 #include <vector>
+
+#include "assetManager.h"
+#include "init.h"
 
 bool loop();
 void kill();
 
-void updatePlayer(const Uint8 *key);
-void renderPlayer();
-void renderStartScreen();
-
-Character *curPlayer;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 static GameState gameState = GameState::PAUSE;
-SDL_Texture *startup_t;
 
 /*
  * game
  */
 int main(int argc, char **args) {
-  AssetManager assetManager;
   // game assets initialization
   if (!AssetManager::init()) {
     system("pause");
@@ -32,11 +27,6 @@ int main(int argc, char **args) {
 
   // game content initialization
   init();
-
-  // player initialization
-  curPlayer = new Character(80, 180);
-  curPlayer->init();
-  curPlayer->curMap = AssetManager::allMaps[1];
 
   while (loop()) {
   }
@@ -56,94 +46,93 @@ bool loop() {
   SDL_RenderClear(AssetManager::renderer);
 
   if (gameState == GameState::PAUSE) {
-    renderStartScreen();
+    renderStartingScreen();
   }
 
   // event loop
   while (SDL_PollEvent(&evt) != 0) {
     switch (evt.type) {
-    case SDL_QUIT:
-      return false;
-    case SDL_KEYDOWN:
-      switch (evt.key.keysym.sym) {
-      case START_GAME:
-        if (gameState != GameState::IN_PROGRESS) {
-          gameState = GameState::IN_PROGRESS;
-          SDL_Delay(10);
+      case SDL_QUIT:
+        return false;
+      case SDL_KEYDOWN:
+        switch (evt.key.keysym.sym) {
+          case START_GAME:
+            if (gameState != GameState::IN_PROGRESS) {
+              gameState = GameState::IN_PROGRESS;
+              SDL_Delay(10);
+            }
+            break;
+          case QUIT:
+            if (gameState == GameState::IN_PROGRESS) {
+              if (AssetManager::player->quit()) {
+                gameState = GameState::PAUSE;
+              }
+            }
+            break;
+          case HELP:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->showHelp();
+            }
+            break;
+          case SHOW_INVENTORY:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->showInventory();
+            }
+            break;
+          case SHOW_SKILLS:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->showSkills();
+            }
+            break;
+          case SHOW_STATS:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->showStats();
+            }
+            break;
+          case SHOW_LOGS:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->showLogs();
+            }
+            break;
+          case PICKUP_ITEM:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->pickupObject();
+            }
+            break;
+          case INTERACT:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->interact();
+            }
+            break;
+          case CONFIRM:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->confirm();
+            }
+            break;
+          case SDLK_t:
+            // testing
+            AssetManager::player->testing();
+            break;
         }
-        break;
-      case QUIT:
-        if (gameState == GameState::IN_PROGRESS) {
-          if (curPlayer->quit()) {
-            gameState = GameState::PAUSE;
-          }
+      case SDL_MOUSEBUTTONDOWN:
+        switch (evt.button.button) {
+          case SDL_BUTTON_LEFT:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->click(evt.button.x, evt.button.y, true);
+            }
+            break;
+          case SDL_BUTTON_RIGHT:
+            if (gameState == GameState::IN_PROGRESS) {
+              AssetManager::player->click(evt.button.x, evt.button.y, false);
+            }
+            break;
         }
-        break;
-      case HELP:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->showHelp();
-        }
-        break;
-      case SHOW_INVENTORY:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->showInventory();
-        }
-        break;
-      case SHOW_SKILLS:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->showSkills();
-        }
-        break;
-      case SHOW_STATS:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->showStats();
-        }
-        break;
-      case SHOW_LOGS:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->showLogs();
-        }
-        break;
-      case PICKUP_ITEM:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->pickupObject();
-        }
-        break;
-      case INTERACT:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->interact();
-        }
-        break;
-      case CONFIRM:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->confirm();
-        }
-        break;
-      case SDLK_t:
-        // testing
-        curPlayer->testing();
-        break;
-      }
-    case SDL_MOUSEBUTTONDOWN:
-      switch (evt.button.button) {
-      case SDL_BUTTON_LEFT:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->click(evt.button.x, evt.button.y, true);
-        }
-        break;
-      case SDL_BUTTON_RIGHT:
-        if (gameState == GameState::IN_PROGRESS) {
-          curPlayer->click(evt.button.x, evt.button.y, false);
-        }
-        break;
-      }
     }
   }
 
   if (gameState == GameState::IN_PROGRESS) {
-    updatePlayer(keys);
-
-    renderPlayer();
+    AssetManager::player->update(keys);
+    AssetManager::player->render(AssetManager::renderer);
   }
 
   SDL_RenderPresent(AssetManager::renderer);
@@ -151,29 +140,13 @@ bool loop() {
   Uint64 end = SDL_GetPerformanceCounter();
   float elapsedMS =
       (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
-  // Cap FPS
+  // cap FPS
   SDL_Delay(floor((1000.0f / FRAME_RATE) - elapsedMS));
 
   return true;
 }
 
-void updatePlayer(const Uint8 *keys) { curPlayer->update(keys); }
-
-void renderPlayer() { curPlayer->render(AssetManager::renderer); }
-
-void renderStartScreen() {
-  startup_t = SDL_CreateTextureFromSurface(AssetManager::renderer,
-                                           AssetManager::startup_text);
-  SDL_Rect dest = {(SCREEN_WIDTH - AssetManager::startup_text->w) / 2,
-                   (SCREEN_HEIGHT - AssetManager::startup_text->h) / 2,
-                   AssetManager::startup_text->w,
-                   AssetManager::startup_text->h};
-  SDL_RenderCopy(AssetManager::renderer, startup_t, NULL, &dest);
-}
-
 void kill() {
-  delete curPlayer;
-  SDL_DestroyTexture(startup_t);
-
-  AssetManager::free();
+  free();
+  AssetManager::quit();
 }

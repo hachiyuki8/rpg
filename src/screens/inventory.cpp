@@ -30,12 +30,8 @@ void Inventory::print() {
   std::cout << "-Current size: " << items.size() << std::endl;
 }
 
-bool Inventory::addItem(Logs *logs, Object o, int q, bool suppressLog) {
+bool Inventory::addItem(Logs *logs, Object o, int q) {
   o.isSelected = false;
-  if (!suppressLog) {
-    std::string s = "-Got " + std::to_string(q) + " " + o.name;
-    logs->addLog(s);
-  }
 
   if (items.contains(o)) {
     items[o] += q;

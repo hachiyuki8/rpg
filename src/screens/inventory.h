@@ -1,20 +1,22 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <math.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <map>
+#include <vector>
+
 #include "../assetManager.h"
 #include "../constants/controls.h"
 #include "../constants/inventory_constants.h"
 #include "../entities/object.h"
 #include "logs.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <map>
-#include <math.h>
-#include <stdlib.h>
-#include <vector>
 
 class Inventory {
-public:
+ public:
   Inventory(float x = (SCREEN_WIDTH - INVENTORY_WIDTH) / 2,
             float y = (SCREEN_HEIGHT - INVENTORY_HEIGHT) / 2,
             float w = INVENTORY_WIDTH, float h = INVENTORY_HEIGHT);
@@ -22,19 +24,19 @@ public:
 
   void print();
   void setInteractRange(float left, float right, float up, float down);
-  bool addItem(Logs *logs, Object o, int q = 1, bool suppressLog = false);
-  void useItem(Object o); // TODO
+  bool addItem(Logs *logs, Object o, int q = 1);
+  void useItem(Object o);  // TODO
 
   void open(Logs *logs);
   void close();
   int onClick(Logs *logs, float x, float y,
-              bool isLeft);            // select/sell item, return item value
-  void onConfirm(Logs *logs);          // use one of the selected item
-  void render(SDL_Renderer *renderer); // TODO: make it better
+              bool isLeft);             // select/sell item, return item value
+  void onConfirm(Logs *logs);           // use one of the selected item
+  void render(SDL_Renderer *renderer);  // TODO: make it better
 
   static int nextID;
 
-private:
+ private:
   int ID;
   bool isShowing = false;
 
@@ -53,9 +55,9 @@ private:
   SDL_Texture *texture = AssetManager::uiTextures[INVENTORY_TEXTURE];
   TTF_Font *font = AssetManager::allFonts[INVENTORY_FONT][INVENTORY_FONT_SIZE];
 
-  void onLeftClick(Logs *logs, float x, float y); // select/unselect
+  void onLeftClick(Logs *logs, float x, float y);  // select/unselect
   int onRightClick(Logs *logs, float x,
-                   float y);   // sell one of the selected if not a quest item,
-                               // return item value
-  bool decreaseItem(Object o); // return false if no more remaining
+                   float y);    // sell one of the selected if not a quest item,
+                                // return item value
+  bool decreaseItem(Object o);  // return false if no more remaining
 };

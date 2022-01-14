@@ -1,13 +1,15 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <map>
+
 #include "../assetManager.h"
 #include "../constants/stats_constants.h"
 #include "logs.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <map>
-#include <stdlib.h>
 
 struct Stat {
   std::string name;
@@ -20,7 +22,7 @@ struct Stat {
 };
 
 class Stats {
-public:
+ public:
   Stats(std::string n = "new player",
         float x = SCREEN_WIDTH - STATS_SCREEN_WIDTH, float y = 0,
         float w = STATS_SCREEN_WIDTH, float h = STATS_SCREEN_HEIGHT);
@@ -41,7 +43,7 @@ public:
   void render(SDL_Renderer *renderer);
   static int nextID;
 
-private:
+ private:
   int ID;
   bool isShowing = false;
 

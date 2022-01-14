@@ -77,7 +77,7 @@ void Stats::increaseExp(Logs *logs, int ex) {
   if (newLevel > level) {
     std::string s = "-Leveled up to " + std::to_string(newLevel);
     logs->addLog(s);
-    hp = hpPerLevel[newLevel]; // hp filled when leveled up
+    hp = hpPerLevel[newLevel];  // hp filled when leveled up
   }
   level = newLevel;
   exp = newExp;

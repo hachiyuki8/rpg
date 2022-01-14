@@ -1,15 +1,17 @@
 #pragma once
 
-#include "constants/asset_constants.h"
-#include "constants/controls.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <iostream>
-#include <map>
 #include <math.h>
 #include <stdlib.h>
+
+#include <iostream>
+#include <map>
 #include <vector>
+
+#include "constants/asset_constants.h"
+#include "constants/controls.h"
 
 /*
  * assetManager.h
@@ -20,12 +22,13 @@
  * TODO: move player initialization to this file as well
  */
 
-class Map;
+class Character;
 class CharacterNPC;
 class Enemy;
+class Map;
 
 class AssetManager {
-public:
+ public:
   AssetManager();
   virtual ~AssetManager();
 
@@ -37,22 +40,25 @@ public:
   static bool init();
 
   /**
-   * @brief Free all game resources and close libraries
+   * @brief Free all game resources and close libraries.
+   * Note that all allocated player, NPCs, enemies and maps are freed in init.h.
    *
    */
-  static void free();
+  static void quit();
 
   static SDL_Window *window;
   static SDL_Renderer *renderer;
-
-  static SDL_Surface *startup_text;
-
   static std::map<std::string, std::map<int, TTF_Font *>> allFonts;
 
+  static SDL_Surface *startingScreen_text;
+  static SDL_Texture *startingScreen_t;
+
+  static Character *player;
   static SDL_Texture *playerIcon;
   static std::map<MovementState,
                   std::map<Direction, std::vector<SDL_Texture *>>>
       playerTextures;
+
   static std::map<
       std::string,
       std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>>
@@ -62,17 +68,21 @@ public:
   static std::map<std::string, SDL_Texture *> tileTextures;
   static std::map<std::string, SDL_Texture *> uiTextures;
   static std::map<SDL_Keycode, SDL_Texture *> keyTextures;
+  static std::map<Uint8, SDL_Texture *> mouseTextures;
 
   static std::vector<Map *> allMaps;
   static std::vector<CharacterNPC *> allNPCs;
   static std::vector<Enemy *> allEnemies;
 
-private:
+ private:
   // Initialize libraries, winder and renderer
   static bool initLibraries();
 
   // Initialize all fonts in FONTS and store in allFonts
   static bool initFonts();
+
+  // Initialize text on the starting screen and store in startingScreen
+  static bool initStartingScreen();
 
   // Initialize all textures in PLAYER_TEXTURES and store in playerIcon/Textures
   static bool initTextures_Player();
@@ -89,8 +99,8 @@ private:
   // Initialize all textures in UIS and store in UIs
   static bool initTextures_UI();
 
-  // Initialize all textures in KEYS and store in keyTextures
-  static bool initTextures_Key();
+  // Initialize all textures in KEYS and store in keyTextures/mouseTextures
+  static bool initTextures_KeyMouse();
 
   // Initialize all textures in ENEMY_TEXTURES and store in playerIcon/Textures
   static bool initTextures_Enemy();
