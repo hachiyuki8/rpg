@@ -35,9 +35,9 @@ class CharacterNPC {
    * @param h
    */
   CharacterNPC(SDL_Texture *t, NPCState st = NPCState::SHOP_NPC,
-               float x = (SCREEN_WIDTH - DEFAULT_NPC_WIDTH) / 2,
-               float y = (SCREEN_HEIGHT - DEFAULT_NPC_HEIGHT) / 2,
-               float w = DEFAULT_NPC_WIDTH, float h = DEFAULT_NPC_HEIGHT);
+               float x = (SCREEN_WIDTH - NPC_WIDTH) / 2,
+               float y = (SCREEN_HEIGHT - NPC_HEIGHT) / 2, float w = NPC_WIDTH,
+               float h = NPC_HEIGHT);
   virtual ~CharacterNPC();
 
   void print();

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include <functional>
 #include <iostream>
 #include <set>
 
@@ -139,6 +140,20 @@ class Object {
   bool onUse() const;
 
   /**
+   * @brief Add CAN_INTERACT to object and set the onInteract callback function
+   *
+   * @param i a callback that returns true when interaction succeeded
+   */
+  void setInteract(std::function<bool()> i);
+
+  /**
+   * @brief Add CAN_USE to object and set the onUse callback function
+   *
+   * @param i a callback that returns true when interaction succeeded
+   */
+  void setUse(std::function<bool()> u);
+
+  /**
    * @brief Render the object based on camera position
    *
    * @param renderer
@@ -193,6 +208,10 @@ class Object {
   int value;
   ObjectType type;
   std::set<ObjectProperty> properties;
+
+  // callback functions, return true if interaction succeeded
+  std::function<bool()> interactCallback = []() { return false; };
+  std::function<bool()> useCallback = []() { return false; };
 
   // Return true if given position collides with object collider
   bool isOnObject(float x, float y, float w, float h);

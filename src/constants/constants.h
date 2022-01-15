@@ -15,7 +15,7 @@ enum class UIState {
   IN_CONVO,
 };
 enum class Direction { LEFT, RIGHT, UP, DOWN };
-enum class MovementState { IDLE, WALK, ATTACK };
+enum class MovementState { IDLE, WALK, ATTACK, DEATH };
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;

@@ -134,6 +134,17 @@ class Character {
   void confirm();
 
   /**
+   * @brief Check if the given position collides with the player
+   *
+   * @param x
+   * @param y
+   * @param w
+   * @param h
+   * @return true if collides with player collider (not interaction collider)
+   */
+  bool isInvalidPosition(float x, float y, float w, float h);
+
+  /**
    * @brief Update player position according to current keyboard state
    *
    * @param keys
@@ -233,8 +244,8 @@ class Character {
   // Calculate damage taken according to enemy difficulty and player statistics
   int calculateDamage(int diff);
 
-  // Calculate rewards based on enemy difficulty
-  void calculateReward(Enemy *e, int diff);
+  // Calculate EXP and money reward based on enemy difficulty
+  void calculateStatsReward(Enemy *e, int diff);
 
   friend class Shop;  // TODO: why is this not working
 };

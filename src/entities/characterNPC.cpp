@@ -70,7 +70,7 @@ bool CharacterNPC::onInteract(Character *curPlayer, float x, float y, float w,
         curPlayer->curNPC = this;
       }
       return true;
-    default:  // TODO: other NPC types
+    default:
       break;
   }
 

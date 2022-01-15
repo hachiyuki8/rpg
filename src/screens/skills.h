@@ -147,7 +147,4 @@ class Skills {
 
   // Select/unselect a skill
   void onLeftClick(float x, float y);
-
-  // TODO: currently no-op
-  void onRightClick(float x, float y);
 };

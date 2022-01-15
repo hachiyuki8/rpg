@@ -21,6 +21,8 @@
 
 class Character;
 
+class Map;
+
 class Enemy {
  public:
   /**
@@ -96,14 +98,15 @@ class Enemy {
   /**
    * @brief Update enemy position, then render based on camera position
    *
+   * @param curMap
    * @param renderer
    * @param camX
    * @param camY
    * @param camW
    * @param camH
    */
-  void render(SDL_Renderer *renderer, float camX, float camY, float camW,
-              float camH);
+  void render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
+              float camW, float camH);
 
   static int nextID;
 
@@ -144,8 +147,6 @@ class Enemy {
   int difficulty;
   std::vector<std::tuple<Object, int>> rewards;  // upon being killed
 
-  bool isAlive = true;
-
   // enemy textures with animations
   std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>
       enemyTextures;
@@ -159,13 +160,17 @@ class Enemy {
                         {Direction::RIGHT, std::make_pair(0, 0)}}},
                       {MovementState::ATTACK,
                        {{Direction::LEFT, std::make_pair(0, 0)},
+                        {Direction::RIGHT, std::make_pair(0, 0)}}},
+                      {MovementState::DEATH,
+                       {{Direction::LEFT, std::make_pair(0, 0)},
                         {Direction::RIGHT, std::make_pair(0, 0)}}}};
 
   // Calculate damage taken according to player attack and enemy difficulty
   int calculateDamage(int attack);
 
   // Update enemy position if is alive and movement state is WALK
-  void move();
+  void move(Map *curMap);
 
   friend class Character;
+  friend class Map;
 };

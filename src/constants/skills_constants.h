@@ -8,8 +8,8 @@
 
 const int SKILLS_SCREEN_WIDTH = 960;
 const int SKILLS_SCREEN_HEIGHT = 540;
-const int SKILLCARD_ROW = 2;
-const int SKILLCARD_COL = 3;
+const int SKILLS_CARD_ROW = 2;
+const int SKILLS_CARD_COL = 3;
 const std::map<int, int> SKILLS_EXP_PER_LEVEL = {{0, 100}, {1, 200}, {2, 400}};
 const std::map<std::string, std::pair<std::string, bool>> SKILLS_ALL = {
     {"testing 1",

@@ -113,8 +113,6 @@ const std::map<Uint8, std::string> MOUSE = {{SDL_BUTTON_LEFT, "left.png"},
 const std::string ENEMY1_PATH = "enemy1/";
 const std::vector<std::string> ENEMY1_IDLE_LEFT = {"walk_left_0.png"};
 const std::vector<std::string> ENEMY1_IDLE_RIGHT = {"walk_right_0.png"};
-const std::map<Direction, std::vector<std::string>> ENEMY1_IDLE = {
-    {Direction::LEFT, ENEMY1_IDLE_LEFT}, {Direction::RIGHT, ENEMY1_IDLE_RIGHT}};
 const std::vector<std::string> ENEMY1_WALK_LEFT = {
     "walk_left_0.png", "walk_left_1.png", "walk_left_2.png", "walk_left_3.png",
     "walk_left_4.png", "walk_left_5.png", "walk_left_6.png", "walk_left_7.png",
@@ -124,8 +122,6 @@ const std::vector<std::string> ENEMY1_WALK_RIGHT = {
     "walk_right_3.png", "walk_right_4.png", "walk_right_5.png",
     "walk_right_6.png", "walk_right_7.png",
 };
-const std::map<Direction, std::vector<std::string>> ENEMY1_WALK = {
-    {Direction::LEFT, ENEMY1_WALK_LEFT}, {Direction::RIGHT, ENEMY1_WALK_RIGHT}};
 const std::vector<std::string> ENEMY1_ATTACK_LEFT = {
     "attack_left_0.png", "attack_left_1.png", "attack_left_2.png",
     "attack_left_3.png", "attack_left_4.png", "attack_left_5.png",
@@ -136,13 +132,29 @@ const std::vector<std::string> ENEMY1_ATTACK_RIGHT = {
     "attack_right_3.png", "attack_right_4.png", "attack_right_5.png",
     "attack_right_6.png", "attack_right_7.png",
 };
-const std::map<Direction, std::vector<std::string>> ENEMY1_ATTACK = {
-    {Direction::LEFT, ENEMY1_ATTACK_LEFT},
-    {Direction::RIGHT, ENEMY1_ATTACK_RIGHT}};
+const std::vector<std::string> ENEMY1_DEATH_LEFT = {
+    "death_left_0.png", "death_left_1.png", "death_left_2.png",
+    "death_left_3.png", "death_left_4.png", "death_left_5.png",
+    "death_left_6.png", "death_left_7.png",
+};
+const std::vector<std::string> ENEMY1_DEATH_RIGHT = {
+    "death_right_0.png", "death_right_1.png", "death_right_2.png",
+    "death_right_3.png", "death_right_4.png", "death_right_5.png",
+    "death_right_6.png", "death_right_7.png",
+};
 const std::map<MovementState, std::map<Direction, std::vector<std::string>>>
-    ENEMY1_TEXTURES = {{MovementState::IDLE, ENEMY1_IDLE},
-                       {MovementState::WALK, ENEMY1_WALK},
-                       {MovementState::ATTACK, ENEMY1_ATTACK}};
+    ENEMY1_TEXTURES = {{MovementState::IDLE,
+                        {{Direction::LEFT, ENEMY1_IDLE_LEFT},
+                         {Direction::RIGHT, ENEMY1_IDLE_RIGHT}}},
+                       {MovementState::WALK,
+                        {{Direction::LEFT, ENEMY1_WALK_LEFT},
+                         {Direction::RIGHT, ENEMY1_WALK_RIGHT}}},
+                       {MovementState::ATTACK,
+                        {{Direction::LEFT, ENEMY1_ATTACK_LEFT},
+                         {Direction::RIGHT, ENEMY1_ATTACK_RIGHT}}},
+                       {MovementState::DEATH,
+                        {{Direction::LEFT, ENEMY1_DEATH_LEFT},
+                         {Direction::RIGHT, ENEMY1_DEATH_RIGHT}}}};
 const std::map<
     std::string,
     std::map<MovementState, std::map<Direction, std::vector<std::string>>>>

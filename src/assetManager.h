@@ -19,7 +19,6 @@
  * This file includes initializations of all resources except the player, which
  * is currently done in main.cpp. Most functions return false upon failure.
  *
- * TODO: move player initialization to this file as well
  */
 
 class Character;

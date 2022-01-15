@@ -85,11 +85,7 @@ bool Object::onInteract(float x, float y, float w, float h) {
     return false;
   }
 
-  // TODO: do something to interact
-  if (DEBUG) {
-    std::cout << "Interacting with object " << ID << std::endl;
-  }
-  return true;
+  return interactCallback();
 }
 
 bool Object::onUse() const {
@@ -97,11 +93,17 @@ bool Object::onUse() const {
     return false;
   }
 
-  // TODO: do something to use
-  if (DEBUG) {
-    std::cout << "Using item " << ID << std::endl;
-  }
-  return true;
+  return useCallback();
+}
+
+void Object::setInteract(std::function<bool()> i) {
+  addObjectProperty(ObjectProperty::CAN_INTERACT);
+  interactCallback = i;
+}
+
+void Object::setUse(std::function<bool()> u) {
+  addObjectProperty(ObjectProperty::CAN_USE);
+  useCallback = u;
 }
 
 void Object::render(SDL_Renderer *renderer, float camX, float camY, float camW,

@@ -48,15 +48,18 @@ void Stats::initAllStats() {
   }
 }
 
-void Stats::increaseHP(int h) {
+bool Stats::changeHP(int h) {
   if (h > 0) {
     hp = std::max(hpPerLevel[level], hp + h);
   } else {
     hp += h;
     if (hp <= 0) {
-      // TODO
+      hp = 1;
+      return false;
     }
   }
+
+  return true;
 }
 
 void Stats::increaseExp(Logs *logs, int ex) {

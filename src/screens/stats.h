@@ -57,12 +57,12 @@ class Stats {
 
   /**
    * @brief Change player HP by the given amount. If positive amount, cap at
-   * max HP of current level.
-   * TODO: If negative amount, do something when HP <= 0
+   * max HP of current level. If HP drops below 0, will set it to 1.
    *
    * @param h
+   * @return false if HP drops below 0
    */
-  void increaseHP(int h);
+  bool changeHP(int h);
 
   /**
    * @brief Increase player EXP by the given amount (non-negative only) and
@@ -153,8 +153,8 @@ class Stats {
   int hp;
   std::map<std::string, Attribute> attributes;
   // EXP and HP needed for each level
-  std::map<int, int> expPerLevel = PLAYER_EXP_PER_LEVEL;
-  std::map<int, int> hpPerLevel = PLAYER_HP_PER_LEVEL;
+  std::map<int, int> expPerLevel = STATS_EXP_PER_LEVEL;
+  std::map<int, int> hpPerLevel = STATS_HP_PER_LEVEL;
 
   SDL_Color text_color = STATS_COLOR;
   SDL_Texture *texture = AssetManager::uiTextures[STATS_TEXTURE];

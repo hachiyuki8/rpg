@@ -95,6 +95,18 @@ class Map {
   bool isInvalidPosition(float x, float y, float w, float h);
 
   /**
+   * @brief Check if the given enemy collides with any unreachable tile,
+   * other enemies, uncollidable object, NPCs, or the player
+   *
+   * @param x
+   * @param y
+   * @param w
+   * @param h
+   * @return true if collides with any entity's collider mentioned above
+   */
+  bool isInvalidEnemyPosition(Enemy *e);
+
+  /**
    * @brief When INTERACT is pressed, check possible interaction with any of the
    * map's associated entities in the following order: NPC->teleporter->object.
    * At most one interaction will be carried out.

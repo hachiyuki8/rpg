@@ -1,5 +1,7 @@
 #include "map.h"
 
+#include "../entities/character.h"
+
 int Map::nextID = 0;
 
 Map::Map(std::vector<std::vector<int>> mapfile, float w, float h, float s) {
@@ -95,6 +97,47 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
   return false;
 }
 
+bool Map::isInvalidEnemyPosition(Enemy *e) {
+  if (e->xPos < 0 || e->xPos + e->width > width || e->yPos < 0 ||
+      e->yPos + e->height > height) {
+    return true;
+  }
+
+  for (auto &ts : tiles) {
+    for (auto &t : ts) {
+      if (t.isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+        return true;
+      }
+    }
+  }
+
+  for (auto &oe : enemies) {
+    if (e != oe &&
+        oe->isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+      return true;
+    }
+  }
+
+  for (auto &o : objects) {
+    if (o.isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+      return true;
+    }
+  }
+
+  for (auto &npc : NPCs) {
+    if (npc->isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+      return true;
+    }
+  }
+
+  if (AssetManager::player->isInvalidPosition(e->xPos, e->yPos, e->width,
+                                              e->height)) {
+    return true;
+  }
+
+  return false;
+}
+
 std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer, float x,
                                                 float y, float w, float h) {
   for (auto &npc : NPCs) {
@@ -157,7 +200,7 @@ void Map::render(SDL_Renderer *renderer, float camX, float camY, float camW,
   }
 
   for (auto &e : enemies) {
-    e->render(renderer, camX, camY, camW, camH);
+    e->render(this, renderer, camX, camY, camW, camH);
   }
 
   for (auto &o : objects) {

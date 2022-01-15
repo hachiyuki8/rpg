@@ -79,7 +79,7 @@ void Help::render(SDL_Renderer *renderer) {
     for (auto &c : controls) {
       SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, c.name_text);
       r.x = xPos + HELP_OFFSET_BORDER +
-            nextC * (width - HELP_OFFSET_BORDER * 2) / NUM_COL;
+            nextC * (width - HELP_OFFSET_BORDER * 2) / HELP_NUM_COL;
       r.y = yPos + HELP_OFFSET_BORDER + nextR * HELP_LINE_HEIGHT;
       r.w = c.name_text->w;
       r.h = c.name_text->h;
@@ -98,9 +98,9 @@ void Help::render(SDL_Renderer *renderer) {
 
       r.x -= width / 2 - HELP_OFFSET_BORDER * 3 - r.w;
 
-      if (nextR + 1 < NUM_ROW) {
+      if (nextR + 1 < HELP_NUM_ROW) {
         nextR++;
-      } else if (nextC + 1 < NUM_COL) {
+      } else if (nextC + 1 < HELP_NUM_COL) {
         nextR = 0;
         nextC++;
       }

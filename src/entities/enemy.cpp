@@ -1,5 +1,7 @@
 #include "enemy.h"
 
+#include "../maps/map.h"
+
 int Enemy::nextID = 0;
 
 Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
@@ -12,12 +14,9 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
   }
 
   name = n;
-  enemyTextures = {{MovementState::IDLE,
-                    AssetManager::enemyTextures[name][MovementState::IDLE]},
-                   {MovementState::WALK,
-                    AssetManager::enemyTextures[name][MovementState::WALK]},
-                   {MovementState::ATTACK,
-                    AssetManager::enemyTextures[name][MovementState::ATTACK]}};
+  for (auto &mt : AssetManager::enemyTextures[name]) {
+    enemyTextures[mt.first] = mt.second;
+  };
 
   xPosMin = xMin;
   xPosMax = xMax;
@@ -55,8 +54,8 @@ void Enemy::print() {
 }
 
 bool Enemy::isInvalidPosition(float x, float y, float w, float h) {
-  return (isAlive && xPos < x + w && x < xPos + width && yPos < y + h &&
-          y < yPos + height);
+  return (movementState != MovementState::DEATH && xPos < x + w &&
+          x < xPos + width && yPos < y + h && y < yPos + height);
 }
 
 void Enemy::addReward(Object o, int q) {
@@ -64,22 +63,27 @@ void Enemy::addReward(Object o, int q) {
 }
 
 bool Enemy::isInRange(float x, float y, float w, float h) {
-  return (isAlive && xPos - ENEMY_INTERACTION_RANGE <= x + w &&
+  return (movementState != MovementState::DEATH &&
+          xPos - ENEMY_INTERACTION_RANGE <= x + w &&
           x <= xPos + width + ENEMY_INTERACTION_RANGE &&
           yPos - ENEMY_INTERACTION_RANGE <= y + h &&
           y <= yPos + height + ENEMY_INTERACTION_RANGE);
 }
 
 std::pair<int, int> Enemy::onAttack(float x, int attack) {
-  if (!isAlive || movementState == MovementState::ATTACK) {
+  if (movementState == MovementState::DEATH ||
+      movementState == MovementState::ATTACK) {
     return std::make_pair(-1, -1);
   }
+
+  bool isAlive = true;
 
   oldMovementState = movementState;
   movementState = MovementState::ATTACK;
   hp -= calculateDamage(attack);
   if (hp <= 0) {
     hp = 0;
+    movementState = MovementState::DEATH;
     isAlive = false;
   }
 
@@ -93,16 +97,19 @@ std::pair<int, int> Enemy::onAttack(float x, int attack) {
   return std::make_pair(difficulty, isAlive);
 }
 
-void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
-                   float camH) {
-  move();
+void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
+                   float camW, float camH) {
+  move(curMap);
 
   if (xPos + width < camX || xPos > camX + camW || yPos + height < camY ||
       yPos > camY + camH) {
     return;
   }
 
-  if (isAlive) {
+  if (movementState != MovementState::DEATH ||
+      enemyIndices[movementState][xDirection].first <
+          enemyTextures[movementState][xDirection].size() -
+              1) {  // death animation loop only rendered once
     SDL_Rect s;
     s.x = std::max(0.0f, round(camX - xPos));
     s.y = std::max(0.0f, round(camY - yPos));
@@ -138,12 +145,11 @@ void Enemy::render(SDL_Renderer *renderer, float camX, float camY, float camW,
         movementState = oldMovementState;
       }
     }
+
     SDL_RenderCopy(renderer,
                    enemyTextures[movementState][xDirection]
                                 [enemyIndices[movementState][xDirection].first],
                    NULL, &r);
-  } else {
-    // TODO: death animation?
   }
 }
 
@@ -151,15 +157,14 @@ int Enemy::calculateDamage(int attack) {
   return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY));  // TODO: not sure
 }
 
-// TODO: right now may move into other objects on the map including the player
-void Enemy::move() {
+void Enemy::move(Map *curMap) {
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 
-  if (movementState == MovementState::WALK && isAlive) {
+  if (movementState == MovementState::WALK) {
     if (xDirection == Direction::LEFT) {
       xPos -= xVel * dT;
-      if (xPos < xPosMin) {
+      if (xPos < xPosMin || curMap->isInvalidEnemyPosition(this)) {
         xPos += xVel * dT;
         xDirection = Direction::RIGHT;
         if (xVelRange > 0) {
@@ -168,7 +173,7 @@ void Enemy::move() {
       }
     } else {
       xPos += xVel * dT;
-      if (xPos > xPosMax) {
+      if (xPos > xPosMax || curMap->isInvalidEnemyPosition(this)) {
         xPos -= xVel * dT;
         xDirection = Direction::LEFT;
         if (xVelRange > 0) {
@@ -179,7 +184,7 @@ void Enemy::move() {
 
     if (yDirection == Direction::UP) {
       yPos -= yVel * dT;
-      if (yPos < yPosMin) {
+      if (yPos < yPosMin || curMap->isInvalidEnemyPosition(this)) {
         yPos += yVel * dT;
         yDirection = Direction::DOWN;
         if (yVelRange > 0) {
@@ -188,7 +193,7 @@ void Enemy::move() {
       }
     } else {
       yPos += yVel * dT;
-      if (yPos > yPosMax) {
+      if (yPos > yPosMax || curMap->isInvalidEnemyPosition(this)) {
         yPos -= yVel * dT;
         yDirection = Direction::UP;
         if (yVelRange > 0) {

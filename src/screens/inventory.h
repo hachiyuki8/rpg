@@ -126,7 +126,4 @@ class Inventory {
 
   // Decrease item's quantity by 1, return false if no more remaining
   bool decreaseItem(Object o);
-
-  // TODO: Use the item if applied
-  void useItem(Object o);
 };

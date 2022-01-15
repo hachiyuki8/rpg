@@ -14,8 +14,8 @@ Skills::Skills(float x, float y, float w, float h, std::map<int, int> exp) {
   width = w;
   height = h;
 
-  cardWidth = width / SKILLCARD_COL;
-  cardHeight = height / SKILLCARD_ROW;
+  cardWidth = width / SKILLS_CARD_COL;
+  cardHeight = height / SKILLS_CARD_ROW;
 
   expPerLevel = exp;
 }
@@ -111,8 +111,8 @@ void Skills::onClick(float x, float y, bool isLeft) {
 void Skills::render(SDL_Renderer *renderer) {
   if (isShowing) {
     // background
-    for (int row = 0; row < SKILLCARD_ROW; row++) {
-      for (int col = 0; col < SKILLCARD_COL; col++) {
+    for (int row = 0; row < SKILLS_CARD_ROW; row++) {
+      for (int col = 0; col < SKILLS_CARD_COL; col++) {
         SDL_Rect r;
         r.x = xPos + col * cardWidth;
         r.y = yPos + row * cardHeight;
@@ -139,9 +139,9 @@ void Skills::render(SDL_Renderer *renderer) {
 
         renderCard(renderer, sc);
 
-        if (nextC + 1 < SKILLCARD_COL) {
+        if (nextC + 1 < SKILLS_CARD_COL) {
           nextC++;
-        } else if (nextR + 1 < SKILLCARD_ROW) {
+        } else if (nextR + 1 < SKILLS_CARD_ROW) {
           nextC = 0;
           nextR++;
         }

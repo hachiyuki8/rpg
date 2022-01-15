@@ -76,6 +76,10 @@ void initMaps() {
                  ObjectType::OTHERS, 485, 190, 25, 25);
   flower3.addObjectProperty(ObjectProperty::CAN_COLLIDE);
   flower3.addObjectProperty(ObjectProperty::CAN_PICKUP);
+  flower3.setUse([]() {
+    std::cout << "Successfully used red flower" << std::endl;
+    return true;
+  });
   map0->addObject(flower3);
 
   Object flower4("blue flower", "",
@@ -83,6 +87,7 @@ void initMaps() {
                  ObjectType::OTHERS, 445, 160, 22, 22);
   flower4.addObjectProperty(ObjectProperty::CAN_COLLIDE);
   flower4.addObjectProperty(ObjectProperty::CAN_PICKUP);
+  flower4.addObjectProperty(ObjectProperty::CAN_USE);
   map0->addObject(flower4);
 
   Object flower5("small white flowers", "",
@@ -376,7 +381,7 @@ void initEnemies() {
 void initPlayer() {
   AssetManager::player = new Character(80, 180);
   AssetManager::player->init();
-  AssetManager::player->curMap = AssetManager::allMaps[0];
+  AssetManager::player->curMap = AssetManager::allMaps[1];
 }
 
 void renderStartingScreen() {

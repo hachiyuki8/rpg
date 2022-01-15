@@ -12,9 +12,9 @@ const int HELP_OFFSET_BORDER = 30;
 const int HELP_LINE_HEIGHT = 35;
 const int HELP_ICON_HEIGHT = 25;
 
-const int NUM_ROW =
+const int HELP_NUM_ROW =
     (HELP_SCREEN_HEIGHT - HELP_OFFSET_BORDER * 2) / HELP_LINE_HEIGHT;
-const int NUM_COL = 2;
+const int HELP_NUM_COL = 2;
 
 const std::string HELP_TEXTURE = "17_panel9.png";
 const std::string HELP_FONT = "0_abaddon_bold.ttf";

@@ -206,6 +206,11 @@ void Character::confirm() {
   }
 }
 
+bool Character::isInvalidPosition(float x, float y, float w, float h) {
+  return (xPos < x + w && x < xPos + width && yPos < y + h &&
+          y < yPos + height);
+}
+
 void Character::update(const Uint8 *keys) {
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
@@ -340,16 +345,9 @@ void Character::attack() {
       curMap->onAttack(stats.getAttribute("attack"), xPos, yPos, width, height);
   int diff = std::get<0>(res);
   Enemy *enemy = std::get<1>(res);
-  if (diff >= 0) {
-    movementState = MovementState::ATTACK;
-    int dmg = calculateDamage(diff);
-    std::cout << "Dmg: " << dmg << std::endl;
-    stats.increaseHP(dmg * -1);
-    // TODO: if HP<0 do something?
-  }
   if (enemy) {
     // enemy killed, add reward
-    calculateReward(enemy, diff);
+    calculateStatsReward(enemy, diff);
     for (auto &r : enemy->rewards) {
       std::string s =
           "-Got " + std::to_string(std::get<1>(r)) + " " + std::get<0>(r).name;
@@ -359,6 +357,13 @@ void Character::attack() {
         inventory.addItem(&logs, std::get<0>(r), 1);
       }
     }
+  } else if (diff >= 0) {
+    // only take damage if enemy is still alive
+    movementState = MovementState::ATTACK;
+    int dmg = calculateDamage(diff);
+    std::cout << "Dmg: " << dmg << std::endl;
+    stats.changeHP(dmg * -1);
+    // TODO: if HP<0 do something?
   }
 }
 
@@ -366,8 +371,9 @@ int Character::calculateDamage(int diff) {
   return diff * 10;  // TODO: also not sure
 }
 
-void Character::calculateReward(Enemy *e, int diff) {
-  e->print();  // TODO: add reward
+void Character::calculateStatsReward(Enemy *e, int diff) {
+  e->print();
+  // TODO: calculate EXP and money reward based on difficulty
 }
 
 void Character::testing() { print(); }
