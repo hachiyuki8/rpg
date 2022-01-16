@@ -1,9 +1,9 @@
 # rpg
-An unknown theme 2D RPG written in C++ from scratch using SDL (in development)
+An unknown theme 2D RPG written in C++ from scratch (in development)
 
 ### Progress
 
-***12/29/2021-present:*** Currently writing my own framework. Haven't decided what the actual story will be.
+***12/29/2021-present:*** Currently writing my own framework based on SDL. Haven't decided what the actual story will be.
 
 ### Implemented Features
 
@@ -12,6 +12,11 @@ An unknown theme 2D RPG written in C++ from scratch using SDL (in development)
 - interactions between players and the environment (conversations, combat, item pickup/usage)
 - inventory and shops
 - naive level and skill systems
+
+### Immediate TODOs
+
+- HP display
+- map editor
 
 ### References
 
