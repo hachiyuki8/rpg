@@ -22,6 +22,13 @@
  *
  */
 
+struct InventoryItem {
+  int quantity;
+  // position and dimension in the inventory screen
+  float xPos;
+  float yPos;
+};
+
 class Inventory {
  public:
   /**
@@ -49,7 +56,7 @@ class Inventory {
    * @param q quantity
    * @return false if failed to add (inventory full or quantity exceeds limit)
    */
-  bool addItem(Logs *logs, Object o, int q = 1);
+  bool addItem(Logs *logs, Object *o, int q = 1);
 
   /**
    * @brief Open the inventory and output instruction to logs
@@ -108,9 +115,9 @@ class Inventory {
   int numRow;
   int numCol;
 
-  // item grouping relies on object names (see operator< in object.h)
-  std::map<Object, int> items;
-  const Object *curSelected = NULL;
+  std::map<Object *, InventoryItem> items;
+  std::vector<Object *> itemsInsertionOrder;
+  Object *curSelected = NULL;
 
   SDL_Color text_color = INVENTORY_COLOR;
   SDL_Texture *background = AssetManager::uiTextures[INVENTORY_BACKGROUND];
@@ -125,5 +132,5 @@ class Inventory {
   int onRightClick(Logs *logs, float x, float y);
 
   // Decrease item's quantity by 1, return false if no more remaining
-  bool decreaseItem(Object o);
+  bool decreaseItem(Object *o);
 };

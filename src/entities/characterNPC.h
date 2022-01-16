@@ -121,7 +121,7 @@ class CharacterNPC {
    *
    * @param items a vector of (object, quantity)
    */
-  void addToShop(std::vector<std::tuple<Object, int>> items);
+  void addToShop(std::vector<std::tuple<Object *, int>> items);
 
   /**
    * @brief Render the NPC based on camera position. Note that the associated UI

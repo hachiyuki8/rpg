@@ -58,7 +58,7 @@ bool Enemy::isInvalidPosition(float x, float y, float w, float h) {
           x < xPos + width && yPos < y + h && y < yPos + height);
 }
 
-void Enemy::addReward(Object o, int q) {
+void Enemy::addReward(Object *o, int q) {
   rewards.push_back(std::make_tuple(o, q));
 }
 

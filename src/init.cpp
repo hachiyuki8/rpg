@@ -1,6 +1,7 @@
 #include "init.h"
 
 void init() {
+  initObjects();
   initMaps();
   initNPCs();
   initEnemies();
@@ -9,6 +10,9 @@ void init() {
 
 void free() {
   delete AssetManager::player;
+  for (auto &o : AssetManager::allObjects) {
+    delete o;
+  }
   for (auto &m : AssetManager::allMaps) {
     delete m;
   }
@@ -20,284 +24,267 @@ void free() {
   }
 }
 
+void initObjects() {
+  // object 0
+  Object *redHouse =
+      new Object("red house", "", AssetManager::objectTextures["23_house1.png"],
+                 0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(redHouse);
+
+  // object 1
+  Object *blueHouse = new Object("blue house", "",
+                                 AssetManager::objectTextures["25_house3.png"],
+                                 0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(blueHouse);
+
+  // object 2
+  Object *campFire = new Object("camp fire", "",
+                                AssetManager::objectTextures["29_bonfire.png"],
+                                0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(campFire);
+
+  // object 3
+  Object *whiteFlower = new Object(
+      "white flower", "", AssetManager::objectTextures["11_flower5.png"], 0,
+      ObjectType::OTHERS);
+  whiteFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+  AssetManager::allObjects.push_back(whiteFlower);
+
+  // object 4
+  Object *whiteFlowers = new Object(
+      "white flowers", "", AssetManager::objectTextures["10_flower4.png"], 0,
+      ObjectType::OTHERS);
+  whiteFlowers->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+  AssetManager::allObjects.push_back(whiteFlowers);
+
+  // object 5
+  Object *redFlower = new Object(
+      "red flower", "", AssetManager::objectTextures["28_flower10.png"], 20,
+      ObjectType::OTHERS);
+  redFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+  redFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
+  redFlower->setUse([]() {
+    std::cout << "Successfully used red flower" << std::endl;
+    return true;
+  });
+  AssetManager::allObjects.push_back(redFlower);
+
+  // object 6
+  Object *blueFlower = new Object("blue flower", "",
+                                  AssetManager::objectTextures["3_flower3.png"],
+                                  20, ObjectType::OTHERS);
+  blueFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+  blueFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
+  blueFlower->addObjectProperty(ObjectProperty::CAN_USE);
+  AssetManager::allObjects.push_back(blueFlower);
+
+  // object 7
+  Object *yellowFlower = new Object(
+      "yellow flower", "", AssetManager::objectTextures["1_flower1.png"], 20,
+      ObjectType::OTHERS);
+  yellowFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+  yellowFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
+  AssetManager::allObjects.push_back(yellowFlower);
+
+  // object 8
+  Object *bigBlueFlower = new Object(
+      "big blue flower", "", AssetManager::objectTextures["12_flower6.png"], 0,
+      ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(bigBlueFlower);
+
+  // object 9
+  Object *bigYellowFlower = new Object(
+      "big yellow flower", "", AssetManager::objectTextures["13_flower7.png"],
+      0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(bigYellowFlower);
+
+  // object 10
+  Object *longWhiteFlower = new Object(
+      "long white flower", "", AssetManager::objectTextures["26_flower8.png"],
+      0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(longWhiteFlower);
+
+  // object 11
+  Object *longYellowFlower = new Object(
+      "long yellow flower", "", AssetManager::objectTextures["27_flower9.png"],
+      0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(longYellowFlower);
+
+  // object 12
+  Object *coinShop = new Object(
+      "coin", "a meaningless coin to demo how the shop works",
+      AssetManager::objectTextures["0_coin.png"], 10, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(coinShop);
+
+  // object  13
+  Object *flowerShop = new Object(
+      "flower", "a meaningless flower to demo how the shop works",
+      AssetManager::objectTextures["1_flower1.png"], 20, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(flowerShop);
+
+  // object 14
+  Object *paleGreenTree = new Object(
+      "pale green tree", "", AssetManager::objectTextures["22_tree2.png"], 0,
+      ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(paleGreenTree);
+
+  // object 15
+  Object *greenTree =
+      new Object("green tree", "", AssetManager::objectTextures["21_tree1.png"],
+                 0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(greenTree);
+
+  // object 16
+  Object *rocks =
+      new Object("rocks", "", AssetManager::objectTextures["19_rock1.png"], 0,
+                 ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(rocks);
+
+  // object 17
+  Object *fenceTop =
+      new Object("fence top", "", AssetManager::objectTextures["6_fence3.png"],
+                 0, ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(fenceTop);
+
+  // object 18
+  Object *fenceHorizontal = new Object(
+      "fence horizontal", "", AssetManager::objectTextures["8_fence5.png"], 0,
+      ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(fenceHorizontal);
+
+  // object 19
+  Object *fenceVertical = new Object(
+      "fence vertical", "", AssetManager::objectTextures["9_fence6.png"], 0,
+      ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(fenceVertical);
+
+  // object 20
+  Object *fenceBottomLeft = new Object(
+      "fence bottom left", "", AssetManager::objectTextures["4_fence1.png"], 0,
+      ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(fenceBottomLeft);
+
+  // object 21
+  Object *fenceBottomRight = new Object(
+      "fence bottom right", "", AssetManager::objectTextures["5_fence2.png"], 0,
+      ObjectType::OTHERS);
+  AssetManager::allObjects.push_back(fenceBottomRight);
+}
+
 void initMaps() {
   // map 0
   Map *map0 = new Map(MAPFILES[0], MAPFILES[0][0].size() * TILE_SIZE,
                       MAPFILES[0].size() * TILE_SIZE, TILE_SIZE);
   AssetManager::allMaps.push_back(map0);
 
-  Object redHouse("big red house", "",
-                  AssetManager::objectTextures["23_house1.png"], 0,
-                  ObjectType::OTHERS, 20, 20, 160, 160);
-  map0->addObject(redHouse);
+  ObjectWrapper redHouseW(AssetManager::allObjects[0], 20, 20, 160, 160);
+  map0->addObject(redHouseW);
+  ObjectWrapper campFireW(AssetManager::allObjects[2], 270, 80, 100, 40);
+  map0->addObject(campFireW);
 
-  Object campFire("camp fire", "",
-                  AssetManager::objectTextures["29_bonfire.png"], 0,
-                  ObjectType::OTHERS, 270, 80, 100, 40);
-  map0->addObject(campFire);
+  ObjectWrapper flower1W(AssetManager::allObjects[3], 440, 10, 35, 35);
+  map0->addObject(flower1W);
+  ObjectWrapper flower2W(AssetManager::allObjects[3], 430, 30, 30, 30);
+  map0->addObject(flower2W);
+  ObjectWrapper tree1W(AssetManager::allObjects[14], 480, -10, 70, 90);
+  map0->addObject(tree1W);
+  ObjectWrapper tree2W(AssetManager::allObjects[15], 530, 15, 85, 110);
+  map0->addObject(tree2W);
+  ObjectWrapper rocksW(AssetManager::allObjects[16], 565, 100, 60, 50);
+  map0->addObject(rocksW);
+  ObjectWrapper tree3W(AssetManager::allObjects[15], 440, 50, 80, 100);
+  map0->addObject(tree3W);
+  ObjectWrapper tree4W(AssetManager::allObjects[14], 460, 90, 80, 90);
+  map0->addObject(tree4W);
+  ObjectWrapper flower3W(AssetManager::allObjects[5], 485, 190, 25, 25);
+  map0->addObject(flower3W);
+  ObjectWrapper flower4W(AssetManager::allObjects[6], 445, 160, 22, 22);
+  map0->addObject(flower4W);
+  ObjectWrapper flower5W(AssetManager::allObjects[4], 590, 155, 32, 32);
+  map0->addObject(flower5W);
+  ObjectWrapper tree5W(AssetManager::allObjects[15], 505, 95, 95, 120);
+  map0->addObject(tree5W);
 
-  Object flower1("small white flower", "",
-                 AssetManager::objectTextures["11_flower5.png"], 0,
-                 ObjectType::OTHERS, 440, 10, 35, 35);
-  flower1.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower1);
+  ObjectWrapper fence1W(AssetManager::allObjects[17], 240, 520, 40, 40);
+  map0->addObject(fence1W);
+  ObjectWrapper fence2W(AssetManager::allObjects[18], 280, 520, 40, 40);
+  map0->addObject(fence2W);
+  ObjectWrapper fence3W(AssetManager::allObjects[18], 400, 520, 40, 40);
+  map0->addObject(fence3W);
+  ObjectWrapper fence4W(AssetManager::allObjects[17], 440, 520, 40, 40);
+  map0->addObject(fence4W);
+  ObjectWrapper fence5W(AssetManager::allObjects[19], 240, 560, 40, 40);
+  map0->addObject(fence5W);
+  ObjectWrapper fence6W(AssetManager::allObjects[19], 440, 560, 40, 40);
+  map0->addObject(fence6W);
+  ObjectWrapper fence7W(AssetManager::allObjects[19], 240, 600, 40, 40);
+  map0->addObject(fence7W);
+  ObjectWrapper fence8W(AssetManager::allObjects[19], 440, 600, 40, 40);
+  map0->addObject(fence8W);
+  ObjectWrapper fence9W(AssetManager::allObjects[19], 240, 640, 40, 40);
+  map0->addObject(fence9W);
+  ObjectWrapper fence10W(AssetManager::allObjects[19], 440, 640, 40, 40);
+  map0->addObject(fence10W);
+  ObjectWrapper fence11W(AssetManager::allObjects[20], 240, 680, 40, 40);
+  map0->addObject(fence11W);
+  ObjectWrapper fence12W(AssetManager::allObjects[18], 280, 680, 40, 40);
+  map0->addObject(fence12W);
+  ObjectWrapper fence13W(AssetManager::allObjects[18], 320, 680, 40, 40);
+  map0->addObject(fence13W);
+  ObjectWrapper fence14W(AssetManager::allObjects[18], 360, 680, 40, 40);
+  map0->addObject(fence14W);
+  ObjectWrapper fence15W(AssetManager::allObjects[18], 400, 680, 40, 40);
+  map0->addObject(fence15W);
+  ObjectWrapper fence16W(AssetManager::allObjects[21], 440, 680, 40, 40);
+  map0->addObject(fence16W);
 
-  Object flower2("small white flower", "",
-                 AssetManager::objectTextures["11_flower5.png"], 0,
-                 ObjectType::OTHERS, 430, 30, 30, 30);
-  flower2.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower2);
+  ObjectWrapper flower6W(AssetManager::allObjects[4], 280, 560, 30, 30);
+  map0->addObject(flower6W);
+  ObjectWrapper flower7W(AssetManager::allObjects[3], 305, 585, 32, 32);
+  map0->addObject(flower7W);
+  ObjectWrapper flower8W(AssetManager::allObjects[3], 300, 620, 27, 27);
+  map0->addObject(flower8W);
+  ObjectWrapper flower9W(AssetManager::allObjects[4], 380, 590, 25, 25);
+  map0->addObject(flower9W);
+  ObjectWrapper flower10W(AssetManager::allObjects[3], 400, 575, 25, 25);
+  map0->addObject(flower10W);
+  ObjectWrapper flower11W(AssetManager::allObjects[3], 420, 625, 22, 22);
+  map0->addObject(flower11W);
+  ObjectWrapper flower12W(AssetManager::allObjects[8], 280, 640, 40, 40);
+  map0->addObject(flower12W);
+  ObjectWrapper flower13W(AssetManager::allObjects[9], 320, 640, 40, 40);
+  map0->addObject(flower13W);
+  ObjectWrapper flower14W(AssetManager::allObjects[8], 360, 640, 40, 40);
+  map0->addObject(flower14W);
+  ObjectWrapper flower15W(AssetManager::allObjects[9], 400, 640, 40, 40);
+  map0->addObject(flower15W);
+  ObjectWrapper flower16W(AssetManager::allObjects[5], 280, 585, 27, 27);
+  map0->addObject(flower16W);
+  ObjectWrapper flower17W(AssetManager::allObjects[3], 320, 560, 25, 25);
+  map0->addObject(flower17W);
+  ObjectWrapper flower18W(AssetManager::allObjects[7], 340, 595, 26, 26);
+  map0->addObject(flower18W);
+  ObjectWrapper flower19W(AssetManager::allObjects[6], 360, 535, 28, 28);
+  map0->addObject(flower19W);
+  ObjectWrapper flower20W(AssetManager::allObjects[5], 420, 595, 25, 25);
+  map0->addObject(flower20W);
+  ObjectWrapper flower21W(AssetManager::allObjects[3], 355, 565, 24, 24);
+  map0->addObject(flower21W);
 
-  Object tree1("pale green tree", "",
-               AssetManager::objectTextures["22_tree2.png"], 0,
-               ObjectType::OTHERS, 480, -10, 70, 90);
-  map0->addObject(tree1);
-
-  Object tree2("green tree", "", AssetManager::objectTextures["21_tree1.png"],
-               0, ObjectType::OTHERS, 530, 15, 85, 110);
-  map0->addObject(tree2);
-
-  Object rock("rocks", "", AssetManager::objectTextures["19_rock1.png"], 0,
-              ObjectType::OTHERS, 565, 100, 60, 50);
-  map0->addObject(rock);
-
-  Object tree3("green tree", "tree",
-               AssetManager::objectTextures["21_tree1.png"], 0,
-               ObjectType::OTHERS, 440, 50, 80, 100);
-  map0->addObject(tree3);
-
-  Object tree4("pale green tree", "",
-               AssetManager::objectTextures["22_tree2.png"], 0,
-               ObjectType::OTHERS, 460, 90, 80, 90);
-  map0->addObject(tree4);
-
-  Object flower3("red flower", "",
-                 AssetManager::objectTextures["28_flower10.png"], 20,
-                 ObjectType::OTHERS, 485, 190, 25, 25);
-  flower3.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower3.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  flower3.setUse([]() {
-    std::cout << "Successfully used red flower" << std::endl;
-    return true;
-  });
-  map0->addObject(flower3);
-
-  Object flower4("blue flower", "",
-                 AssetManager::objectTextures["3_flower3.png"], 20,
-                 ObjectType::OTHERS, 445, 160, 22, 22);
-  flower4.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower4.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  flower4.addObjectProperty(ObjectProperty::CAN_USE);
-  map0->addObject(flower4);
-
-  Object flower5("small white flowers", "",
-                 AssetManager::objectTextures["10_flower4.png"], 0,
-                 ObjectType::OTHERS, 590, 155, 32, 32);
-  flower5.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower5);
-
-  Object tree5("green tree", "", AssetManager::objectTextures["21_tree1.png"],
-               0, ObjectType::OTHERS, 505, 95, 95, 120);
-  map0->addObject(tree5);
-
-  Object fence1("fence top", "", AssetManager::objectTextures["6_fence3.png"],
-                0, ObjectType::OTHERS, 240, 520, 40, 40);
-  map0->addObject(fence1);
-
-  Object fence2("fence horizontal", "",
-                AssetManager::objectTextures["8_fence5.png"], 0,
-                ObjectType::OTHERS, 280, 520, 40, 40);
-  map0->addObject(fence2);
-
-  Object fence3("fence horizontal", "",
-                AssetManager::objectTextures["8_fence5.png"], 0,
-                ObjectType::OTHERS, 400, 520, 40, 40);
-  map0->addObject(fence3);
-
-  Object fence4("fence top", "", AssetManager::objectTextures["6_fence3.png"],
-                0, ObjectType::OTHERS, 440, 520, 40, 40);
-  map0->addObject(fence4);
-
-  Object fence5("fence vertical", "",
-                AssetManager::objectTextures["9_fence6.png"], 0,
-                ObjectType::OTHERS, 240, 560, 40, 40);
-  map0->addObject(fence5);
-
-  Object fence6("fence vertical", "",
-                AssetManager::objectTextures["9_fence6.png"], 0,
-                ObjectType::OTHERS, 440, 560, 40, 40);
-  map0->addObject(fence6);
-
-  Object fence7("fence vertical", "",
-                AssetManager::objectTextures["9_fence6.png"], 0,
-                ObjectType::OTHERS, 240, 600, 40, 40);
-  map0->addObject(fence7);
-
-  Object fence8("fence vertical", "",
-                AssetManager::objectTextures["9_fence6.png"], 0,
-                ObjectType::OTHERS, 440, 600, 40, 40);
-  map0->addObject(fence8);
-
-  Object fence9("fence vertical", "",
-                AssetManager::objectTextures["9_fence6.png"], 0,
-                ObjectType::OTHERS, 240, 640, 40, 40);
-  map0->addObject(fence9);
-
-  Object fence10("fence vertical", "",
-                 AssetManager::objectTextures["9_fence6.png"], 0,
-                 ObjectType::OTHERS, 440, 640, 40, 40);
-  map0->addObject(fence10);
-
-  Object fence11("fence bottom left", "",
-                 AssetManager::objectTextures["4_fence1.png"], 0,
-                 ObjectType::OTHERS, 240, 680, 40, 40);
-  map0->addObject(fence11);
-
-  Object fence12("fence horizontal", "",
-                 AssetManager::objectTextures["8_fence5.png"], 0,
-                 ObjectType::OTHERS, 280, 680, 40, 40);
-  map0->addObject(fence12);
-
-  Object fence13("fence horizontal", "",
-                 AssetManager::objectTextures["8_fence5.png"], 0,
-                 ObjectType::OTHERS, 320, 680, 40, 40);
-  map0->addObject(fence13);
-
-  Object fence14("fence horizontal", "",
-                 AssetManager::objectTextures["8_fence5.png"], 0,
-                 ObjectType::OTHERS, 360, 680, 40, 40);
-  map0->addObject(fence14);
-
-  Object fence15("fence horizontal", "",
-                 AssetManager::objectTextures["8_fence5.png"], 0,
-                 ObjectType::OTHERS, 400, 680, 40, 40);
-  map0->addObject(fence15);
-
-  Object fence16("fence bottom right", "",
-                 AssetManager::objectTextures["5_fence2.png"], 0,
-                 ObjectType::OTHERS, 440, 680, 40, 40);
-  map0->addObject(fence16);
-
-  Object flower6("small white flowers", "",
-                 AssetManager::objectTextures["10_flower4.png"], 0,
-                 ObjectType::OTHERS, 280, 560, 30, 30);
-  flower6.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower6);
-
-  Object flower7("small white flower", "",
-                 AssetManager::objectTextures["11_flower5.png"], 0,
-                 ObjectType::OTHERS, 305, 585, 32, 32);
-  flower7.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower7);
-
-  Object flower8("small white flower", "",
-                 AssetManager::objectTextures["11_flower5.png"], 0,
-                 ObjectType::OTHERS, 300, 620, 27, 27);
-  flower8.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower8);
-
-  Object flower9("small white flowers", "",
-                 AssetManager::objectTextures["10_flower4.png"], 0,
-                 ObjectType::OTHERS, 380, 590, 25, 25);
-  flower9.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower9);
-
-  Object flower10("small white flower", "",
-                  AssetManager::objectTextures["11_flower5.png"], 0,
-                  ObjectType::OTHERS, 400, 575, 25, 25);
-  flower10.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower10);
-
-  Object flower11("small white flower", "",
-                  AssetManager::objectTextures["11_flower5.png"], 0,
-                  ObjectType::OTHERS, 420, 625, 22, 22);
-  flower11.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower11);
-
-  Object flower12("big blue flower", "",
-                  AssetManager::objectTextures["12_flower6.png"], 0,
-                  ObjectType::OTHERS, 280, 640, 40, 40);
-  map0->addObject(flower12);
-
-  Object flower13("big yellow flower", "",
-                  AssetManager::objectTextures["13_flower7.png"], 0,
-                  ObjectType::OTHERS, 320, 640, 40, 40);
-  map0->addObject(flower13);
-
-  Object flower14("big blue flower", "",
-                  AssetManager::objectTextures["12_flower6.png"], 0,
-                  ObjectType::OTHERS, 360, 640, 40, 40);
-  map0->addObject(flower14);
-
-  Object flower15("big yellow flower", "",
-                  AssetManager::objectTextures["13_flower7.png"], 0,
-                  ObjectType::OTHERS, 400, 640, 40, 40);
-  map0->addObject(flower15);
-
-  Object flower16("red flower", "",
-                  AssetManager::objectTextures["28_flower10.png"], 20,
-                  ObjectType::OTHERS, 280, 585, 27, 27);
-  flower16.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower16.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  map0->addObject(flower16);
-
-  Object flower17("white flower", "",
-                  AssetManager::objectTextures["2_flower2.png"], 20,
-                  ObjectType::OTHERS, 320, 560, 25, 25);
-  flower17.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower17.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  map0->addObject(flower17);
-
-  Object flower18("yellow flower", "",
-                  AssetManager::objectTextures["1_flower1.png"], 20,
-                  ObjectType::OTHERS, 340, 595, 26, 26);
-  flower18.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower18.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  map0->addObject(flower18);
-
-  Object flower19("blue flower", "",
-                  AssetManager::objectTextures["3_flower3.png"], 20,
-                  ObjectType::OTHERS, 360, 535, 28, 28);
-  flower19.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower19.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  map0->addObject(flower19);
-
-  Object flower20("red flower", "",
-                  AssetManager::objectTextures["28_flower10.png"], 20,
-                  ObjectType::OTHERS, 420, 595, 25, 25);
-  flower20.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  flower20.addObjectProperty(ObjectProperty::CAN_PICKUP);
-  map0->addObject(flower20);
-
-  Object flower21("small white flower", "",
-                  AssetManager::objectTextures["11_flower5.png"], 0,
-                  ObjectType::OTHERS, 355, 565, 24, 24);
-  flower21.addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  map0->addObject(flower21);
-
-  Object blueHouse("blue house", "",
-                   AssetManager::objectTextures["25_house3.png"], 0,
-                   ObjectType::OTHERS, 990, 10, 100, 160);
-  map0->addObject(blueHouse);
-
-  Object flower22("long white flower", "",
-                  AssetManager::objectTextures["26_flower8.png"], 0,
-                  ObjectType::OTHERS, 950, 160, 48, 34);
-  map0->addObject(flower22);
-
-  Object flower23("long yellow flower", "",
-                  AssetManager::objectTextures["27_flower9.png"], 0,
-                  ObjectType::OTHERS, 1085, 160, 48, 34);
-  map0->addObject(flower23);
+  ObjectWrapper blueHouseW(AssetManager::allObjects[1], 990, 10, 100, 160);
+  map0->addObject(blueHouseW);
+  ObjectWrapper flower22W(AssetManager::allObjects[10], 950, 160, 48, 34);
+  map0->addObject(flower22W);
+  ObjectWrapper flower23W(AssetManager::allObjects[11], 1085, 160, 48, 34);
+  map0->addObject(flower23W);
 
   // map 1
   Map *map1 = new Map(MAPFILES[1], MAPFILES[1][0].size() * TILE_SIZE,
                       MAPFILES[1].size() * TILE_SIZE, TILE_SIZE);
   AssetManager::allMaps.push_back(map1);
-  Object redHouse1("big red house", "",
-                   AssetManager::objectTextures["23_house1.png"], 0,
-                   ObjectType::OTHERS, 300, 100, 200, 200);
-  map1->addObject(redHouse1);
+
+  ObjectWrapper redHouse1W(AssetManager::allObjects[0], 300, 100, 200, 200);
+  map1->addObject(redHouse1W);
 
   // teleporters
   std::map<std::pair<int, int>, std::pair<int, int>> sd1 = {
@@ -328,15 +315,9 @@ void initNPCs() {
       new CharacterNPC(AssetManager::npcTextures["0_shop1.png"],
                        NPCState::SHOP_NPC, 620, 360, 80, 80);
   npc1->setInteractRange(5, 5, 5, 5);
-  Object coin3("coin", "a meaningless coin to demo how the shop works",
-               AssetManager::objectTextures["0_coin.png"], 10,
-               ObjectType::OTHERS, 0, 0);
-  Object flowers("flowers", "meaningless flowers",
-                 AssetManager::objectTextures["1_flower1.png"], 20,
-                 ObjectType::OTHERS, 0, 0);
-  std::vector<std::tuple<Object, int>> items;
-  items.push_back(std::make_tuple(coin3, 10));
-  items.push_back(std::make_tuple(flowers, 99));
+  std::vector<std::tuple<Object *, int>> items;
+  items.push_back(std::make_tuple(AssetManager::allObjects[12], 10));
+  items.push_back(std::make_tuple(AssetManager::allObjects[13], 99));
   npc1->addToShop(items);
   AssetManager::allNPCs.push_back(npc1);
   AssetManager::allMaps[0]->addNPC(npc1);
@@ -366,14 +347,8 @@ void initEnemies() {
   // enemy 0
   Enemy *enemy1 = new Enemy(400, 600, 400, 800, ENEMY1_PATH,
                             MovementState::WALK, 100, 1, 40, 40, 30, 30, 0, 0);
-  Object flowerReward1("blue flower", "",
-                       AssetManager::objectTextures["3_flower3.png"], 20,
-                       ObjectType::OTHERS, 0, 0, 0, 0);
-  Object flowerReward2("red flower", "",
-                       AssetManager::objectTextures["28_flower10.png"], 20,
-                       ObjectType::OTHERS, 0, 0, 0, 0);
-  enemy1->addReward(flowerReward1, 2);
-  enemy1->addReward(flowerReward2, 99);
+  enemy1->addReward(AssetManager::allObjects[5], 2);
+  enemy1->addReward(AssetManager::allObjects[6], 99);
   AssetManager::allEnemies.push_back(enemy1);
   AssetManager::allMaps[1]->addEnemy(enemy1);
 }

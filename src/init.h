@@ -28,6 +28,12 @@ void free();
  */
 void renderStartingScreen();
 
+// Create all objects manually and store in allObjects. Note that each unique
+// item should ideally only be associated with one object and has a unique name.
+// If multiple instances of different sizes/positions are needed, use object
+// wrappers and initialize them after maps. See object.h for more.
+void initObjects();
+
 // Create all maps in MAPS(mapfiles.h), manually add objects and teleporters,
 // and store in allMaps
 void initMaps();

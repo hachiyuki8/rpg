@@ -53,20 +53,20 @@ class Map {
   void addTeleporter(Teleporter tp);
 
   /**
-   * @brief Add the given object to objects
+   * @brief Add the given object wrapper to objectWrappers
    *
    * @param o
    */
-  void addObject(Object o);
+  void addObject(ObjectWrapper ow);
 
   /**
-   * @brief Remove the exact instance of the given object from objects. Because
-   * object equality is checked by ID, this should always just remove one object
-   * because multiple instances of the same object will have different IDs.
+   * @brief Remove the given object wrapper from objectWrappers. Because
+   * object wrapper equality is checked by ID, this should always just remove
+   * one object wrapper.
    *
    * @param o
    */
-  void removeObject(Object o);
+  void removeObject(ObjectWrapper ow);
 
   /**
    * @brief Add pointer to the given NPC to NPCs
@@ -164,7 +164,7 @@ class Map {
   // map entities
   std::vector<std::vector<Tile>> tiles;
   std::vector<Teleporter> teleporters;
-  std::vector<Object> objects;
+  std::vector<ObjectWrapper> objectWrappers;
   std::vector<CharacterNPC *> NPCs;
   std::vector<Enemy *> enemies;
 

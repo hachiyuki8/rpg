@@ -130,17 +130,17 @@ void Character::pickupObject() {
     return;
   }
 
-  for (auto &o : curMap->objects) {
-    if (o.canPickup(xPos, yPos, width, height)) {
-      if (o.type == ObjectType::MONEY) {
-        stats.increaseMoney(&logs, o.value);
-        curMap->removeObject(o);
+  for (auto &ow : curMap->objectWrappers) {
+    if (ow.canPickup(xPos, yPos, width, height)) {
+      if (ow.object->type == ObjectType::MONEY) {
+        stats.increaseMoney(&logs, ow.object->value);
+        curMap->removeObject(ow);
       } else {
-        bool success = inventory.addItem(&logs, o, 1);
+        bool success = inventory.addItem(&logs, ow.object, 1);
         if (success) {
-          std::string s = "-Picked up " + o.name;
+          std::string s = "-Picked up " + ow.object->name;
           logs.addLog(s);
-          curMap->removeObject(o);
+          curMap->removeObject(ow);
         }
       }
       return;
@@ -350,7 +350,7 @@ void Character::attack() {
     calculateStatsReward(enemy, diff);
     for (auto &r : enemy->rewards) {
       std::string s =
-          "-Got " + std::to_string(std::get<1>(r)) + " " + std::get<0>(r).name;
+          "-Got " + std::to_string(std::get<1>(r)) + " " + std::get<0>(r)->name;
       logs.addLog(s);
       // add items one at a time to max out quantity until item limit reached
       for (int i = 0; i < std::get<1>(r); i++) {

@@ -30,19 +30,20 @@ void Inventory::print() {
   std::cout << "-Current size: " << items.size() << std::endl;
 }
 
-bool Inventory::addItem(Logs *logs, Object o, int q) {
-  o.isSelected = false;
-
+bool Inventory::addItem(Logs *logs, Object *o, int q) {
   if (items.contains(o)) {
-    items[o] += q;
-    if (items[o] > INVENTORY_PER_ITEM_LIMIT) {
+    items[o].quantity += q;
+    if (items[o].quantity > INVENTORY_PER_ITEM_LIMIT) {
       logs->addLog("-Max quantity per item reached");
-      items[o] -= q;
+      items[o].quantity -= q;
       return false;
     }
   } else {
     if (items.size() < INVENTORY_ITEM_LIMIT) {
-      items[o] = q;
+      struct InventoryItem newI;
+      newI.quantity = q;
+      items[o] = newI;
+      itemsInsertionOrder.push_back(o);
     } else {
       logs->addLog("-No more space in bag");
       return false;
@@ -61,7 +62,6 @@ void Inventory::open(Logs *logs) {
 void Inventory::close() {
   // unselect
   if (curSelected) {
-    curSelected->isSelected = false;
     curSelected = NULL;
   }
   isShowing = false;
@@ -90,9 +90,8 @@ void Inventory::onConfirm(Logs *logs) {
     if (curSelected->onUse()) {
       std::string s = "-Used " + curSelected->name;
       logs->addLog(s);
-      bool flag = decreaseItem(*curSelected);
+      bool flag = decreaseItem(curSelected);
       if (!flag) {
-        curSelected->isSelected = !curSelected->isSelected;
         curSelected = NULL;
       }
     }
@@ -123,20 +122,25 @@ void Inventory::render(SDL_Renderer *renderer) {
     int nextR = 0;
     int nextC = 0;
     int offset = (INVENTORY_GRID_SIZE - INVENTORY_OBJECT_SIZE) / 2;
-    for (auto &o : items) {
+    for (auto &o : itemsInsertionOrder) {
       float x = xPos + INVENTORY_BORDER +
                 nextC * (INVENTORY_GRID_SIZE + INVENTORY_BORDER) + offset;
       float y = yPos + INVENTORY_BORDER +
                 nextR * (INVENTORY_GRID_SIZE + INVENTORY_BORDER) + offset;
 
       // item
-      o.first.setInventoryPosition(x, y);
-      o.first.render(renderer, x, y, INVENTORY_OBJECT_SIZE,
-                     INVENTORY_OBJECT_SIZE);
+      items[o].xPos = x;
+      items[o].yPos = y;
+      if (o == curSelected) {
+        SDL_SetTextureColorMod(o->texture, 127, 127,
+                               127);  // TODO: highlight?
+      }
+      o->render(renderer, x, y, INVENTORY_OBJECT_SIZE, INVENTORY_OBJECT_SIZE);
+      SDL_SetTextureColorMod(o->texture, 255, 255, 255);
 
       // quantity
       SDL_Surface *q = TTF_RenderText_Solid(
-          font, std::to_string(o.second).c_str(), text_color);
+          font, std::to_string(items[o].quantity).c_str(), text_color);
       if (!q) {
         std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
       }
@@ -161,44 +165,39 @@ void Inventory::render(SDL_Renderer *renderer) {
 }
 
 void Inventory::onLeftClick(Logs *logs, float x, float y) {
-  for (auto &[i, q] : items) {
-    if (i.xPosIL < x && x < i.xPosIL + INVENTORY_OBJECT_SIZE && i.yPosIL < y &&
-        y < i.yPosIL + INVENTORY_OBJECT_SIZE) {
-      if (!i.isSelected) {
+  for (auto &[o, i] : items) {
+    if (i.xPos < x && x < i.xPos + INVENTORY_OBJECT_SIZE && i.yPos < y &&
+        y < i.yPos + INVENTORY_OBJECT_SIZE) {
+      if (o != curSelected) {
         // unselect previous and select this
-        if (curSelected) {
-          curSelected->isSelected = false;
-        }
-        curSelected = &i;
+        curSelected = o;
 
         // TODO: use a UI similar to shop instead of writing to logs
-        std::string s =
-            "-Selected item: " + i.name + ", value: " + std::to_string(i.value);
+        std::string s = "-Selected item: " + o->name +
+                        ", value: " + std::to_string(o->value);
         logs->addLog(s);
       } else {
         // unselect this
         curSelected = NULL;
       }
-      i.isSelected = !i.isSelected;
     }
   }
 }
 
 int Inventory::onRightClick(Logs *logs, float x, float y) {
-  for (auto &[i, q] : items) {
-    if (i.xPosIL < x && x < i.xPosIL + INVENTORY_OBJECT_SIZE && i.yPosIL < y &&
-        y < i.yPosIL + INVENTORY_OBJECT_SIZE) {
-      if (i.isSelected && i.type != ObjectType::QUEST_OBJECT) {
-        std::string s = "-Sold " + i.name + " for " + std::to_string(i.value);
+  for (auto &[o, i] : items) {
+    if (i.xPos < x && x < i.xPos + INVENTORY_OBJECT_SIZE && i.yPos < y &&
+        y < i.yPos + INVENTORY_OBJECT_SIZE) {
+      if (o == curSelected && o->type != ObjectType::QUEST_OBJECT) {
+        std::string s = "-Sold " + o->name + " for " + std::to_string(o->value);
         logs->addLog(s);
         // decrease and unselect if none remaining
-        bool flag = decreaseItem(i);
+        bool flag = decreaseItem(o);
         if (!flag) {
-          i.isSelected = !i.isSelected;
           curSelected = NULL;
         }
-        return i.value;
-      } else if (i.type == ObjectType::QUEST_OBJECT) {
+        return o->value;
+      } else if (o->type == ObjectType::QUEST_OBJECT) {
         logs->addLog("-Cannot sell a quest item");
       }
     }
@@ -207,14 +206,17 @@ int Inventory::onRightClick(Logs *logs, float x, float y) {
   return 0;
 }
 
-bool Inventory::decreaseItem(Object o) {
+bool Inventory::decreaseItem(Object *o) {
   if (!items.contains(o)) {
     std::cout << "Item not found in item list" << std::endl;
     return false;
   }
-  items[o]--;
-  if (items[o] == 0) {
+  items[o].quantity--;
+  if (items[o].quantity == 0) {
     items.erase(o);
+    itemsInsertionOrder.erase(
+        std::remove(itemsInsertionOrder.begin(), itemsInsertionOrder.end(), o),
+        itemsInsertionOrder.end());
     return false;
   }
   return true;

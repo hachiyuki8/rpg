@@ -53,10 +53,12 @@ void Map::addTeleporter(Teleporter tp) {
   teleporters.push_back(tp);
 }
 
-void Map::addObject(Object o) { objects.push_back(o); }
+void Map::addObject(ObjectWrapper ow) { objectWrappers.push_back(ow); }
 
-void Map::removeObject(Object o) {
-  objects.erase(std::remove(objects.begin(), objects.end(), o), objects.end());
+void Map::removeObject(ObjectWrapper ow) {
+  objectWrappers.erase(
+      std::remove(objectWrappers.begin(), objectWrappers.end(), ow),
+      objectWrappers.end());
 }
 
 void Map::addNPC(CharacterNPC *npc) { NPCs.push_back(npc); }
@@ -82,8 +84,8 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
     }
   }
 
-  for (auto &o : objects) {
-    if (o.isInvalidPosition(x, y, w, h)) {
+  for (auto &ow : objectWrappers) {
+    if (ow.isInvalidPosition(x, y, w, h)) {
       return true;
     }
   }
@@ -118,8 +120,8 @@ bool Map::isInvalidEnemyPosition(Enemy *e) {
     }
   }
 
-  for (auto &o : objects) {
-    if (o.isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+  for (auto &ow : objectWrappers) {
+    if (ow.isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
       return true;
     }
   }
@@ -162,8 +164,8 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer, float x,
     }
   }
 
-  for (auto &o : objects) {
-    if (o.onInteract(x, y, w, h)) {
+  for (auto &ow : objectWrappers) {
+    if (ow.onInteract(x, y, w, h)) {
       return std::make_tuple(this, x, y);
     }
   }
@@ -203,8 +205,8 @@ void Map::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     e->render(this, renderer, camX, camY, camW, camH);
   }
 
-  for (auto &o : objects) {
-    o.render(renderer, camX, camY, camW, camH);
+  for (auto &ow : objectWrappers) {
+    ow.render(renderer, camX, camY, camW, camH);
   }
 
   for (auto &npc : NPCs) {

@@ -28,17 +28,19 @@ Shop::~Shop() {
 
 void Shop::print() { std::cout << "Shop " << ID << std::endl; }
 
-bool Shop::addItem(Object o, int q) {
+bool Shop::addItem(Object *o, int q) {
   if (items.contains(o)) {
-    items[o] += q;
-    if (items[o] > SHOP_PER_ITEM_LIMIT) {
+    items[o].quantity += q;
+    if (items[o].quantity > SHOP_PER_ITEM_LIMIT) {
       std::cout << "Max quantity per item reached" << std::endl;
-      items[o] -= q;
+      items[o].quantity -= q;
       return false;
     }
   } else {
     if (items.size() + 1 <= numRow * numCol) {
-      items[o] = q;
+      struct ShopItem newI;
+      newI.quantity = q;
+      items[o] = newI;
     } else {
       std::cout << "No more space in shop" << std::endl;
       return false;
@@ -57,7 +59,6 @@ void Shop::open(Logs *logs) {
 void Shop::close() {
   // unselect
   if (curSelected) {
-    curSelected->isSelected = false;
     curSelected = NULL;
   }
   isShowing = false;
@@ -68,20 +69,16 @@ void Shop::onClick(float x, float y) {
     return;
   }
 
-  for (auto &[i, q] : items) {
-    if (i.xPosIL < x && x < i.xPosIL + SHOP_OBJECT_SIZE && i.yPosIL < y &&
-        y < i.yPosIL + SHOP_OBJECT_SIZE) {
-      if (!i.isSelected) {
+  for (auto &[o, i] : items) {
+    if (i.xPos < x && x < i.xPos + SHOP_OBJECT_SIZE && i.yPos < y &&
+        y < i.yPos + SHOP_OBJECT_SIZE) {
+      if (o != curSelected) {
         // unselect previous and select this
-        if (curSelected) {
-          curSelected->isSelected = false;
-        }
-        curSelected = &i;
+        curSelected = o;
       } else {
         // unselect this
         curSelected = NULL;
       }
-      i.isSelected = !i.isSelected;
     }
   }
 }
@@ -92,18 +89,18 @@ void Shop::onConfirm(Character *curPlayer) {
   }
 
   if (curSelected) {
-    if (!items.contains(*curSelected)) {
+    if (!items.contains(curSelected)) {
       std::cout << "Item not found in shop" << std::endl;
       return;
     }
     if (curPlayer->stats.decreaseMoneyIfEnough(&curPlayer->logs,
                                                curSelected->value) &&
-        curPlayer->inventory.addItem(&curPlayer->logs, *curSelected, 1)) {
+        curPlayer->inventory.addItem(&curPlayer->logs, curSelected, 1)) {
       std::string s = "-Bought 1 " + curSelected->name;
       curPlayer->logs.addLog(s);
-      items[*curSelected]--;
-      if (items[*curSelected] == 0) {
-        items.erase(*curSelected);
+      items[curSelected].quantity--;
+      if (items[curSelected].quantity == 0) {
+        items.erase(curSelected);
         curSelected = NULL;
       }
     }
@@ -142,12 +139,18 @@ void Shop::render(SDL_Renderer *renderer) {
           yPos + SHOP_BORDER + nextR * (SHOP_GRID_SIZE + SHOP_BORDER) + offset;
 
       // item
-      o.first.setInventoryPosition(x, y);
-      o.first.render(renderer, x, y, SHOP_OBJECT_SIZE, SHOP_OBJECT_SIZE);
+      o.second.xPos = x;
+      o.second.yPos = y;
+      if (o.first == curSelected) {
+        SDL_SetTextureColorMod(o.first->texture, 127, 127,
+                               127);  // TODO: highlight?
+      }
+      o.first->render(renderer, x, y, SHOP_OBJECT_SIZE, SHOP_OBJECT_SIZE);
+      SDL_SetTextureColorMod(o.first->texture, 255, 255, 255);
 
       // quantity
       SDL_Surface *q = TTF_RenderText_Solid(
-          font, std::to_string(o.second).c_str(), text_color);
+          font, std::to_string(o.second.quantity).c_str(), text_color);
       if (!q) {
         std::cout << "Failed to render text: " << TTF_GetError() << std::endl;
       }
@@ -176,7 +179,7 @@ void Shop::render(SDL_Renderer *renderer) {
       float y = yPos + SHOP_BORDER + SHOP_SELECTED_SIZE;
       float w = SHOP_SELECTED_SIZE;
       float h = SHOP_SELECTED_SIZE;
-      curSelected->render(renderer, x, y, w, h, true);
+      curSelected->render(renderer, x, y, w, h);
       // description
       std::string s = curSelected->name + ": " + curSelected->description +
                       "\n\nCost: " + std::to_string(curSelected->value);

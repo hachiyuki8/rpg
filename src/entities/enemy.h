@@ -71,7 +71,7 @@ class Enemy {
    * @param o item
    * @param q quantity
    */
-  void addReward(Object o, int q);
+  void addReward(Object *o, int q);
 
   /**
    * @brief Check if given position collides with interaction collider
@@ -145,7 +145,7 @@ class Enemy {
   // enemy properties
   int hp;
   int difficulty;
-  std::vector<std::tuple<Object, int>> rewards;  // upon being killed
+  std::vector<std::tuple<Object *, int>> rewards;  // upon being killed
 
   // enemy textures with animations
   std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>

@@ -122,7 +122,7 @@ void CharacterNPC::setConvo(
   convo.init(lines);
 }
 
-void CharacterNPC::addToShop(std::vector<std::tuple<Object, int>> items) {
+void CharacterNPC::addToShop(std::vector<std::tuple<Object *, int>> items) {
   if (state != NPCState::SHOP_NPC) {
     std::cout << "Cannot add shop items for non SHOP_NPC" << std::endl;
     return;

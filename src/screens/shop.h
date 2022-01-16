@@ -23,6 +23,13 @@
 
 class Character;
 
+struct ShopItem {
+  int quantity;
+  // position and dimension in the shop screen
+  float xPos;
+  float yPos;
+};
+
 class Shop {
  public:
   /**
@@ -50,7 +57,7 @@ class Shop {
    * @param q
    * @return false if failed to add (shop full or quantity exceeds limit)
    */
-  bool addItem(Object o, int q);
+  bool addItem(Object *o, int q);
 
   /**
    * @brief Open the shop and output instruction to logs
@@ -104,9 +111,8 @@ class Shop {
   int numRow;
   int numCol;
 
-  // item grouping relies on object names (see operator< in object.h)
-  std::map<Object, int> items;
-  const Object *curSelected = NULL;
+  std::map<Object *, ShopItem> items;
+  Object *curSelected = NULL;
 
   SDL_Color text_color = SHOP_COLOR;
   SDL_Texture *background = AssetManager::uiTextures[SHOP_BACKGROUND];

@@ -25,6 +25,7 @@ class Character;
 class CharacterNPC;
 class Enemy;
 class Map;
+class Object;
 
 class AssetManager {
  public:
@@ -69,6 +70,7 @@ class AssetManager {
   static std::map<SDL_Keycode, SDL_Texture *> keyTextures;
   static std::map<Uint8, SDL_Texture *> mouseTextures;
 
+  static std::vector<Object *> allObjects;
   static std::vector<Map *> allMaps;
   static std::vector<CharacterNPC *> allNPCs;
   static std::vector<Enemy *> allEnemies;

@@ -392,6 +392,7 @@ std::map<std::string, SDL_Texture *> AssetManager::tileTextures;
 std::map<std::string, SDL_Texture *> AssetManager::uiTextures;
 std::map<SDL_Keycode, SDL_Texture *> AssetManager::keyTextures;
 std::map<Uint8, SDL_Texture *> AssetManager::mouseTextures;
+std::vector<Object *> AssetManager::allObjects;
 std::vector<Map *> AssetManager::allMaps;
 std::vector<CharacterNPC *> AssetManager::allNPCs;
 std::vector<Enemy *> AssetManager::allEnemies;
