@@ -55,7 +55,7 @@ class Map {
   /**
    * @brief Add the given object wrapper to objectWrappers
    *
-   * @param o
+   * @param ow
    */
   void addObject(ObjectWrapper ow);
 
@@ -64,7 +64,7 @@ class Map {
    * object wrapper equality is checked by ID, this should always just remove
    * one object wrapper.
    *
-   * @param o
+   * @param ow
    */
   void removeObject(ObjectWrapper ow);
 
@@ -76,11 +76,11 @@ class Map {
   void addNPC(CharacterNPC *npc);
 
   /**
-   * @brief Add pointer to the given enemy to enemies
+   * @brief Add pointer to the given enemy to enemyWrappers
    *
-   * @param e caller should allocate memory for this
+   * @param ew
    */
-  void addEnemy(Enemy *e);
+  void addEnemy(EnemyWrapper ew);
 
   /**
    * @brief Check if the given position collides with any unreachable tile,
@@ -98,13 +98,14 @@ class Map {
    * @brief Check if the given enemy collides with any unreachable tile,
    * other enemies, uncollidable object, NPCs, or the player
    *
-   * @param x
+   * @param ID ID of enemy wrapper, used to not check it against itself
+   * @param x enemy position and dimension
    * @param y
    * @param w
    * @param h
    * @return true if collides with any entity's collider mentioned above
    */
-  bool isInvalidEnemyPosition(Enemy *e);
+  bool isInvalidEnemyPosition(int ID, float x, float y, float w, float h);
 
   /**
    * @brief When INTERACT is pressed, check possible interaction with any of the
@@ -166,7 +167,7 @@ class Map {
   std::vector<Teleporter> teleporters;
   std::vector<ObjectWrapper> objectWrappers;
   std::vector<CharacterNPC *> NPCs;
-  std::vector<Enemy *> enemies;
+  std::vector<EnemyWrapper> enemyWrappers;
 
   friend class Character;
 };

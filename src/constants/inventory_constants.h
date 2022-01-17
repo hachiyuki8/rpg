@@ -12,7 +12,7 @@ const int INVENTORY_ITEM_LIMIT = (INVENTORY_WIDTH - INVENTORY_BORDER) /
                                  (INVENTORY_HEIGHT - INVENTORY_BORDER) /
                                  (INVENTORY_GRID_SIZE + INVENTORY_BORDER);
 const int INVENTORY_PER_ITEM_LIMIT =
-    99;  // ideally this number should not be reached
+    999;  // ideally this number should not be reached
 
 const std::string INVENTORY_TEXTURE = "14_grid3.png";
 const std::string INVENTORY_BACKGROUND = "19_panel10.png";

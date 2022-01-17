@@ -63,7 +63,7 @@ void Map::removeObject(ObjectWrapper ow) {
 
 void Map::addNPC(CharacterNPC *npc) { NPCs.push_back(npc); }
 
-void Map::addEnemy(Enemy *e) { enemies.push_back(e); }
+void Map::addEnemy(EnemyWrapper ew) { enemyWrappers.push_back(ew); }
 
 bool Map::isInvalidPosition(float x, float y, float w, float h) {
   if (x < 0 || x + w > width || y < 0 || y + h > height) {
@@ -78,8 +78,8 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
     }
   }
 
-  for (auto &e : enemies) {
-    if (e->isInvalidPosition(x, y, w, h)) {
+  for (auto &ew : enemyWrappers) {
+    if (ew.isInvalidPosition(x, y, w, h)) {
       return true;
     }
   }
@@ -99,41 +99,38 @@ bool Map::isInvalidPosition(float x, float y, float w, float h) {
   return false;
 }
 
-bool Map::isInvalidEnemyPosition(Enemy *e) {
-  if (e->xPos < 0 || e->xPos + e->width > width || e->yPos < 0 ||
-      e->yPos + e->height > height) {
+bool Map::isInvalidEnemyPosition(int ID, float x, float y, float w, float h) {
+  if (x < 0 || x + w > width || y < 0 || y + h > height) {
     return true;
   }
 
   for (auto &ts : tiles) {
     for (auto &t : ts) {
-      if (t.isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+      if (t.isInvalidPosition(x, y, w, h)) {
         return true;
       }
     }
   }
 
-  for (auto &oe : enemies) {
-    if (e != oe &&
-        oe->isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+  for (auto &oe : enemyWrappers) {
+    if (ID != oe.ID && oe.isInvalidPosition(x, y, w, h)) {
       return true;
     }
   }
 
   for (auto &ow : objectWrappers) {
-    if (ow.isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+    if (ow.isInvalidPosition(x, y, w, h)) {
       return true;
     }
   }
 
   for (auto &npc : NPCs) {
-    if (npc->isInvalidPosition(e->xPos, e->yPos, e->width, e->height)) {
+    if (npc->isInvalidPosition(x, y, w, h)) {
       return true;
     }
   }
 
-  if (AssetManager::player->isInvalidPosition(e->xPos, e->yPos, e->width,
-                                              e->height)) {
+  if (AssetManager::player->isInvalidPosition(x, y, w, h)) {
     return true;
   }
 
@@ -176,14 +173,14 @@ std::tuple<Map *, float, float> Map::onInteract(Character *curPlayer, float x,
 std::tuple<int, Enemy *> Map::onAttack(int attack, float x, float y, float w,
                                        float h) {
   Enemy *np = NULL;
-  for (auto &e : enemies) {
-    if (e->isInRange(x, y, w, h)) {
-      std::pair<int, int> res = e->onAttack(x, attack);
+  for (auto &ew : enemyWrappers) {
+    if (ew.isInRange(x, y, w, h)) {
+      std::pair<int, int> res = ew.onAttack(x, attack);
       if (res.first == -1 && res.second == -1) {
         return std::make_tuple(-1, np);  // still in last attack animation
       }
       if (!res.second) {
-        return std::make_tuple(res.first, e);  // enemy killed
+        return std::make_tuple(res.first, ew.enemy);  // enemy killed
       } else {
         return std::make_tuple(res.first, np);
       }
@@ -201,8 +198,8 @@ void Map::render(SDL_Renderer *renderer, float camX, float camY, float camW,
     }
   }
 
-  for (auto &e : enemies) {
-    e->render(this, renderer, camX, camY, camW, camH);
+  for (auto &ew : enemyWrappers) {
+    ew.render(this, renderer, camX, camY, camW, camH);
   }
 
   for (auto &ow : objectWrappers) {

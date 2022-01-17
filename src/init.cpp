@@ -2,9 +2,9 @@
 
 void init() {
   initObjects();
+  initEnemies();
   initMaps();
   initNPCs();
-  initEnemies();
   initPlayer();
 }
 
@@ -171,6 +171,14 @@ void initObjects() {
   AssetManager::allObjects.push_back(fenceBottomRight);
 }
 
+void initEnemies() {
+  // enemy 0
+  Enemy *enemy1 = new Enemy(ENEMY1_PATH, 1);
+  enemy1->addReward(AssetManager::allObjects[5], 2);
+  enemy1->addReward(AssetManager::allObjects[6], 99);
+  AssetManager::allEnemies.push_back(enemy1);
+}
+
 void initMaps() {
   // map 0
   Map *map0 = new Map(MAPFILES[0], MAPFILES[0][0].size() * TILE_SIZE,
@@ -286,6 +294,13 @@ void initMaps() {
   ObjectWrapper redHouse1W(AssetManager::allObjects[0], 300, 100, 200, 200);
   map1->addObject(redHouse1W);
 
+  EnemyWrapper enemy1W(AssetManager::allEnemies[0], 400, 600, 400, 800,
+                       MovementState::WALK, 100, 40, 40, 30, 30, 0, 0);
+  map1->addEnemy(enemy1W);
+  EnemyWrapper enemy2W(AssetManager::allEnemies[0], 500, 600, 400, 800,
+                       MovementState::WALK, 100, 40, 40, 30, 30, 0, 0);
+  map1->addEnemy(enemy2W);
+
   // teleporters
   std::map<std::pair<int, int>, std::pair<int, int>> sd1 = {
       {std::make_pair(17, 25), std::make_pair(1, 0)},
@@ -341,16 +356,6 @@ void initNPCs() {
   npc2->setConvo(lines);
   AssetManager::allNPCs.push_back(npc2);
   AssetManager::allMaps[0]->addNPC(npc2);
-}
-
-void initEnemies() {
-  // enemy 0
-  Enemy *enemy1 = new Enemy(400, 600, 400, 800, ENEMY1_PATH,
-                            MovementState::WALK, 100, 1, 40, 40, 30, 30, 0, 0);
-  enemy1->addReward(AssetManager::allObjects[5], 2);
-  enemy1->addReward(AssetManager::allObjects[6], 99);
-  AssetManager::allEnemies.push_back(enemy1);
-  AssetManager::allMaps[1]->addEnemy(enemy1);
 }
 
 void initPlayer() {

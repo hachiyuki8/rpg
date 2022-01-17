@@ -57,12 +57,13 @@ class Stats {
 
   /**
    * @brief Change player HP by the given amount. If positive amount, cap at
-   * max HP of current level. If HP drops below 0, will set it to 1.
+   * max HP of current level. If HP drops below 0, will set it to 1 and output
+   * to logs.
    *
    * @param h
    * @return false if HP drops below 0
    */
-  bool changeHP(int h);
+  bool changeHP(Logs *log, int h);
 
   /**
    * @brief Increase player EXP by the given amount (non-negative only) and

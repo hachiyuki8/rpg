@@ -8,7 +8,6 @@ const int ENEMY_YVELOCITY_BASE = 75;
 const int ENEMY_XVELOCITY_RANGE = 100;
 const int ENEMY_YVELOCITY_RANGE = 75;
 const int ENEMY_HP = 100;
-const int ENEMY_DIFFICULTY = 0;
 const int ENEMY_MAX_DIFFICULTY = 5;
 const int ENEMY_PER_FRAME_LENGTH = 5;
 const int ENEMY_INTERACTION_RANGE = 5;

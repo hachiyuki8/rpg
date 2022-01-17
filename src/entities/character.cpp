@@ -362,7 +362,7 @@ void Character::attack() {
     movementState = MovementState::ATTACK;
     int dmg = calculateDamage(diff);
     std::cout << "Dmg: " << dmg << std::endl;
-    stats.changeHP(dmg * -1);
+    stats.changeHP(&logs, dmg * -1);
     // TODO: if HP<0 do something?
   }
 }

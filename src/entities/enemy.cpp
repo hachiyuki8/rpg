@@ -4,9 +4,7 @@
 
 int Enemy::nextID = 0;
 
-Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
-             MovementState state, int p, int diff, float w, float h, int xVBase,
-             int yVBase, int xVRange, int yVRange) {
+Enemy::Enemy(std::string n, int diff) {
   ID = nextID;
   nextID++;
   if (DEBUG) {
@@ -17,6 +15,44 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
   for (auto &mt : AssetManager::enemyTextures[name]) {
     enemyTextures[mt.first] = mt.second;
   };
+
+  difficulty = diff;
+}
+
+Enemy::~Enemy() {
+  if (DEBUG) {
+    std::cout << "Destroying enemy " << ID << std::endl;
+  }
+}
+
+void Enemy::print() {
+  std::cout << "Enemy " << ID << std::endl;
+  std::cout << "-difficulty: " << difficulty << std::endl;
+}
+
+void Enemy::addReward(Object *o, int q) {
+  rewards.push_back(std::make_tuple(o, q));
+}
+
+int Enemy::calculateDamage(int attack) {
+  return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY));  // TODO: not sure
+}
+
+// enemy wrapper
+
+int EnemyWrapper::nextID = 0;
+
+EnemyWrapper::EnemyWrapper(Enemy *e, float xMin, float xMax, float yMin,
+                           float yMax, MovementState state, int p, float w,
+                           float h, int xVBase, int yVBase, int xVRange,
+                           int yVRange) {
+  ID = nextID;
+  nextID++;
+  if (DEBUG) {
+    std::cout << "Creating enemy wrapper" << ID << std::endl;
+  }
+
+  enemy = e;
 
   xPosMin = xMin;
   xPosMax = xMax;
@@ -37,34 +73,32 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
 
   fullHP = p;
   curHP = p;
-  difficulty = diff;
   movementState = state;
 
   lastUpdate = SDL_GetTicks();
 }
 
-Enemy::~Enemy() {
+EnemyWrapper::~EnemyWrapper() {
   if (DEBUG) {
-    std::cout << "Destroying enemy " << ID << std::endl;
+    std::cout << "Destroying enemy wrapper " << ID << std::endl;
   }
 }
 
-void Enemy::print() {
-  std::cout << "Enemy " << ID << std::endl;
-  std::cout << "-current HP: " << curHP << ", difficulty: " << difficulty
-            << std::endl;
+void EnemyWrapper::print() {
+  std::cout << "Enemy wrapper" << ID << std::endl;
+  std::cout << "-current HP: " << curHP << std::endl;
 }
 
-bool Enemy::isInvalidPosition(float x, float y, float w, float h) {
+bool EnemyWrapper::operator==(const EnemyWrapper &ew) const {
+  return (ID == ew.ID);
+}
+
+bool EnemyWrapper::isInvalidPosition(float x, float y, float w, float h) {
   return (movementState != MovementState::DEATH && xPos < x + w &&
           x < xPos + width && yPos < y + h && y < yPos + height);
 }
 
-void Enemy::addReward(Object *o, int q) {
-  rewards.push_back(std::make_tuple(o, q));
-}
-
-bool Enemy::isInRange(float x, float y, float w, float h) {
+bool EnemyWrapper::isInRange(float x, float y, float w, float h) {
   return (movementState != MovementState::DEATH &&
           xPos - ENEMY_INTERACTION_RANGE <= x + w &&
           x <= xPos + width + ENEMY_INTERACTION_RANGE &&
@@ -72,7 +106,7 @@ bool Enemy::isInRange(float x, float y, float w, float h) {
           y <= yPos + height + ENEMY_INTERACTION_RANGE);
 }
 
-std::pair<int, int> Enemy::onAttack(float x, int attack) {
+std::pair<int, int> EnemyWrapper::onAttack(float x, int attack) {
   if (movementState == MovementState::DEATH ||
       movementState == MovementState::ATTACK) {
     return std::make_pair(-1, -1);
@@ -82,7 +116,7 @@ std::pair<int, int> Enemy::onAttack(float x, int attack) {
 
   oldMovementState = movementState;
   movementState = MovementState::ATTACK;
-  curHP -= calculateDamage(attack);
+  curHP -= enemy->calculateDamage(attack);
   if (curHP <= 0) {
     curHP = 0;
     movementState = MovementState::DEATH;
@@ -96,11 +130,11 @@ std::pair<int, int> Enemy::onAttack(float x, int attack) {
   } else {
     xDirection = Direction::LEFT;
   }
-  return std::make_pair(difficulty, isAlive);
+  return std::make_pair(enemy->difficulty, isAlive);
 }
 
-void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
-                   float camW, float camH) {
+void EnemyWrapper::render(Map *curMap, SDL_Renderer *renderer, float camX,
+                          float camY, float camW, float camH) {
   move(curMap);
 
   if (xPos + width < camX || xPos > camX + camW || yPos + height < camY ||
@@ -110,7 +144,7 @@ void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
 
   if (movementState != MovementState::DEATH ||
       enemyIndices[movementState][xDirection].first <
-          enemyTextures[movementState][xDirection].size() -
+          enemy->enemyTextures[movementState][xDirection].size() -
               1) {  // death animation loop only rendered once
     SDL_Rect s;
     s.x = std::max(0.0f, round(camX - xPos));
@@ -118,8 +152,9 @@ void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
     // rescale
     // TODO: here assuming all textures have the same size
     int actualW, actualH;
-    SDL_QueryTexture(enemyTextures[MovementState::IDLE][Direction::LEFT][0],
-                     NULL, NULL, &actualW, &actualH);
+    SDL_QueryTexture(
+        enemy->enemyTextures[MovementState::IDLE][Direction::LEFT][0], NULL,
+        NULL, &actualW, &actualH);
     s.x = s.x / width * actualW;
     s.y = s.y / height * actualH;
     s.w = actualW - s.x;
@@ -139,7 +174,7 @@ void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
       enemyIndices[movementState][xDirection].second = 0;
       enemyIndices[movementState][xDirection].first += 1;
       enemyIndices[movementState][xDirection].first %=
-          enemyTextures[movementState][xDirection].size();
+          enemy->enemyTextures[movementState][xDirection].size();
 
       // update movement state after attack animation finished
       if (movementState == MovementState::ATTACK &&
@@ -148,37 +183,35 @@ void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
       }
     }
 
-    SDL_RenderCopy(renderer,
-                   enemyTextures[movementState][xDirection]
-                                [enemyIndices[movementState][xDirection].first],
-                   NULL, &r);
+    SDL_RenderCopy(
+        renderer,
+        enemy->enemyTextures[movementState][xDirection]
+                            [enemyIndices[movementState][xDirection].first],
+        NULL, &r);
 
     // health bar
     r.x = r.x + width / 2 - ENEMY_HEALTH_BAR_BG_WIDTH / 2;
     r.y = r.y - ENEMY_HEALTH_BAR_BG_HEIGHT;
     r.w = ENEMY_HEALTH_BAR_BG_WIDTH;
     r.h = ENEMY_HEALTH_BAR_BG_HEIGHT;
-    SDL_RenderCopy(renderer, healthbarbg_texture, NULL, &r);
+    SDL_RenderCopy(renderer, enemy->healthbarbg_texture, NULL, &r);
     r.x += ENEMY_HEALTH_BAR_XPOS;
     r.y += ENEMY_HEALTH_BAR_YPOS;
     r.w = ENEMY_HEALTH_BAR_WIDTH * curHP / fullHP;
     r.h = ENEMY_HEALTH_BAR_HEIGHT;
-    SDL_RenderCopy(renderer, healthbar_texture, NULL, &r);
+    SDL_RenderCopy(renderer, enemy->healthbar_texture, NULL, &r);
   }
 }
 
-int Enemy::calculateDamage(int attack) {
-  return attack * (2 - (difficulty / ENEMY_MAX_DIFFICULTY));  // TODO: not sure
-}
-
-void Enemy::move(Map *curMap) {
+void EnemyWrapper::move(Map *curMap) {
   Uint32 current = SDL_GetTicks();
   float dT = (current - lastUpdate) / 1000.0f;
 
   if (movementState == MovementState::WALK) {
     if (xDirection == Direction::LEFT) {
       xPos -= xVel * dT;
-      if (xPos < xPosMin || curMap->isInvalidEnemyPosition(this)) {
+      if (xPos < xPosMin ||
+          curMap->isInvalidEnemyPosition(ID, xPos, yPos, width, height)) {
         xPos += xVel * dT;
         xDirection = Direction::RIGHT;
         if (xVelRange > 0) {
@@ -187,7 +220,8 @@ void Enemy::move(Map *curMap) {
       }
     } else {
       xPos += xVel * dT;
-      if (xPos > xPosMax || curMap->isInvalidEnemyPosition(this)) {
+      if (xPos > xPosMax ||
+          curMap->isInvalidEnemyPosition(ID, xPos, yPos, width, height)) {
         xPos -= xVel * dT;
         xDirection = Direction::LEFT;
         if (xVelRange > 0) {
@@ -198,7 +232,8 @@ void Enemy::move(Map *curMap) {
 
     if (yDirection == Direction::UP) {
       yPos -= yVel * dT;
-      if (yPos < yPosMin || curMap->isInvalidEnemyPosition(this)) {
+      if (yPos < yPosMin ||
+          curMap->isInvalidEnemyPosition(ID, xPos, yPos, width, height)) {
         yPos += yVel * dT;
         yDirection = Direction::DOWN;
         if (yVelRange > 0) {
@@ -207,7 +242,8 @@ void Enemy::move(Map *curMap) {
       }
     } else {
       yPos += yVel * dT;
-      if (yPos > yPosMax || curMap->isInvalidEnemyPosition(this)) {
+      if (yPos > yPosMax ||
+          curMap->isInvalidEnemyPosition(ID, xPos, yPos, width, height)) {
         yPos -= yVel * dT;
         yDirection = Direction::UP;
         if (yVelRange > 0) {

@@ -17,6 +17,20 @@
  *
  * This file defines all enemy states and refers to enemy_constants.h.
  *
+ * An enemy encapsulates all information related to the enemy itself
+ * (name/texture/rewards/etc.) but contain nothing about the game state
+ * (size/position on map/properties that should scale with player level/etc.).
+ * The latter is contained in an enemy wrapper.
+ *
+ * The point of having enemies and enemy wrappers separately is that , with
+ * enemies, it is easier to define all types of enemies needed in the game
+ * independent of the game state, hence reusing them to create multiple
+ * instances. So all enemies should be allocated and managed by AssetManager.
+ *
+ * But using enemy wrappers, different instances representing the same enemy can
+ * each has its own independent game state. An enemy wrapper should be managed
+ * by the game state it's dependent on, for example the map.
+ *
  */
 
 class Character;
@@ -28,14 +42,59 @@ class Enemy {
   /**
    * @brief Construct a new enemy
    *
+   * @param n name, should match the folder name containing all textures
+   * @param diff an integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
+   */
+  Enemy(std::string n, int diff = 0);
+  virtual ~Enemy();
+
+  void print();
+
+  /**
+   * @brief Add given items to enemy's reward list
+   *
+   * @param o item
+   * @param q quantity
+   */
+  void addReward(Object *o, int q);
+
+  static int nextID;
+
+ private:
+  int ID;
+  std::string name;
+
+  // enemy properties
+  int difficulty;
+  std::vector<std::tuple<Object *, int>> rewards;  // upon being killed
+
+  // enemy textures with animations
+  std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>
+      enemyTextures;
+  SDL_Texture *healthbarbg_texture =
+      AssetManager::uiTextures[ENEMY_HEALTH_BAR_BG_TEXTURE];
+  SDL_Texture *healthbar_texture =
+      AssetManager::uiTextures[ENEMY_HEALTH_BAR_TEXTURE];
+
+  friend class Character;
+  friend class EnemyWrapper;
+
+  // Calculate damage taken according to player attack and enemy difficulty
+  int calculateDamage(int attack);
+};
+
+class EnemyWrapper {
+ public:
+  /**
+   * @brief Construct a new enemy wrapper
+   *
+   * @param e underlying enemy
    * @param xMin movement range
    * @param xMax
    * @param yMin
    * @param yMax
-   * @param n name, should match the folder name containing all textures
    * @param state either IDLE (then position is alwasy (xMin, yMin)) or WALK
-   * @param p full HP
-   * @param diff an integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
+   * @param p full HP (should scale with player level)
    * @param w dimension
    * @param h
    * @param xVBase velocity range
@@ -43,15 +102,24 @@ class Enemy {
    * @param xVRange
    * @param yVRange
    */
-  Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
-        MovementState state = MovementState::IDLE, int p = ENEMY_HP,
-        int diff = ENEMY_DIFFICULTY, float w = ENEMY_WIDTH,
-        float h = ENEMY_HEIGHT, int xVBase = ENEMY_XVELOCITY_BASE,
-        int yVBase = ENEMY_YVELOCITY_BASE, int xVRange = ENEMY_XVELOCITY_RANGE,
-        int yVRange = ENEMY_YVELOCITY_RANGE);
-  virtual ~Enemy();
+  EnemyWrapper(Enemy *e, float xMin, float xMax, float yMin, float yMax,
+               MovementState state = MovementState::IDLE, int p = ENEMY_HP,
+               float w = ENEMY_WIDTH, float h = ENEMY_HEIGHT,
+               int xVBase = ENEMY_XVELOCITY_BASE,
+               int yVBase = ENEMY_YVELOCITY_BASE,
+               int xVRange = ENEMY_XVELOCITY_RANGE,
+               int yVRange = ENEMY_YVELOCITY_RANGE);
+  virtual ~EnemyWrapper();
 
   void print();
+
+  /**
+   * @brief Check if two enemy wrappers are the exact same instance
+   *
+   * @param ow
+   * @return true if enemy wrapper IDs are the same
+   */
+  bool operator==(const EnemyWrapper &ew) const;
 
   /**
    * @brief Check if the given position collides with living enemy
@@ -64,14 +132,6 @@ class Enemy {
    * enemy is alive
    */
   bool isInvalidPosition(float x, float y, float w, float h);
-
-  /**
-   * @brief Add given items to enemy's reward list
-   *
-   * @param o item
-   * @param q quantity
-   */
-  void addReward(Object *o, int q);
 
   /**
    * @brief Check if given position collides with interaction collider
@@ -112,8 +172,8 @@ class Enemy {
 
  private:
   int ID;
+  Enemy *enemy;
   Uint32 lastUpdate;
-  std::string name;
 
   // enemy position
   float xPos;
@@ -142,15 +202,10 @@ class Enemy {
   float yPosMin;
   float yPosMax;
 
-  // enemy properties
+  // enemy properties that scale with player level
   int fullHP;
   int curHP;
-  int difficulty;
-  std::vector<std::tuple<Object *, int>> rewards;  // upon being killed
 
-  // enemy textures with animations
-  std::map<MovementState, std::map<Direction, std::vector<SDL_Texture *>>>
-      enemyTextures;
   // (index of current texture, number of frames it has lasted)
   std::map<MovementState, std::map<Direction, std::pair<int, int>>>
       enemyIndices = {{MovementState::IDLE,
@@ -165,17 +220,9 @@ class Enemy {
                       {MovementState::DEATH,
                        {{Direction::LEFT, std::make_pair(0, 0)},
                         {Direction::RIGHT, std::make_pair(0, 0)}}}};
-  SDL_Texture *healthbarbg_texture =
-      AssetManager::uiTextures[ENEMY_HEALTH_BAR_BG_TEXTURE];
-  SDL_Texture *healthbar_texture =
-      AssetManager::uiTextures[ENEMY_HEALTH_BAR_TEXTURE];
-
-  // Calculate damage taken according to player attack and enemy difficulty
-  int calculateDamage(int attack);
 
   // Update enemy position if is alive and movement state is WALK
   void move(Map *curMap);
 
-  friend class Character;
   friend class Map;
 };

@@ -20,7 +20,7 @@
  *
  * An object encapsulates all information related to the object itself
  * (name/texture/properties/etc.) but contain nothing about the game state
- * (size/position on map/etc.) The latter is contained in an object wrapper.
+ * (size/position on map/etc.). The latter is contained in an object wrapper.
  *
  * The point of having objects and object wrappers separately is that, with
  * objects, it is easier to define all items needed in the game independent of
@@ -28,7 +28,7 @@
  * objects should be allocated and managed by AssetManager.
  *
  * But using object wrappers, different instances representing the same object
- * can each has its own independent game state. An object wrappers should be
+ * can each has its own independent game state. An object wrapper should be
  * managed by the game state it's dependent on, for example the map.
  *
  * When the ownership of an object changes (i.e. from one map to another), the
@@ -133,6 +133,7 @@ class ObjectWrapper {
   /**
    * @brief Construct a new object wrapper
    *
+   * @param o underlying object
    * @param x position
    * @param y
    * @param w dimension

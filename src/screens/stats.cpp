@@ -48,13 +48,14 @@ void Stats::initAllStats() {
   }
 }
 
-bool Stats::changeHP(int h) {
+bool Stats::changeHP(Logs *logs, int h) {
   if (h > 0) {
     hp = std::max(hpPerLevel[level], hp + h);
   } else {
     hp += h;
     if (hp <= 0) {
       hp = 1;
+      logs->addLog("-Low HP warning");
       return false;
     }
   }

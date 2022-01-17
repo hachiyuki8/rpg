@@ -28,21 +28,45 @@ void free();
  */
 void renderStartingScreen();
 
-// Create all objects manually and store in allObjects. Note that each unique
-// item should ideally only be associated with one object and has a unique name.
-// If multiple instances of different sizes/positions are needed, use object
-// wrappers and initialize them after maps. See object.h for more.
+/**
+ * @brief Create all objects manually and store in allObjects.
+ * Note that each unique item should ideally only be associated with one object
+ * and has a unique name. If multiple instances of different sizes/positions are
+ * needed, use object wrappers and initialize them after maps. See object.h for
+ * more.
+ *
+ */
 void initObjects();
 
-// Create all maps in MAPS(mapfiles.h), manually add objects and teleporters,
-// and store in allMaps
-void initMaps();
-
-// Create all NPCs manually and store in allNPCs
-void initNPCs();
-
-// Create all enemies manually and store in allEnemies
+/**
+ * @brief Create all enemies manually and store in allEnemies. Note that each
+ * unique enemy should ideally only be associated with one enemy and has a
+ * unique name. If multiple instances of different sizes/positions/movement
+ * types/HPs are needed, use enemy wrappers and initialize tham after maps. See
+ * enemy.h for more.
+ *
+ */
 void initEnemies();
 
-// Create the player and set the initial map
+/**
+ * @brief Create all maps in MAPS(mapfiles.h), manually add objects and enemies
+ * (using wrappers), and teleporters, and store in allMaps.
+ *
+ * TODO: Each enemy wrapper needs to be initialized at a valid position,
+ * otherwise will get stuck. Teleporters must also be pointing to valid
+ * positions. Maybe one day I will improve this.
+ *
+ */
+void initMaps();
+
+/**
+ * @brief Create all NPCs manually and store in allNPCs
+ *
+ */
+void initNPCs();
+
+/**
+ * @brief Create the player and set the initial map. Note that player must be
+ * initialized at a valid position.
+ */
 void initPlayer();
