@@ -15,7 +15,6 @@ An unknown theme 2D RPG written in C++ from scratch (in development)
 
 ### Immediate TODOs
 
-- HP display
 - map editor
 
 ### References
