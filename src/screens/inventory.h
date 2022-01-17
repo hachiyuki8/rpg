@@ -95,7 +95,6 @@ class Inventory {
   /**
    * @brief Render the inventory screen. This function sets the inventory
    * position attributes for each item in inventory.
-   * TODO: make it better, also use vector instead of map to preserve order?
    *
    * @param renderer
    */

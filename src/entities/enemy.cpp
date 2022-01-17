@@ -35,7 +35,8 @@ Enemy::Enemy(float xMin, float xMax, float yMin, float yMax, std::string n,
   yVelBase = yVBase;
   yVelRange = yVRange;
 
-  hp = p;
+  fullHP = p;
+  curHP = p;
   difficulty = diff;
   movementState = state;
 
@@ -50,7 +51,8 @@ Enemy::~Enemy() {
 
 void Enemy::print() {
   std::cout << "Enemy " << ID << std::endl;
-  std::cout << "-HP: " << hp << ", difficulty: " << difficulty << std::endl;
+  std::cout << "-current HP: " << curHP << ", difficulty: " << difficulty
+            << std::endl;
 }
 
 bool Enemy::isInvalidPosition(float x, float y, float w, float h) {
@@ -80,14 +82,14 @@ std::pair<int, int> Enemy::onAttack(float x, int attack) {
 
   oldMovementState = movementState;
   movementState = MovementState::ATTACK;
-  hp -= calculateDamage(attack);
-  if (hp <= 0) {
-    hp = 0;
+  curHP -= calculateDamage(attack);
+  if (curHP <= 0) {
+    curHP = 0;
     movementState = MovementState::DEATH;
     isAlive = false;
   }
 
-  std::cout << "HP: " << hp << std::endl;
+  std::cout << "HP: " << curHP << std::endl;
 
   if (x > xPos + width / 2) {
     xDirection = Direction::RIGHT;
@@ -150,6 +152,18 @@ void Enemy::render(Map *curMap, SDL_Renderer *renderer, float camX, float camY,
                    enemyTextures[movementState][xDirection]
                                 [enemyIndices[movementState][xDirection].first],
                    NULL, &r);
+
+    // health bar
+    r.x = r.x + width / 2 - ENEMY_HEALTH_BAR_BG_WIDTH / 2;
+    r.y = r.y - ENEMY_HEALTH_BAR_BG_HEIGHT;
+    r.w = ENEMY_HEALTH_BAR_BG_WIDTH;
+    r.h = ENEMY_HEALTH_BAR_BG_HEIGHT;
+    SDL_RenderCopy(renderer, healthbarbg_texture, NULL, &r);
+    r.x += ENEMY_HEALTH_BAR_XPOS;
+    r.y += ENEMY_HEALTH_BAR_YPOS;
+    r.w = ENEMY_HEALTH_BAR_WIDTH * curHP / fullHP;
+    r.h = ENEMY_HEALTH_BAR_HEIGHT;
+    SDL_RenderCopy(renderer, healthbar_texture, NULL, &r);
   }
 }
 

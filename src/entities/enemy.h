@@ -34,7 +34,7 @@ class Enemy {
    * @param yMax
    * @param n name, should match the folder name containing all textures
    * @param state either IDLE (then position is alwasy (xMin, yMin)) or WALK
-   * @param p HP
+   * @param p full HP
    * @param diff an integer in [0, ENEMY_MAX_DIFFICULTY], 0=doesn't do damage
    * @param w dimension
    * @param h
@@ -143,7 +143,8 @@ class Enemy {
   float yPosMax;
 
   // enemy properties
-  int hp;
+  int fullHP;
+  int curHP;
   int difficulty;
   std::vector<std::tuple<Object *, int>> rewards;  // upon being killed
 
@@ -164,6 +165,10 @@ class Enemy {
                       {MovementState::DEATH,
                        {{Direction::LEFT, std::make_pair(0, 0)},
                         {Direction::RIGHT, std::make_pair(0, 0)}}}};
+  SDL_Texture *healthbarbg_texture =
+      AssetManager::uiTextures[ENEMY_HEALTH_BAR_BG_TEXTURE];
+  SDL_Texture *healthbar_texture =
+      AssetManager::uiTextures[ENEMY_HEALTH_BAR_TEXTURE];
 
   // Calculate damage taken according to player attack and enemy difficulty
   int calculateDamage(int attack);

@@ -124,11 +124,12 @@ class Stats {
 
   /**
    * @brief Render the stats screen, showing player level, EXP, HP, money, and
-   * all attributes
+   * all attributes. Health bar may be rendered depending on game state.
    *
    * @param renderer
+   * @param showHealthBar
    */
-  void render(SDL_Renderer *renderer);
+  void render(SDL_Renderer *renderer, bool showHealthBar);
 
   static int nextID;
 
@@ -159,6 +160,9 @@ class Stats {
   SDL_Color text_color = STATS_COLOR;
   SDL_Texture *texture = AssetManager::uiTextures[STATS_TEXTURE];
   TTF_Font *font = AssetManager::allFonts[STATS_FONT][STATS_FONT_SIZE];
+  SDL_Texture *healthbarbg_texture =
+      AssetManager::uiTextures[HEALTH_BAR_BG_TEXTURE];
+  SDL_Texture *healthbar_texture = AssetManager::uiTextures[HEALTH_BAR_TEXTURE];
 
   // Add the given attribute to attributes if it doesn't exist already by
   // initializing an Attribute object

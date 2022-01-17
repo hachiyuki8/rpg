@@ -131,7 +131,22 @@ void Stats::open() { isShowing = true; }
 
 void Stats::close() { isShowing = false; }
 
-void Stats::render(SDL_Renderer *renderer) {
+void Stats::render(SDL_Renderer *renderer, bool showHealthBar) {
+  if (showHealthBar) {
+    // health bar
+    SDL_Rect r;
+    r.x = HEALTH_BAR_BG_XPOS;
+    r.y = HEALTH_BAR_BG_YPOS;
+    r.w = HEALTH_BAR_BG_WIDTH;
+    r.h = HEALTH_BAR_BG_HEIGHT;
+    SDL_RenderCopy(renderer, healthbarbg_texture, NULL, &r);
+    r.x = HEALTH_BAR_BG_XPOS + HEALTH_BAR_XPOS;
+    r.y = HEALTH_BAR_BG_YPOS + HEALTH_BAR_YPOS;
+    r.w = HEALTH_BAR_WIDTH * hp / hpPerLevel[level];
+    r.h = HEALTH_BAR_HEIGHT;
+    SDL_RenderCopy(renderer, healthbar_texture, NULL, &r);
+  }
+
   if (isShowing) {
     // background
     SDL_Rect r;

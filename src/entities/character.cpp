@@ -256,7 +256,7 @@ void Character::render(SDL_Renderer *renderer) {
   help.render(renderer);
   inventory.render(renderer);
   skills.render(renderer);
-  stats.render(renderer);
+  stats.render(renderer, uiState != UIState::IN_CONVO);
   if (curNPC) {
     curNPC->renderScreen(renderer);
   }

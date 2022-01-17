@@ -94,11 +94,14 @@ const std::vector<std::string> TILES = {
     "36_stairs14.png", "37_stairs15.png", "38_stairs16.png", "39_stairs17.png",
     "40_bridge7.png",  "41_bridge8.png"};
 const std::vector<std::string> UIS = {
-    "0_textbox.png",   "1_grid1.png",   "2_grid2.png",     "3_panel1.png",
-    "4_panel2.png",    "5_panel3.png",  "6_panel4.png",    "7_longbox.png",
-    "8_panel5.png",    "9_panel6.png",  "10_panel7.png",   "11_panel8.png",
-    "12_namecard.png", "13_box.png",    "14_grid3.png",    "15_grid4.png",
-    "16_grid5.png",    "17_panel9.png", "18_chatbox1.png", "19_panel10.png"};
+    "0_textbox.png",    "1_grid1.png",        "2_grid2.png",
+    "3_panel1.png",     "4_panel2.png",       "5_panel3.png",
+    "6_panel4.png",     "7_longbox.png",      "8_panel5.png",
+    "9_panel6.png",     "10_panel7.png",      "11_panel8.png",
+    "12_namecard.png",  "13_box.png",         "14_grid3.png",
+    "15_grid4.png",     "16_grid5.png",       "17_panel9.png",
+    "18_chatbox1.png",  "19_panel10.png",     "20_healthbarbg.png",
+    "21_healthbar.png", "22_healthbarbg2.png"};
 const std::map<SDL_Keycode, std::string> KEYS = {
     {SDLK_w, "w.png"},           {SDLK_a, "a.png"},
     {SDLK_s, "s.png"},           {SDLK_d, "d.png"},
