@@ -29,21 +29,28 @@ void free();
 void renderStartingScreen();
 
 /**
- * @brief Create all objects manually and store in allObjects.
+ * @brief If in game mode, create all objects manually and store in
+ * AssetManager::allObjects. If in editor mode, manually store the texture name
+ * and index into AssetManager::allObjects in MapEditor::allObjectsIndex for
+ * those objects that should show up in map editor.
+ *
  * Note that each unique item should ideally only be associated with one object
  * and has a unique name. If multiple instances of different sizes/positions are
  * needed, use object wrappers and initialize them after maps. See object.h for
  * more.
  *
+ * @param isGameMode
+ *
  */
-void initObjects();
+void initObjects(bool isGameMode = true);
 
 /**
- * @brief Create all enemies manually and store in allEnemies. Note that each
- * unique enemy should ideally only be associated with one enemy and has a
- * unique name. If multiple instances of different sizes/positions/movement
- * types/HPs are needed, use enemy wrappers and initialize tham after maps. See
- * enemy.h for more.
+ * @brief Create all enemies manually and store in allEnemies.
+ *
+ * Note that each unique enemy should ideally only be associated with one enemy
+ * and has a unique name. If multiple instances of different
+ * sizes/positions/movement types/HPs are needed, use enemy wrappers and
+ * initialize tham after maps. See enemy.h for more.
  *
  */
 void initEnemies();

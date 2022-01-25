@@ -28,7 +28,7 @@ class Map;
 class Object;
 
 class AssetManager {
- public:
+public:
   AssetManager();
   virtual ~AssetManager();
 
@@ -75,7 +75,7 @@ class AssetManager {
   static std::vector<CharacterNPC *> allNPCs;
   static std::vector<Enemy *> allEnemies;
 
- private:
+private:
   // Initialize libraries, winder and renderer
   static bool initLibraries();
 

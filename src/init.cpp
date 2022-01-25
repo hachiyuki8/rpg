@@ -1,4 +1,5 @@
 #include "init.h"
+#include "editor/mapEditor.h"
 
 void init() {
   initObjects();
@@ -24,151 +25,235 @@ void free() {
   }
 }
 
-void initObjects() {
+void initObjects(bool isGameMode) {
   // object 0
-  Object *redHouse =
-      new Object("red house", "", AssetManager::objectTextures["23_house1.png"],
-                 0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(redHouse);
+  if (isGameMode) {
+    Object *redHouse = new Object("red house", "",
+                                  AssetManager::objectTextures["23_house1.png"],
+                                  0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(redHouse);
+  } else {
+    MapEditor::allObjectsIndex["23_house1.png"] = 0;
+  }
 
   // object 1
-  Object *blueHouse = new Object("blue house", "",
-                                 AssetManager::objectTextures["25_house3.png"],
-                                 0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(blueHouse);
+  if (isGameMode) {
+    Object *blueHouse = new Object(
+        "blue house", "", AssetManager::objectTextures["25_house3.png"], 0,
+        ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(blueHouse);
+  } else {
+    MapEditor::allObjectsIndex["25_house3.png"] = 1;
+  }
 
   // object 2
-  Object *campFire = new Object("camp fire", "",
-                                AssetManager::objectTextures["29_bonfire.png"],
-                                0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(campFire);
+  if (isGameMode) {
+    Object *campFire = new Object(
+        "camp fire", "", AssetManager::objectTextures["29_bonfire.png"], 0,
+        ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(campFire);
+  } else {
+    MapEditor::allObjectsIndex["29_bonfire.png"] = 2;
+  }
 
   // object 3
-  Object *whiteFlower = new Object(
-      "white flower", "", AssetManager::objectTextures["11_flower5.png"], 0,
-      ObjectType::OTHERS);
-  whiteFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  AssetManager::allObjects.push_back(whiteFlower);
+  if (isGameMode) {
+    Object *whiteFlower = new Object(
+        "white flower", "", AssetManager::objectTextures["11_flower5.png"], 0,
+        ObjectType::OTHERS);
+    whiteFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+    AssetManager::allObjects.push_back(whiteFlower);
+  } else {
+    MapEditor::allObjectsIndex["11_flower5.png"] = 3;
+  }
 
   // object 4
-  Object *whiteFlowers = new Object(
-      "white flowers", "", AssetManager::objectTextures["10_flower4.png"], 0,
-      ObjectType::OTHERS);
-  whiteFlowers->addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  AssetManager::allObjects.push_back(whiteFlowers);
+  if (isGameMode) {
+    Object *whiteFlowers = new Object(
+        "white flowers", "", AssetManager::objectTextures["10_flower4.png"], 0,
+        ObjectType::OTHERS);
+    whiteFlowers->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+    AssetManager::allObjects.push_back(whiteFlowers);
+  } else {
+    MapEditor::allObjectsIndex["10_flower4.png"] = 4;
+  }
 
   // object 5
-  Object *redFlower = new Object(
-      "red flower", "", AssetManager::objectTextures["28_flower10.png"], 20,
-      ObjectType::OTHERS);
-  redFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  redFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
-  redFlower->setUse([]() {
-    std::cout << "Successfully used red flower" << std::endl;
-    return true;
-  });
-  AssetManager::allObjects.push_back(redFlower);
+  if (isGameMode) {
+    Object *redFlower = new Object(
+        "red flower", "", AssetManager::objectTextures["28_flower10.png"], 20,
+        ObjectType::OTHERS);
+    redFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+    redFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
+    redFlower->setUse([]() {
+      std::cout << "Successfully used red flower" << std::endl;
+      return true;
+    });
+    AssetManager::allObjects.push_back(redFlower);
+  } else {
+    MapEditor::allObjectsIndex["28_flower10.png"] = 5;
+  }
 
   // object 6
-  Object *blueFlower = new Object("blue flower", "",
-                                  AssetManager::objectTextures["3_flower3.png"],
-                                  20, ObjectType::OTHERS);
-  blueFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  blueFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
-  blueFlower->addObjectProperty(ObjectProperty::CAN_USE);
-  AssetManager::allObjects.push_back(blueFlower);
+  if (isGameMode) {
+    Object *blueFlower = new Object(
+        "blue flower", "", AssetManager::objectTextures["3_flower3.png"], 20,
+        ObjectType::OTHERS);
+    blueFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+    blueFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
+    blueFlower->addObjectProperty(ObjectProperty::CAN_USE);
+    AssetManager::allObjects.push_back(blueFlower);
+  } else {
+    MapEditor::allObjectsIndex["3_flower3.png"] = 6;
+  }
 
   // object 7
-  Object *yellowFlower = new Object(
-      "yellow flower", "", AssetManager::objectTextures["1_flower1.png"], 20,
-      ObjectType::OTHERS);
-  yellowFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
-  yellowFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
-  AssetManager::allObjects.push_back(yellowFlower);
+  if (isGameMode) {
+    Object *yellowFlower = new Object(
+        "yellow flower", "", AssetManager::objectTextures["1_flower1.png"], 20,
+        ObjectType::OTHERS);
+    yellowFlower->addObjectProperty(ObjectProperty::CAN_COLLIDE);
+    yellowFlower->addObjectProperty(ObjectProperty::CAN_PICKUP);
+    AssetManager::allObjects.push_back(yellowFlower);
+  } else {
+    MapEditor::allObjectsIndex["1_flower1.png"] = 7;
+  }
 
   // object 8
-  Object *bigBlueFlower = new Object(
-      "big blue flower", "", AssetManager::objectTextures["12_flower6.png"], 0,
-      ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(bigBlueFlower);
+  if (isGameMode) {
+    Object *bigBlueFlower = new Object(
+        "big blue flower", "", AssetManager::objectTextures["12_flower6.png"],
+        0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(bigBlueFlower);
+  } else {
+    MapEditor::allObjectsIndex["12_flower6.png"] = 8;
+  }
 
   // object 9
-  Object *bigYellowFlower = new Object(
-      "big yellow flower", "", AssetManager::objectTextures["13_flower7.png"],
-      0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(bigYellowFlower);
+  if (isGameMode) {
+    Object *bigYellowFlower = new Object(
+        "big yellow flower", "", AssetManager::objectTextures["13_flower7.png"],
+        0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(bigYellowFlower);
+  } else {
+    MapEditor::allObjectsIndex["13_flower7.png"] = 9;
+  }
 
   // object 10
-  Object *longWhiteFlower = new Object(
-      "long white flower", "", AssetManager::objectTextures["26_flower8.png"],
-      0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(longWhiteFlower);
+  if (isGameMode) {
+    Object *longWhiteFlower = new Object(
+        "long white flower", "", AssetManager::objectTextures["26_flower8.png"],
+        0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(longWhiteFlower);
+  } else {
+    MapEditor::allObjectsIndex["26_flower8.png"] = 10;
+  }
 
   // object 11
-  Object *longYellowFlower = new Object(
-      "long yellow flower", "", AssetManager::objectTextures["27_flower9.png"],
-      0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(longYellowFlower);
+  if (isGameMode) {
+    Object *longYellowFlower = new Object(
+        "long yellow flower", "",
+        AssetManager::objectTextures["27_flower9.png"], 0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(longYellowFlower);
+  } else {
+    MapEditor::allObjectsIndex["27_flower9.png"] = 11;
+  }
 
   // object 12
-  Object *coinShop = new Object(
-      "coin", "a meaningless coin to demo how the shop works",
-      AssetManager::objectTextures["0_coin.png"], 10, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(coinShop);
+  if (isGameMode) {
+    Object *coinShop = new Object(
+        "coin", "a meaningless coin to demo how the shop works",
+        AssetManager::objectTextures["0_coin.png"], 10, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(coinShop);
+  }
 
   // object  13
-  Object *flowerShop = new Object(
-      "flower", "a meaningless flower to demo how the shop works",
-      AssetManager::objectTextures["1_flower1.png"], 20, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(flowerShop);
+  if (isGameMode) {
+    Object *flowerShop = new Object(
+        "flower", "a meaningless flower to demo how the shop works",
+        AssetManager::objectTextures["1_flower1.png"], 20, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(flowerShop);
+  }
 
   // object 14
-  Object *paleGreenTree = new Object(
-      "pale green tree", "", AssetManager::objectTextures["22_tree2.png"], 0,
-      ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(paleGreenTree);
+  if (isGameMode) {
+    Object *paleGreenTree = new Object(
+        "pale green tree", "", AssetManager::objectTextures["22_tree2.png"], 0,
+        ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(paleGreenTree);
+  } else {
+    MapEditor::allObjectsIndex["22_tree2.png"] = 14;
+  }
 
   // object 15
-  Object *greenTree =
-      new Object("green tree", "", AssetManager::objectTextures["21_tree1.png"],
-                 0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(greenTree);
+  if (isGameMode) {
+    Object *greenTree = new Object("green tree", "",
+                                   AssetManager::objectTextures["21_tree1.png"],
+                                   0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(greenTree);
+  } else {
+    MapEditor::allObjectsIndex["21_tree1.png"] = 15;
+  }
 
   // object 16
-  Object *rocks =
-      new Object("rocks", "", AssetManager::objectTextures["19_rock1.png"], 0,
-                 ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(rocks);
+  if (isGameMode) {
+    Object *rocks =
+        new Object("rocks", "", AssetManager::objectTextures["19_rock1.png"], 0,
+                   ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(rocks);
+  } else {
+    MapEditor::allObjectsIndex["19_rock1.png"] = 16;
+  }
 
   // object 17
-  Object *fenceTop =
-      new Object("fence top", "", AssetManager::objectTextures["6_fence3.png"],
-                 0, ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(fenceTop);
+  if (isGameMode) {
+    Object *fenceTop = new Object("fence top", "",
+                                  AssetManager::objectTextures["6_fence3.png"],
+                                  0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(fenceTop);
+  } else {
+    MapEditor::allObjectsIndex["6_fence3.png"] = 17;
+  }
 
   // object 18
-  Object *fenceHorizontal = new Object(
-      "fence horizontal", "", AssetManager::objectTextures["8_fence5.png"], 0,
-      ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(fenceHorizontal);
+  if (isGameMode) {
+    Object *fenceHorizontal = new Object(
+        "fence horizontal", "", AssetManager::objectTextures["8_fence5.png"], 0,
+        ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(fenceHorizontal);
+  } else {
+    MapEditor::allObjectsIndex["8_fence5.png"] = 18;
+  }
 
   // object 19
-  Object *fenceVertical = new Object(
-      "fence vertical", "", AssetManager::objectTextures["9_fence6.png"], 0,
-      ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(fenceVertical);
+  if (isGameMode) {
+    Object *fenceVertical = new Object(
+        "fence vertical", "", AssetManager::objectTextures["9_fence6.png"], 0,
+        ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(fenceVertical);
+  } else {
+    MapEditor::allObjectsIndex["9_fence6.png"] = 19;
+  }
 
   // object 20
-  Object *fenceBottomLeft = new Object(
-      "fence bottom left", "", AssetManager::objectTextures["4_fence1.png"], 0,
-      ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(fenceBottomLeft);
+  if (isGameMode) {
+    Object *fenceBottomLeft = new Object(
+        "fence bottom left", "", AssetManager::objectTextures["4_fence1.png"],
+        0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(fenceBottomLeft);
+  } else {
+    MapEditor::allObjectsIndex["4_fence1.png"] = 20;
+  }
 
   // object 21
-  Object *fenceBottomRight = new Object(
-      "fence bottom right", "", AssetManager::objectTextures["5_fence2.png"], 0,
-      ObjectType::OTHERS);
-  AssetManager::allObjects.push_back(fenceBottomRight);
+  if (isGameMode) {
+    Object *fenceBottomRight = new Object(
+        "fence bottom right", "", AssetManager::objectTextures["5_fence2.png"],
+        0, ObjectType::OTHERS);
+    AssetManager::allObjects.push_back(fenceBottomRight);
+  } else {
+    MapEditor::allObjectsIndex["5_fence2.png"] = 21;
+  }
 }
 
 void initEnemies() {
@@ -346,9 +431,8 @@ void initNPCs() {
   lines.push_back(std::make_tuple(
       "1_shop1.png",
       std::vector<std::string>{
-          "Well",
-          "I know everything looks ugly now, but that's cuz all the "
-          "graphics are just a placeholder."}));
+          "Well", "I know everything looks ugly now, but that's cuz all the "
+                  "graphics are just a placeholder."}));
   lines.push_back(std::make_tuple(
       "1_shop1.png",
       std::vector<std::string>{"BTW I really hate designing GUI."}));

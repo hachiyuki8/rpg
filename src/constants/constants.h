@@ -4,6 +4,7 @@ const bool DEBUG = true;
 
 const int FRAME_RATE = 60;
 
+enum class Mode { GAME, EDITOR };
 enum class GameState { PAUSE, IN_PROGRESS };
 enum class UIState {
   IN_GAME,

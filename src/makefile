@@ -1,13 +1,19 @@
 all: main
 
-main: main.o assetManager.o init.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o inventory.o skills.o stats.o logs.o shop.o help.o convo.o
-	clang++ -std=c++20 -g -o main main.o assetManager.o init.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o inventory.o skills.o stats.o logs.o shop.o help.o convo.o -L/opt/homebrew/Cellar/sdl2/2.0.18/lib -L/opt/homebrew/Cellar/sdl2_ttf/2.0.15/lib -L/opt/homebrew/Cellar/sdl2_image/2.0.5/lib -lSDL2 -lSDL2_ttf -lSDL2_image
+main: main.o assetManager.o init.o mapEditor.o itemlist.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o inventory.o skills.o stats.o logs.o shop.o help.o convo.o
+	clang++ -std=c++20 -g -o main main.o assetManager.o init.o mapEditor.o itemlist.o character.o characterNPC.o enemy.o map.o tile.o teleporter.o object.o inventory.o skills.o stats.o logs.o shop.o help.o convo.o -L/opt/homebrew/Cellar/sdl2/2.0.18/lib -L/opt/homebrew/Cellar/sdl2_ttf/2.0.15/lib -L/opt/homebrew/Cellar/sdl2_image/2.0.5/lib -lSDL2 -lSDL2_ttf -lSDL2_image
 
 assetManager.o: assetManager.cpp assetManager.h constants/asset_constants.h constants/controls.h constants/mapfiles.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 assetManager.cpp
 
-init.o: init.cpp init.h assetManager.h constants/constants.h constants/controls.h constants/mapfiles.h 
+init.o: init.cpp init.h assetManager.h constants/constants.h constants/controls.h constants/mapfiles.h editor/mapEditor.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 init.cpp
+
+mapEditor.o: editor/mapEditor.cpp editor/mapEditor.h editor/constants.h editor/itemlist.h init.h 
+	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 editor/mapEditor.cpp
+
+itemlist.o: editor/itemlist.cpp editor/itemlist.h editor/constants.h editor/mapEditor.h
+	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 editor/itemlist.cpp
 
 character.o: entities/character.cpp entities/character.h assetManager.h constants/character_constants.h constants/controls.h maps/map.h screens/inventory.h screens/skills.h screens/stats.h screens/shop.h screens/logs.h screens/help.h
 	clang++ -std=c++20 -g -c -I/opt/homebrew/Cellar/sdl2/2.0.18/include/SDL2 -I/opt/homebrew/Cellar/sdl2_ttf/2.0.15/include/SDL2 -I/opt/homebrew/Cellar/sdl2_image/2.0.5/include/SDL2 entities/character.cpp
