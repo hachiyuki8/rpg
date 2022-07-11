@@ -3,7 +3,7 @@ An unknown theme 2D RPG written in C++ from scratch (in development)
 
 ### Progress
 
-***12/29/2021-present:*** Currently writing my own framework based on SDL. Haven't decided what the actual story will be.
+***12/29/2021-present:*** Currently writing my own framework based on SDL2. Haven't decided what the actual story will be.
 
 ### Implemented Features
 
@@ -15,6 +15,8 @@ An unknown theme 2D RPG written in C++ from scratch (in development)
 
 ### Immediate TODOs
 
+- dialogues
+- quest system
 - map editor
 
 ### References
