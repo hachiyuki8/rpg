@@ -3,7 +3,9 @@ An unknown theme 2D RPG written in C++ from scratch (in development)
 
 ### Progress
 
-***12/29/2021-present:*** Currently writing my own framework based on SDL2. Haven't decided what the actual story will be.
+***01/25/2022-Present:*** On hiatus due to school and job hunting. Hoping to resume development in 2023.
+
+***12/29/2021-01/24/2022:*** Currently writing my own framework based on SDL2. Haven't decided what the actual story will be.
 
 ### Implemented Features
 
